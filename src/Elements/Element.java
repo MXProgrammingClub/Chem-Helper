@@ -1,3 +1,4 @@
+package Elements;
 /*
  * Represents an element of the periodic table. 
  * Current functions: finding the electron shell configuration, phase at room temperature, whether it is metal, non-metal, or metalloid

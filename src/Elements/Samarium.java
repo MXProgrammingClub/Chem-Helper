@@ -1,3 +1,4 @@
+package Elements;
 
 public class Samarium extends Element 
 {

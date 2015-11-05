@@ -1,7 +1,8 @@
-
+package ChemHelper;
 import java.awt.*;
 
 import javax.swing.*;
+
 
 
 public class ChemHelper extends JFrame{		//Primary GUI class
