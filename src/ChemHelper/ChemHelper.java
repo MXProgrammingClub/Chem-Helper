@@ -3,18 +3,20 @@ import java.awt.*;
 
 import javax.swing.*;
 
+import Functions.Function;
+
 
 
 public class ChemHelper extends JFrame{		//Primary GUI class
 	Container pane;
-	JList funcs;
+	JList<Function> funcs;
 	
 	public ChemHelper(){
 		pane = getContentPane();
 		pane.setLayout(new BorderLayout());
 		
 		
-		funcs = new JList(populateFuncs());
+		funcs = new JList<Function>(populateFuncs());
 		
 		
 		pane.add(funcs, BorderLayout.WEST);

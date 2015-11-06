@@ -1,4 +1,4 @@
-package ChemHelper;
+package Functions;
 
 import javax.swing.JFrame;
 
