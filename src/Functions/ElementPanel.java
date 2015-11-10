@@ -4,9 +4,12 @@
  * Author: Julia McClellan
  * Version: 11/04/2015
  */
-
+package Functions;
 import javax.swing.*;
 import javax.swing.border.*;
+
+import Elements.Element;
+
 import java.awt.*;
 
 public class ElementPanel extends JPanel 

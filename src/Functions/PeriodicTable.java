@@ -1,4 +1,8 @@
+package Functions; 
 import javax.swing.*;
+
+import Elements.*;
+
 import java.awt.*;
 
 public class PeriodicTable extends JPanel

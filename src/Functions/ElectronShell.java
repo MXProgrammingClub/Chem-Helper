@@ -1,14 +1,16 @@
+package Functions;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import Elements.Element;
+
 public class ElectronShell extends Function
 {
 	private JRadioButton num, sym, name;
-	private JPanel buttons, panel, enterPanel;
+	private JPanel buttons, panel, enterPanel, frame;
 	private JLabel info, results;
 	private JButton calc;
-	private JFrame frame;
 	private JTextField enter;
 	private ButtonGroup options;
 	
@@ -40,20 +42,16 @@ public class ElectronShell extends Function
 		panel.add(info, BorderLayout.NORTH);
 		panel.add(enterPanel, BorderLayout.CENTER);
 		panel.add(results, BorderLayout.SOUTH);
-		frame = new JFrame();
-		frame.add(panel);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
 	public void display()
 	{
-		frame.pack();
 		frame.setVisible(true);
 	}
 
-	public JFrame getFrame() 
+	public JPanel getPanel() 
 	{
-		return frame;
+		return panel;
 	}
 	
 	private class ButtonListener implements ActionListener
@@ -61,7 +59,7 @@ public class ElectronShell extends Function
 		public void actionPerformed(ActionEvent arg0) 
 		{
 			String input = enter.getText();
-			Element[] table = PeriodicTable.getTable();
+			Element[] table = PeriodicTable.TABLE;
 			if(num.isSelected())
 			{
 				int atomicNum = Integer.parseInt(input);
@@ -107,5 +105,10 @@ public class ElectronShell extends Function
 				}
 			}
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "Electron shell configuration";
 	}
 }
