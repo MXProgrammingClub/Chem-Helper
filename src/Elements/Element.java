@@ -4,7 +4,7 @@ package Elements;
  * Current functions: finding the electron shell configuration, phase at room temperature, whether it is metal, non-metal, or metalloid
  * 
  * Author: Julia McClellan
- * Version: 11/02/2015
+ * Version: 11/10/2015
  */
 public class Element
 {
@@ -161,8 +161,8 @@ public class Element
      */
     public String getState()
     {
-    	if(boil < RM_TEMP) return "Gas"; //If the boiling point is below room temperature, the element is a gas
-    	else if(freeze > RM_TEMP) return "Solid"; //If the freezing point is above room temperature, the element is a solid
+    	if(boil < RM_TEMP || name.equals("Ununoctium")) return "Gas"; //If the boiling point is below room temperature, the element is a gas
+    	else if(freeze > RM_TEMP || boil == Double.MAX_VALUE || freeze == 0) return "Solid"; //If the freezing point is above room temperature, the element is a solid
     	else return "Liquid"; //Otherwise, the element is a liquid.
     }
     
@@ -183,5 +183,19 @@ public class Element
     	{
     		return "Metalloid";
     	}
+    }
+    
+    /*
+     * Determines the group name of the element.
+     */
+    public String getGroupName()
+    {
+    	if(group == 1 && ! name.equals("Hydrogen")) return "Alkali Metal";
+    	else if(group == 2) return "Alkaline Earth Metal";
+    	else if(group == 15) return "Pnictogen";
+    	else if(group == 16) return "Chalcogen";
+    	else if(group == 17) return "Halogen";
+    	else if(group == 18) return "Noble Gas";
+    	else return "None";
     }
 }

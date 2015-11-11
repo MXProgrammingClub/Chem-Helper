@@ -3,16 +3,19 @@ import javax.swing.*;
 
 import Elements.*;
 
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 
 public class PeriodicTable extends JPanel
 {
 	private ElementPanel[][] panels, alPanels; //Panels is all elements but actinides and lanthandies, which are in alPanels
-	
+	private JPanel panel, alPanel;
+	private JLabel info;
 	public PeriodicTable()
 	{
 		panels = new ElementPanel[7][18];
-		alPanels = new ElementPanel[2][14];
+		alPanels = new ElementPanel[2][18];
 		for(int row = 0; row < panels.length; row++)
 		{
 			for(int col = 0; col < panels[0].length; col++)
@@ -20,29 +23,61 @@ public class PeriodicTable extends JPanel
 				panels[row][col] = new ElementPanel(null); //To avoid null pointer exceptions later
 			}
 		}
-		
-		for(Element e: TABLE)
+		for(int row = 0; row < alPanels.length; row++)
 		{
-			ElementPanel panel = new ElementPanel(e);
-			if(e.getPeriod() > 0)
+			for(int col = 0; col < alPanels[0].length; col++)
 			{
-				
-			}
-			else
-			{
-				panels[e.getPeriod()][e.getGroup()] = panel;
+				alPanels[row][col] = new ElementPanel(null); //To avoid null pointer exceptions later
 			}
 		}
 		
-		setLayout(new GridLayout(7, 18));
+		int laCol = 0;
+		for(Element e: TABLE)
+		{
+			ElementPanel panel = new ElementPanel(e);
+			if(e.getGroup() < 0)
+			{
+				alPanels[(e.getGroup() * -1) - 1][laCol] = panel;
+				laCol++;
+				if(laCol >= 14)
+				{
+					laCol = 0;
+				}
+			}
+			else
+			{
+				panels[e.getPeriod() - 1][e.getGroup() - 1] = panel;
+			}
+		}
+		
+		panel = new JPanel();
+		panel.setLayout(new GridLayout(7, 18));
+		alPanel = new JPanel();
+		alPanel.setLayout(new GridLayout(2, 14));
 		for(int row = 0; row < panels.length; row++)
 		{
 			for(int col = 0; col < panels[0].length; col++)
 			{
-				add(panels[row][col]);
+				panel.add(panels[row][col]);
+				panels[row][col].addMouseListener(new EListener());
 			}
 		}
-		
+		for(int row = 0; row < alPanels.length; row++)
+		{
+			for(int col = 0; col < alPanels[0].length; col++)
+			{
+				alPanel.add(alPanels[row][col]);
+				alPanels[row][col].addMouseListener(new EListener());
+			}
+		}
+		info = new JLabel("Click an element to find out about it.");
+		Box box = Box.createVerticalBox();
+		box.add(panel);
+		box.add(Box.createVerticalStrut(20));
+		box.add(alPanel);
+		box.add(Box.createVerticalStrut(20));
+		box.add(info);
+		add(box);
 	}
 	
 	public static void main(String[] args)
@@ -51,9 +86,61 @@ public class PeriodicTable extends JPanel
 		JFrame frame = new JFrame();
 		frame.getContentPane().add(table);
 	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	    frame.pack();
-	    frame.setVisible(true);
-		
+	    frame.setVisible(true);	
+	}
+
+	public static Element[] getTable()
+	{
+		return TABLE;
+	}
+	
+	private class EListener implements MouseListener
+	{
+		public void mouseClicked(MouseEvent arg0) 
+		{
+			if(arg0.getSource() instanceof ElementPanel)
+			{
+				Element e = ((ElementPanel) arg0.getSource()).getElement();
+				if(e != null)
+				{
+					String text = "<html>Element: " + e.getName() + "<br>Atomic Number: " + e.getNum() + "<br>Atomic Mass: " + e.getMolarMass() +  
+							"<br>Group Name: " + e.getGroupName() + "<br>" + e.getMetal() + "<br>State at room temperature: " + e.getState() + 
+							"<br>Boiling Point: ";
+					if(e.getBoil() == Double.MAX_VALUE || e.getBoil() == 0)
+					{
+						text += "Unknown";
+					}
+					else
+					{
+						text += e.getBoil();
+					}
+					text += "<br>Freezing Point: ";
+					if(e.getFreeze() == Double.MAX_VALUE || e.getFreeze() == 0)
+					{
+						text += "Unknown";
+					}
+					else
+					{
+						text += e.getFreeze();
+					}
+					text += "<br>Density: ";
+					if(e.getDense() == Double.MAX_VALUE || e.getDense() == 0)
+					{
+						text += "Unknown";
+					}
+					else
+					{
+						text += e.getDense();
+					}
+					text += "</html";
+					info.setText(text);
+				}
+			}
+		}
+		public void mouseEntered(MouseEvent arg0){}
+		public void mouseExited(MouseEvent arg0) {}
+		public void mousePressed(MouseEvent arg0) {}
+		public void mouseReleased(MouseEvent arg0) {}
 	}
 	
 	public static final Element[] TABLE = {
@@ -84,6 +171,8 @@ public class PeriodicTable extends JPanel
 			new Manganese(),
 			new Iron(),
 			new Cobalt(),
+			new Nickel(),
+			new Copper(),
 			new Zinc(),
 			new Gallium(),
 			new Germanium(),
@@ -94,8 +183,7 @@ public class PeriodicTable extends JPanel
 			new Rubidium(),
 			new Strontium(),
 			new Yttrium(),
-			new Zirconium()
-			/*,
+			new Zirconium(),
 			new Niobium(),
 			new Molybdenum(),
 			new Technetium(),
@@ -174,6 +262,5 @@ public class PeriodicTable extends JPanel
 			new Livermorium(), 
 			new Ununseptium(),
 			new Ununoctium()
-			*/
 		};
 }

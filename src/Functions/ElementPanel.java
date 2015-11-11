@@ -1,9 +1,3 @@
-/*
- * A panel which creates the box for an element in the periodic table.
- * 
- * Author: Julia McClellan
- * Version: 11/04/2015
- */
 package Functions;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -19,11 +13,29 @@ public class ElementPanel extends JPanel
 	public ElementPanel(Element element)
 	{
 		this.element = element;
-		setLayout(new BorderLayout());
-		add(new JLabel("" + element.getNum()), BorderLayout.NORTH);
-		add(new JLabel(element.getSymbol()), BorderLayout.CENTER);
-		add(new JLabel(element.getName()), BorderLayout.SOUTH);
-		setBorder(new CompoundBorder(new LineBorder(Color.BLACK, 1), new EmptyBorder(6, 6, 6, 6)));
+		if(element != null)
+		{
+			String name = element.getSymbol();
+			if(element.getName().equals("Lanthanum"))
+			{
+				name = "*" + name;
+			}
+			if(element.getName().equals("Barium"))
+			{
+				name += "*";
+			}
+			if(element.getName().equals("Actinium"))
+			{
+				name = "**" + name;
+			}
+			if(element.getName().equals("Radium"))
+			{
+				name += "**";
+			}
+			
+			add(new JLabel(name));
+			setBorder(new CompoundBorder(new LineBorder(Color.BLACK, 1), new EmptyBorder(6, 6, 6, 6)));
+		}
 	}
 	
 	public Element getElement()
