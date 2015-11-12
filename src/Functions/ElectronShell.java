@@ -1,4 +1,5 @@
 package Functions;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -8,7 +9,7 @@ import Elements.Element;
 public class ElectronShell extends Function
 {
 	private JRadioButton num, sym, name;
-	private JPanel buttons, panel, enterPanel, frame;
+	private JPanel buttons, panel, enterPanel;
 	private JLabel info, results;
 	private JButton calc;
 	private JTextField enter;
@@ -16,6 +17,7 @@ public class ElectronShell extends Function
 	
 	public ElectronShell()
 	{
+		super("Electron Shell Configuration");
 		options = new ButtonGroup();
 		num = new JRadioButton("Atomic Number");
 		sym = new JRadioButton("Symbol");
@@ -42,11 +44,6 @@ public class ElectronShell extends Function
 		panel.add(info, BorderLayout.NORTH);
 		panel.add(enterPanel, BorderLayout.CENTER);
 		panel.add(results, BorderLayout.SOUTH);
-	}
-	
-	public void display()
-	{
-		frame.setVisible(true);
 	}
 
 	public JPanel getPanel() 
@@ -105,10 +102,5 @@ public class ElectronShell extends Function
 				}
 			}
 		}
-	}
-
-	@Override
-	public String toString() {
-		return "Electron shell configuration";
 	}
 }

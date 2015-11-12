@@ -1,5 +1,4 @@
 package Functions; 
-import javax.swing.*;
 
 import Elements.*;
 
@@ -7,13 +6,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class PeriodicTable extends JPanel
+public class PeriodicTable extends Function
 {
 	private ElementPanel[][] panels, alPanels; //Panels is all elements but actinides and lanthandies, which are in alPanels
-	private JPanel panel, alPanel;
+	private JPanel panel, alPanel, table;
 	private JLabel info;
+	
 	public PeriodicTable()
 	{
+		super("Element Information");
 		panels = new ElementPanel[7][18];
 		alPanels = new ElementPanel[2][18];
 		for(int row = 0; row < panels.length; row++)
@@ -77,16 +78,14 @@ public class PeriodicTable extends JPanel
 		box.add(alPanel);
 		box.add(Box.createVerticalStrut(20));
 		box.add(info);
-		add(box);
+		table = new JPanel();
+		table.add(box);
+		table.setSize(900, 590);
 	}
 	
-	public static void main(String[] args)
+	public JPanel getPanel()
 	{
-		PeriodicTable table = new PeriodicTable();
-		JFrame frame = new JFrame();
-		frame.getContentPane().add(table);
-	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	    frame.setVisible(true);	
+		return table;
 	}
 
 	public static Element[] getTable()
