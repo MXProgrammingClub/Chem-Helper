@@ -1,9 +1,6 @@
 package ChemHelper;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -27,14 +24,16 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 		pane.add(new JPanel());
 		funcs.setSize(200, HEIGHT);
 		
-		setSize(800,800);
+		setSize(1100,600);
 		setVisible(true);
 	}
+
 	
 	private Function[] populateFuncs() {
-		Function[] funcs = new Function[1];
+		Function[] funcs = new Function[2];
 		
-		funcs[0] = new ElectronShell();
+		funcs[0] = new PeriodicTable();
+		funcs[1] = new ElectronShell();
 		return funcs;
 	}
 	
