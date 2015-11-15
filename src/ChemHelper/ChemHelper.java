@@ -12,12 +12,15 @@ import Functions.*;
 public class ChemHelper extends JFrame{		//Primary GUI class
 	Container pane;
 	JList<Function> funcs;
+	Function[] funcList;
+	JPanel last;
 	
 	public ChemHelper(){
 		pane = getContentPane();
 		pane.setLayout(new BorderLayout());
 		
-		funcs = new JList<Function>(populateFuncs());
+		funcList = populateFuncs();
+		funcs = new JList<Function>(funcList);
 		funcs.addListSelectionListener(new FuncListener());
 		
 		pane.add(funcs, BorderLayout.WEST);
@@ -38,18 +41,17 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 	}
 	
 	private class FuncListener implements ListSelectionListener{
-
-		public void valueChanged(ListSelectionEvent arg0) {
-			changeFunc(arg0.getLastIndex());
-		}
-
-		private void changeFunc(int lastIndex) {
-			pane.remove(1);
-			JPanel func = funcs.getModel().getElementAt(lastIndex).getPanel();
+		public void valueChanged(ListSelectionEvent arg0) {				
+			if(last!=null) pane.remove(last);
+			JPanel func = funcList[funcs.getSelectedIndex()].getPanel();
 			pane.add(func);
 			func.setVisible(true);
+			func.repaint();
+			pane.repaint();
+			pack();
+			repaint();
+			last = func;
 		}
-		
 	}
 
 	public static void main(String[] args){
