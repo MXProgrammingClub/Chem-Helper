@@ -78,7 +78,7 @@ public class Element
      */
     public String getEShell()
     {
-    	String shell = "";
+    	String shell = "<html>";
     	for(int row = 1, elec = num; row <= period; row++)
     	{
     		//Adds the s for the row
@@ -93,7 +93,7 @@ public class Element
     			s = S;
     			elec -= S;
     		}
-    		shell += row + "s^" + s + " ";
+    		shell += row + "s<sup>" + s + "</sup>";
     		
     		//Adds the f for the row two before, if applicable
     		if(row >= 6 && elec > 0) //The first row with an insertion of a previous f row in it is 6
@@ -109,7 +109,7 @@ public class Element
         			f = F;
         			elec -= F;
         		}
-        		shell += (row - 2) + "f^" + f + " ";
+        		shell += (row - 2) + "f<sup>" + f + "</sup>";
     		}
     		
     		//Adds the d for the row before, if applicable
@@ -133,7 +133,7 @@ public class Element
         			d = D;
         			elec -= D;
         		}
-        		shell += (row - 1) + "d^" + d + " ";
+        		shell += (row - 1) + "d<sup>" + d + "</sup>";
     		}
     		
     		//Adds the p for the row, if applicable
@@ -150,9 +150,10 @@ public class Element
         			p = P;
         			elec -= P;
         		}
-        		shell += row + "p^" + p + " ";
+        		shell += row + "p<sup>" + p + "</sup>";
     		}
     	}
+    	shell += "</html>";
     	return shell;
     }
     

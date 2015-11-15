@@ -59,15 +59,23 @@ public class ElectronShell extends Function
 			Element[] table = PeriodicTable.TABLE;
 			if(num.isSelected())
 			{
-				int atomicNum = Integer.parseInt(input);
-				if(atomicNum < 1 || table.length < atomicNum)
+				try
 				{
-					results.setText(atomicNum + " is not a valid atomic number.");
+					int atomicNum = Integer.parseInt(input);
+					if(atomicNum < 1 || table.length < atomicNum)
+					{
+						results.setText(atomicNum + " is not a valid atomic number.");
+					}
+					else
+					{
+						results.setText(table[atomicNum - 1].getEShell());
+					}
 				}
-				else
+				catch(NumberFormatException e)
 				{
-					results.setText(table[atomicNum - 1].getEShell());
+					results.setText("Please enter a number.");
 				}
+				
 			}
 			if(sym.isSelected())
 			{
