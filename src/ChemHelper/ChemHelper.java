@@ -27,7 +27,7 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 		pane.add(new JPanel());
 		funcs.setSize(200, HEIGHT);
 		
-		setSize(1100,600);
+		pack();
 		setVisible(true);
 	}
 
@@ -44,7 +44,8 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 		public void valueChanged(ListSelectionEvent arg0) {				
 			if(last!=null) pane.remove(last);
 			JPanel func = funcList[funcs.getSelectedIndex()].getPanel();
-			pane.add(func);
+			pane.add(func, BorderLayout.EAST);
+			
 			func.setVisible(true);
 			func.repaint();
 			pane.repaint();
