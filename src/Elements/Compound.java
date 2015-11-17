@@ -1,3 +1,11 @@
+/*
+ * File: Compound.java
+ * Name: Luke Giacalone --Julia did a very minimal portion of this class; one might call it insignificant
+ * Date: 11/11/1111
+ * -----------------------
+ * This represents something which Julia has not told me. Clearly I did in fact write this entire class.
+ */
+
 package Elements;
 
 public class Compound 
@@ -87,6 +95,35 @@ public class Compound
 	
 	public static Compound parseCompound(String cmp)
 	{
-		
+		int stateIndex = cmp.indexOf("("), num;
+		try
+		{
+			num = Integer.parseInt(cmp.substring(0, 1));
+		}
+		catch(NumberFormatException e)
+		{
+			num = 1;
+		}
+		String state = "";
+		if(stateIndex != -1)
+		{
+			state = cmp.substring(stateIndex + 1, cmp.length() - 1);
+			cmp = cmp.substring(0, stateIndex);
+		}
+		int index = 0, count = 1;
+		while(cmp.indexOf("/", index) != -1)
+		{
+			count++;
+			index = cmp.indexOf("/", index) + 1;
+		}
+		Ions[] ions = new Ions[count];
+		for(int ion = 0; ion < ions.length; ion++)
+		{
+			int end = cmp.indexOf("/");
+			if(end == -1) end = cmp.length();
+			ions[ion] = Ions.parseIons(cmp.substring(0, end));
+			if(end != cmp.length()) cmp = cmp.substring(end + 1);
+		}
+		return new Compound(ions, state, num);
 	}
 }

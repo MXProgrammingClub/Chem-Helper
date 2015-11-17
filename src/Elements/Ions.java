@@ -55,9 +55,9 @@ public class Ions
 	
 	public String toString()
 	{
-		String str = "<html>" + element.getSymbol();
+		String str = element.getSymbol();
 		if(charge != 0) str += "<sup>" + charge + "</sup>";
-		str += "<sub>" + num + "</sub></html>";
+		str += "<sub>" + num + "</sub>";
 		return str;
 	}
 	
@@ -71,23 +71,22 @@ public class Ions
 			isCharge = false;
 		}
 		if(symEnd == -1)
-			symEnd = ions.length() + 1;
+			symEnd = ions.length();
 		String symbol = ions.substring(0, symEnd);
 		Element e = PeriodicTable.find(symbol);
 		
 		int chargeEnd = ions.indexOf("."), charge;
 		if(chargeEnd == -1) 
 		{ 
-			chargeEnd = ions.length() + 1;
+			chargeEnd = ions.length();
 			isNum = false;
 		}
 		if(!isCharge) charge = 0;
 		else charge = Integer.parseInt(ions.substring(symEnd + 1, chargeEnd));
 		
 		int num;
-		if(!isNum) num = 0;
-		else num = Integer.parseInt(ions.substring(chargeEnd) + 1);
-		
-		return new Ions(e, charge, num);
+		if(!isNum) num = 1;
+		else num = Integer.parseInt(ions.substring(chargeEnd + 1));
+		return new Ions(e, num, charge);
 	}
 }
