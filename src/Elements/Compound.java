@@ -99,6 +99,7 @@ public class Compound
 		try
 		{
 			num = Integer.parseInt(cmp.substring(0, 1));
+			cmp = cmp.substring(1);
 		}
 		catch(NumberFormatException e)
 		{

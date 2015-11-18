@@ -44,7 +44,6 @@ public class Equation
 			compounds.add(Compound.parseCompound(side.substring(0, side.indexOf("+"))));
 			side = side.substring(side.indexOf("+") + 1);
 		}
-		System.out.println(side);
 		compounds.add(Compound.parseCompound(side));
 		return compounds;
 	}
