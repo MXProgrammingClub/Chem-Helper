@@ -34,10 +34,11 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 
 	
 	private Function[] populateFuncs() {
-		Function[] funcs = new Function[2];
+		Function[] funcs = new Function[3];
 		
 		funcs[0] = new PeriodicTable();
 		funcs[1] = new ElectronShell();
+		funcs[2] = new EquationReader();
 		return funcs;
 	}
 	

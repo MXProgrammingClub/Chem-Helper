@@ -4,6 +4,7 @@ import javax.swing.JPanel;
 
 public abstract class Function {
 	private String name;
+	
 	public Function(String name)
 	{
 		this.name = name;

@@ -1,7 +1,7 @@
 package Elements;
 
 import java.util.ArrayList;
-
+import javax.swing.*;
 public class Equation
 {
 	private ArrayList<Compound> left, right;
@@ -28,7 +28,7 @@ public class Equation
 		right.add(c);
 	}
 	
-	public static Equation parseEquation(String eq)
+	public static Equation parseEquation(String eq) throws InvalidInputException
 	{
 		String left, right;
 		left = eq.substring(0, eq.indexOf("="));
@@ -36,7 +36,7 @@ public class Equation
 		return new Equation(parseSide(left), parseSide(right));
 	}
 	
-	private static ArrayList<Compound> parseSide(String side)
+	private static ArrayList<Compound> parseSide(String side) throws InvalidInputException
 	{
 		ArrayList<Compound> compounds = new ArrayList<Compound>();
 		while(side.indexOf("+") != -1)
@@ -63,11 +63,5 @@ public class Equation
 		}
 		equation = equation.substring(0, equation.length() - 2);
 		return equation;
-	}
-	
-	public static void main(String[] args)
-	{
-		String string = "2Na^-1+2Cl^-1=2Na^-1/Cl^1";
-		System.out.println(parseEquation(string));
 	}
 }

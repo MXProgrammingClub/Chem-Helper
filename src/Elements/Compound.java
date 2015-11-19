@@ -85,6 +85,7 @@ public class Compound
 	public String toString()
 	{
 		String str = "";
+		if(num != 1) str += num;
 		for(Ions ion: ions)
 		{
 			str += ion;
@@ -93,7 +94,7 @@ public class Compound
 		return str;
 	}
 	
-	public static Compound parseCompound(String cmp)
+	public static Compound parseCompound(String cmp) throws InvalidInputException
 	{
 		int stateIndex = cmp.indexOf("("), num;
 		try

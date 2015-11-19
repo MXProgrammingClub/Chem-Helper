@@ -56,15 +56,21 @@ public class Ions
 	public String toString()
 	{
 		String str = element.getSymbol();
-		if(charge != 0) str += "<sup>" + charge + "</sup>";
-		str += "<sub>" + num + "</sub>";
+		if(charge != 0) 
+		{
+			str += "<sup>";
+			if(charge < 0) str += charge;
+			else str += "+" + charge;
+			str += "</sup>";
+		}
+		if(num != 1) str += "<sub>" + num + "</sub>";
 		return str;
 	}
 	
-	public static Ions parseIons(String ions)
+	public static Ions parseIons(String ions) throws InvalidInputException
 	{
 		int symEnd = ions.indexOf("^");
-		boolean isCharge = true, isNum = true;;
+		boolean isCharge = true, isNum = true;
 		if(symEnd == -1)
 		{
 			symEnd = ions.indexOf(".");
@@ -74,7 +80,7 @@ public class Ions
 			symEnd = ions.length();
 		String symbol = ions.substring(0, symEnd);
 		Element e = PeriodicTable.find(symbol);
-		
+		if(e == null) throw new InvalidInputException(0);
 		int chargeEnd = ions.indexOf("."), charge;
 		if(chargeEnd == -1) 
 		{ 
@@ -82,11 +88,31 @@ public class Ions
 			isNum = false;
 		}
 		if(!isCharge) charge = 0;
-		else charge = Integer.parseInt(ions.substring(symEnd + 1, chargeEnd));
+		else
+		{
+			try
+			{
+				charge = Integer.parseInt(ions.substring(symEnd + 1, chargeEnd));
+			}
+			catch(NumberFormatException e1)
+			{
+				throw new InvalidInputException(1);
+			}
+		}
 		
 		int num;
 		if(!isNum) num = 1;
-		else num = Integer.parseInt(ions.substring(chargeEnd + 1));
+		else
+		{
+			try
+			{
+				num = Integer.parseInt(ions.substring(chargeEnd + 1));
+			}
+			catch(NumberFormatException e1)
+			{
+				throw new InvalidInputException(1);
+			}
+		}
 		return new Ions(e, num, charge);
 	}
 }
