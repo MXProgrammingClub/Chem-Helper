@@ -72,11 +72,11 @@ public class PeriodicTable extends Function
 			}
 		}
 		info = new JLabel("Click an element to find out about it.");
+
 		Box box = Box.createVerticalBox();
 		box.add(panel);
 		box.add(Box.createVerticalStrut(20));
 		box.add(alPanel);
-		box.add(Box.createVerticalStrut(20));
 		box.add(info);
 		table = new JPanel();
 		table.add(box);

@@ -1,9 +1,10 @@
 package ChemHelper;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import Functions.*;
 
@@ -11,52 +12,81 @@ import Functions.*;
 
 public class ChemHelper extends JFrame{		//Primary GUI class
 	Container pane;
-	JList<Function> funcs;
-	Function[] funcList;
 	JPanel last;
+	JMenuBar menu;
+	Function[] funcs;
 	
 	public ChemHelper(){
 		pane = getContentPane();
 		pane.setLayout(new BorderLayout());
 		
-		funcList = populateFuncs();
-		funcs = new JList<Function>(funcList);
-		funcs.addListSelectionListener(new FuncListener());
-		
-		pane.add(funcs, BorderLayout.WEST);
-		pane.add(new JPanel());
-		funcs.setSize(200, HEIGHT);
-		
+		createMenu();
+		pane.add(menu, BorderLayout.NORTH);
 		pack();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
 	}
 
-	
-	private Function[] populateFuncs() {
-		Function[] funcs = new Function[3];
-		
+	private void createMenu()
+	{
+		funcs = new Function[3];
 		funcs[0] = new PeriodicTable();
 		funcs[1] = new ElectronShell();
 		funcs[2] = new EquationReader();
-		return funcs;
-	}
-	
-	private class FuncListener implements ListSelectionListener{
-		public void valueChanged(ListSelectionEvent arg0) {				
-			if(last!=null) pane.remove(last);
-			JPanel func = funcList[funcs.getSelectedIndex()].getPanel();
-			pane.add(func, BorderLayout.EAST);
-			
-			func.setVisible(true);
-			func.repaint();
-			pane.repaint();
-			pack();
-			repaint();
-			last = func;
+		
+		//Currently this system is completely random as there are not enough things to make an actually useful system but I wanted to make the framework
+		String[] menuNames = {"Things you may want to use", "Things that are currently unusable"}; //Lists the names of the different menus on the menu bar.
+		int[] menuCutoffs = {0, 2}; //Specifies the indices where a new menu would start from funcs
+		
+		menu = new JMenuBar();
+		for(int menuNum = 0; menuNum < menuCutoffs.length; menuNum++)
+		{
+			int startIndex = menuCutoffs[menuNum], endIndex;
+			if(menuNum + 1 == menuCutoffs.length) endIndex = funcs.length - 1;
+			else endIndex = menuCutoffs[menuNum + 1] - 1;
+			JMenu thisMenu = new JMenu(menuNames[menuNum]);
+			for(int index = startIndex; index <= endIndex; index++)
+			{
+				thisMenu.add(new FunctionMenuItem(funcs[index]));
+			}
+			menu.add(thisMenu);
 		}
 	}
 
+	private class FunctionMenuItem extends JMenuItem
+	{
+		private Function function;
+		
+		public FunctionMenuItem(Function function)
+		{
+			super(function.toString());
+			this.function = function;
+			addActionListener(new FunctionListener());
+		}
+		
+		public Function getFunction()
+		{
+			return function;
+		}
+		
+		private class FunctionListener implements ActionListener
+		{
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				if(last!=null) pane.remove(last);
+				JPanel func = ((FunctionMenuItem)arg0.getSource()).getFunction().getPanel();
+				pane.add(func, BorderLayout.EAST);
+				
+				func.setVisible(true);
+				func.repaint();
+				pane.repaint();
+				pack();
+				repaint();
+				last = func;
+			}
+		}
+	}
+	
 	public static void main(String[] args){
 		new ChemHelper();
 	}
