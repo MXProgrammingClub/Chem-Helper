@@ -131,7 +131,7 @@ public class PeriodicTable extends Function
 				Element e = ((ElementPanel) arg0.getSource()).getElement();
 				if(e != null)
 				{
-					String text = "<html>Element: " + e.getName() + "<br>Atomic Number: " + e.getNum() + "<br>Atomic Mass: " + e.getMolarMass() +  
+					String text = "<html>Element: " + e.getName() + "<br>Atomic Mass: " + e.getMolarMass() + " amu" + 
 							"<br>Group Name: " + e.getGroupName() + "<br>" + e.getMetal() + "<br>State at room temperature: " + e.getState() + 
 							"<br>Boiling Point: ";
 					if(e.getBoil() == Double.MAX_VALUE || e.getBoil() == 0)
@@ -140,16 +140,16 @@ public class PeriodicTable extends Function
 					}
 					else
 					{
-						text += e.getBoil();
+						text += e.getBoil() + " K";
 					}
-					text += "<br>Freezing Point: ";
+					text += " Freezing Point: ";
 					if(e.getFreeze() == Double.MAX_VALUE || e.getFreeze() == 0)
 					{
 						text += "Unknown";
 					}
 					else
 					{
-						text += e.getFreeze();
+						text += e.getFreeze() + " K";
 					}
 					text += "<br>Density: ";
 					if(e.getDense() == Double.MAX_VALUE || e.getDense() == 0)
@@ -158,7 +158,7 @@ public class PeriodicTable extends Function
 					}
 					else
 					{
-						text += e.getDense();
+						text += e.getDense() + "g/cm<sup>3</sup>";
 					}
 					text += "</html";
 					info.setText(text);
