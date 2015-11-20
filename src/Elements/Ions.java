@@ -66,7 +66,7 @@ public class Ions
 		if(num != 1) str += "<sub>" + num + "</sub>";
 		return str;
 	}
-	
+
 	public static Ions parseIons(String ions) throws InvalidInputException
 	{
 		int symEnd = ions.indexOf("^");

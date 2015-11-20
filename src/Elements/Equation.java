@@ -1,7 +1,7 @@
 package Elements;
 
 import java.util.ArrayList;
-import javax.swing.*;
+
 public class Equation
 {
 	private ArrayList<Compound> left, right;
@@ -47,7 +47,7 @@ public class Equation
 		compounds.add(Compound.parseCompound(side));
 		return compounds;
 	}
-	
+
 	public String toString()
 	{
 		if(left.size() == 0 || right.size() == 0) return "";

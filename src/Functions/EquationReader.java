@@ -1,16 +1,21 @@
 package Functions;
 
-import javax.swing.*;
-
-import Elements.Equation;
-import Elements.InvalidInputException;
-
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import Elements.Equation;
+import Elements.InvalidInputException;
+
 public class EquationReader extends Function
 {
+	
 	private JPanel panel, enterPanel, panel1;
 	private JTextField enter;
 	private JLabel instructions, result, examples;
@@ -70,4 +75,96 @@ public class EquationReader extends Function
 			result.setText(output);
 		}
 	}
+	/*
+	JPanel panel, buttonPanel, enterPanel;
+	JButton arrow, sup, sub, button;
+	JLabel instructions, result;
+	JTextPane enter;
+	
+	public EquationReader()
+	{
+	 	super("Equation Reader");
+		
+		arrow = new AddButton("<html>\u2192</html>", "\u2192");
+		sup = new AddButton("<html>a<sup>b</sup></html>", "<sup>", "</sup>");
+		sub = new AddButton("<html>a<sub>b</sub></html>", "<sub>", "</sub>");
+		Box buttonBox = Box.createHorizontalBox();
+		buttonBox.add(arrow);
+		buttonBox.add(Box.createHorizontalStrut(2));
+		buttonBox.add(sup);
+		buttonBox.add(Box.createHorizontalStrut(2));
+		buttonBox.add(sub);
+		buttonPanel = new JPanel();
+		buttonPanel.add(buttonBox);
+		
+		enter = new JTextPane();
+		enter.setContentType("text/html");
+		enter.setText("<html>Enter your equation here");
+		button = new JButton("Click here!");
+		enterPanel = new JPanel();
+		enterPanel.add(enter);
+		enterPanel.add(button);
+		
+		instructions = new JLabel("Instructions would go here");
+		
+		Box box = Box.createVerticalBox();
+		box.add(instructions);
+		box.add(Box.createVerticalStrut(5));
+		box.add(enterPanel);
+		box.add(Box.createVerticalStrut(5));
+		box.add(buttonPanel);
+		
+		panel = new JPanel();
+		panel.add(box);
+	}
+	
+	public JPanel getPanel()
+	{
+		return panel;
+	}
+	
+	private class AddButton extends JButton
+	{
+		private String setText, alt;
+		boolean toggle;
+		
+		public AddButton(String display, String setText)
+		{
+			super(display);
+			this.setText = setText;
+			addActionListener(new AddText());
+			toggle = false;
+		}
+		
+		public AddButton(String display, String setText1, String setText2)
+		{
+			super(display);
+			setText = setText1;
+			alt = setText2;
+			addActionListener(new AddText());
+			toggle = true;
+		}
+		
+		private void toggle()
+		{
+			if(!toggle)
+			{
+				String temp = setText;
+				setText = alt;
+				alt = temp;
+			}
+		}
+		
+		private class AddText implements ActionListener
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				enter.setText(enter.getText()+ setText);
+				if(toggle) toggle();
+			}
+		}
+	}
+
+	/*
+	 */
 }
