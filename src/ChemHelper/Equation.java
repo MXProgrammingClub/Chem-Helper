@@ -1,6 +1,8 @@
-package Elements;
+package ChemHelper;
 
 import java.util.ArrayList;
+
+import Elements.Compound;
 
 public class Equation
 {

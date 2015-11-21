@@ -1,4 +1,4 @@
-package Elements;
+package ChemHelper;
 
 public class InvalidInputException extends Throwable 
 {

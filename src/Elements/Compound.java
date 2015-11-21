@@ -8,6 +8,9 @@
 
 package Elements;
 
+import ChemHelper.InvalidInputException;
+import ChemHelper.Ions;
+
 public class Compound 
 {
 	private Ions[] ions;

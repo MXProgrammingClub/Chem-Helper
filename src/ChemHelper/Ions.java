@@ -1,5 +1,6 @@
-package Elements;
+package ChemHelper;
 
+import Elements.Element;
 import Functions.PeriodicTable;
 
 public class Ions 
