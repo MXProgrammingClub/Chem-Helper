@@ -135,7 +135,7 @@ public class PeriodicTable extends Function
 				if(e != null)
 				{
 					String text = "<html>Element: " + e.getName() + "<br>Atomic Mass: " + e.getMolarMass() + " amu" + 
-							"<br>Group Name: " + e.getGroupName() + "<br>" + e.getMetal() + "<br>State at room temperature: " + e.getState() + 
+							"<br>Family: " + e.getGroupName() + "<br>Type: " + e.getMetal() + "<br>State at room temperature: " + e.getState() + 
 							"<br>Boiling Point: ";
 					if(e.getBoil() == Double.MAX_VALUE || e.getBoil() == 0)
 					{
