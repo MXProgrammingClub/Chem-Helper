@@ -19,14 +19,14 @@ import Elements.*;
 public class PeriodicTable extends Function
 {
 	private ElementPanel[][] panels, alPanels; //Panels is all elements but actinides and lanthandies, which are in alPanels
-	private JPanel panel, alPanel, table;
+	private JPanel panel, alPanel, table, bottomPanel;
 	private JLabel info;
 	
 	public PeriodicTable()
 	{
 		super("Element Information");
 		panels = new ElementPanel[7][18];
-		alPanels = new ElementPanel[2][18];
+		alPanels = new ElementPanel[2][14];
 		for(int row = 0; row < panels.length; row++)
 		{
 			for(int col = 0; col < panels[0].length; col++)
@@ -82,12 +82,15 @@ public class PeriodicTable extends Function
 			}
 		}
 		info = new JLabel("Click an element to find out about it.");
-
+		bottomPanel = new JPanel();
+		bottomPanel.add(alPanel);
+		bottomPanel.add(info);
+		
 		Box box = Box.createVerticalBox();
 		box.add(panel);
 		box.add(Box.createVerticalStrut(20));
-		box.add(alPanel);
-		box.add(info);
+		box.add(bottomPanel);
+
 		table = new JPanel();
 		table.add(box);
 		table.setSize(900, 590);
@@ -142,7 +145,7 @@ public class PeriodicTable extends Function
 					{
 						text += e.getBoil() + " K";
 					}
-					text += " Freezing Point: ";
+					text += "<br>Freezing Point: ";
 					if(e.getFreeze() == Double.MAX_VALUE || e.getFreeze() == 0)
 					{
 						text += "Unknown";
@@ -158,7 +161,7 @@ public class PeriodicTable extends Function
 					}
 					else
 					{
-						text += e.getDense() + "g/cm<sup>3</sup>";
+						text += e.getDense() + " g/mL";
 					}
 					text += "</html";
 					info.setText(text);
