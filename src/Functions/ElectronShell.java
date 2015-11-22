@@ -39,11 +39,27 @@ public class ElectronShell extends Function
 		enterPanel.add(enter);
 		enterPanel.add(calc);
 		panel = new JPanel();
+		
+		//adds all the elements to a panel with GridBagLayout
+		JPanel subpanel = new JPanel(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridwidth = 2;
+		c.gridx = 0;
+		c.gridy = 0;
+		subpanel.add(info, c);
+		c.gridwidth = 1;
+		c.gridy = 1;
+		subpanel.add(buttons, c);
+		c.gridx = 1;
+		subpanel.add(enterPanel, c);
+		c.gridx = 0;
+		c.gridy = 2;
+		c.gridwidth = 2;
+		subpanel.add(results, c);
+		
+		//adds the subpanel to the real panel so that the contents will be at the top, not the center, of the screen
 		panel.setLayout(new BorderLayout());
-		panel.add(buttons, BorderLayout.WEST);
-		panel.add(info, BorderLayout.NORTH);
-		panel.add(enterPanel, BorderLayout.CENTER);
-		panel.add(results, BorderLayout.SOUTH);
+		panel.add(subpanel, BorderLayout.NORTH);
 	}
 
 	public JPanel getPanel() 

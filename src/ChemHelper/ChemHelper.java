@@ -84,7 +84,7 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 			{
 				if(last!=null) pane.remove(last);
 				JPanel func = ((FunctionMenuItem)arg0.getSource()).getFunction().getPanel();
-				pane.add(func, BorderLayout.EAST);
+				pane.add(func, BorderLayout.WEST);
 				
 				//func.setVisible(true);
 				//func.repaint();
