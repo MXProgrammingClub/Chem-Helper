@@ -1,8 +1,12 @@
 package Functions;
 
+import java.awt.Component;
+import java.awt.FlowLayout;
+
 import javax.swing.JPanel;
 
 public abstract class Function {
+	public static final double C = 300000000, h = 6.626*Math.pow(10, -34);
 	private String name;
 	
 	public Function(String name)
@@ -15,5 +19,13 @@ public abstract class Function {
 	public String toString()
 	{
 		return name;
+	}
+	
+	
+	public static JPanel wrapInFlow(Component comp){			//Wrap a component in a FlowLayout
+		JPanel panel = new JPanel();
+		panel.setLayout(new FlowLayout());
+		panel.add(comp);
+		return panel;
 	}
 }
