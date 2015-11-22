@@ -2,6 +2,7 @@ package ChemHelper;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -27,7 +28,10 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 		
 		createMenu();
 		pane.add(menu, BorderLayout.NORTH);
-		pack();
+		//pack();
+		setSize(1158, 636);
+		this.setMaximumSize(new Dimension(1158, 636)); //makes sure that the size will never exceed 1158, 636
+		this.setMinimumSize(new Dimension(1158, 636)); //makes sure that the size will never be lower than 1158, 636
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
 	}
@@ -82,11 +86,12 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 				JPanel func = ((FunctionMenuItem)arg0.getSource()).getFunction().getPanel();
 				pane.add(func, BorderLayout.EAST);
 				
-				func.setVisible(true);
-				func.repaint();
+				//func.setVisible(true);
+				//func.repaint();
 				pane.repaint();
 				pack();
-				repaint();
+				
+				//repaint();
 				last = func;
 			}
 		}
