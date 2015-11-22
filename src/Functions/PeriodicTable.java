@@ -1,6 +1,7 @@
 package Functions; 
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -19,7 +20,7 @@ import Elements.*;
 public class PeriodicTable extends Function
 {
 	private ElementPanel[][] panels, alPanels; //Panels is all elements but actinides and lanthandies, which are in alPanels
-	private JPanel panel, alPanel, table, bottomPanel;
+	private JPanel panel, alPanel, table, bottomPanel, strut;
 	private JLabel info;
 	
 	public PeriodicTable()
@@ -32,13 +33,6 @@ public class PeriodicTable extends Function
 			for(int col = 0; col < panels[0].length; col++)
 			{
 				panels[row][col] = new ElementPanel(null); //To avoid null pointer exceptions later
-			}
-		}
-		for(int row = 0; row < alPanels.length; row++)
-		{
-			for(int col = 0; col < alPanels[0].length; col++)
-			{
-				alPanels[row][col] = new ElementPanel(null); //To avoid null pointer exceptions later
 			}
 		}
 		
@@ -82,8 +76,12 @@ public class PeriodicTable extends Function
 			}
 		}
 		info = new JLabel("Click an element to find out about it.");
+		info.setPreferredSize(new Dimension(245, 125));
+		strut = new JPanel();
+		strut.setPreferredSize(new Dimension(15, 125));
 		bottomPanel = new JPanel();
 		bottomPanel.add(alPanel);
+		bottomPanel.add(strut);
 		bottomPanel.add(info);
 		
 		Box box = Box.createVerticalBox();
