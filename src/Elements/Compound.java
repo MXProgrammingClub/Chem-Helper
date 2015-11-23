@@ -102,6 +102,16 @@ public class Compound
 		return str;
 	}
 	
+	public double getMolarMass()
+	{
+		double total = 0;
+		for(Ions ion: ions)
+		{
+			total += ion.getNum() * ion.getElement().getMolarMass();
+		}
+		return total;
+	}
+	
 	public static Compound parseCompound(String cmp) throws InvalidInputException
 	{
 		int stateIndex = cmp.indexOf("("), num;

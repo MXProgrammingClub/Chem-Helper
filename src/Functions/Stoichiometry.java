@@ -130,7 +130,7 @@ public class Stoichiometry extends Function
 				if(given)
 				{
 					known = compound;
-					knownPanel.add(new JLabel(compound.toString()));
+					knownPanel.add(new JLabel("<html>" + compound + "</html>"));
 					enter = new JTextField(5);
 					knownPanel.add(enter);
 					mole1 = new JRadioButton("Moles");
@@ -146,7 +146,7 @@ public class Stoichiometry extends Function
 				else if (!done)
 				{
 					unknown = compound;
-					unknownPanel.add(new JLabel(compound.toString()));
+					unknownPanel.add(new JLabel("<html>" + compound + "</html>"));
 					mole2 = new JRadioButton("Moles");
 					gram2 = new JRadioButton("Grams", true);
 					ButtonGroup group = new ButtonGroup();
@@ -190,23 +190,12 @@ public class Stoichiometry extends Function
 		else moles = amount;
 		double molesC2 = moles / c1.getNum() * c2.getNum();
 		if(!inGrams2) return molesC2;
-		else return toGrams(c2, molesC2);
-	}
-	
-	private double toGrams(Compound c, double moles)
-	{
-		double total = 0;
-		Ions[] ions = c.getIons();
-		for(Ions ion: ions)
-		{
-			total += ion.getNum() * ion.getElement().getMolarMass();
-		}
-		return total;
+		else return c2.getMolarMass() * molesC2;
 	}
 	
 	private double toMoles(Compound c, double grams)
 	{
-		double forOne = toGrams(c, 1);
+		double forOne = c.getMolarMass();
 		return grams / forOne;
 	}
 }
