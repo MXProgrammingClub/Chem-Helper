@@ -2,7 +2,13 @@ package Functions;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+
 import javax.swing.*;
+
+import org.scilab.forge.jlatexmath.TeXConstants;
+import org.scilab.forge.jlatexmath.TeXFormula;
+import org.scilab.forge.jlatexmath.TeXIcon;
 
 import Elements.Element;
 
@@ -73,6 +79,8 @@ public class ElectronShell extends Function
 		{
 			String input = enter.getText();
 			Element[] table = PeriodicTable.TABLE;
+			String output = "";
+			boolean done = false;
 			if(num.isSelected())
 			{
 				try
@@ -84,7 +92,9 @@ public class ElectronShell extends Function
 					}
 					else
 					{
-						results.setText(table[atomicNum - 1].getEShell());
+						output += table[atomicNum - 1].getEShell();
+						done = true;
+						//results.setText(table[atomicNum - 1].getEShell());
 					}
 				}
 				catch(NumberFormatException e)
@@ -100,7 +110,9 @@ public class ElectronShell extends Function
 				{
 					if(table[element].getSymbol().equals(input))
 					{
-						results.setText(table[element].getEShell());
+						output += table[element].getEShell();
+						done = true;
+						//results.setText(table[element].getEShell());
 						found = true;
 					}
 					if(!found)
@@ -116,7 +128,9 @@ public class ElectronShell extends Function
 				{
 					if(table[element].getName().equals(input))
 					{
-						results.setText(table[element].getEShell());
+						output += table[element].getEShell();
+						done = true;
+						//results.setText(table[element].getEShell());
 						found = true;
 					}
 					if(!found)
@@ -125,6 +139,17 @@ public class ElectronShell extends Function
 					}
 				}
 			}
+			
+			if (done) {
+				TeXFormula formula = new TeXFormula (output);
+				TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, 20);
+						
+				BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+				icon.paintIcon(new JLabel(), image.getGraphics(), 0, 0);
+				
+				results.setIcon(icon);
+			}
+			
 		}
 	}
 }

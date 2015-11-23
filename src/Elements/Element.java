@@ -155,13 +155,15 @@ public class Element
         		shell += row + "p^" + p + " ";
     		}
     	}
-    	String toReturn = "<html>";
+    	//String toReturn = "<html>";
+    	String toReturn = "";
     	while(shell.length() != 0)
     	{
     		toReturn += shell.substring(0, 2);
     		int start = shell.indexOf("^");
     		int end = shell.indexOf(" ");
-    		toReturn += "<sup>" + shell.substring(start + 1, end) + "</sup>";
+    		toReturn += "^{" + shell.substring(start+1, end) + "}";
+    		//toReturn += "<sup>" + shell.substring(start + 1, end) + "</sup>";
     		shell = shell.substring(end + 1);
     	}
     	return toReturn;
