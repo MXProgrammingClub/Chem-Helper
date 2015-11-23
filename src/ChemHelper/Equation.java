@@ -68,6 +68,14 @@ public class Equation
 		return equation;
 	}
 	
+	public ArrayList<Compound> getLeft() {
+		return left;
+	}
+	
+	public ArrayList<Compound> getRight() {
+		return right;
+	}
+	
 	public boolean balance()
 	{
 		if(isBalanced()) return true;

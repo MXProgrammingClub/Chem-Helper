@@ -68,6 +68,7 @@ public class EquationReader extends Function
 		public void actionPerformed(ActionEvent arg0) 
 		{
 			String input = enter.getText(), output, output2;
+			JLabel label = new JLabel();
 			try
 			{
 				Equation resultant = Equation.parseEquation(input);
@@ -81,6 +82,8 @@ public class EquationReader extends Function
 				{
 					output2 = "This equation could not be balanced";
 				}
+				label = latex(resultant);
+				
 			}
 			catch(Throwable e)
 			{
@@ -88,7 +91,8 @@ public class EquationReader extends Function
 				output = e.getMessage();
 				output2 = "";
 			}
-			result.setText(output);
+			//result.setText(output);
+			result.setIcon(label.getIcon());
 			balanced.setText(output2);
 		}
 	}
