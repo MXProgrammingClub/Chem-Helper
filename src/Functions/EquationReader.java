@@ -20,6 +20,7 @@ public class EquationReader extends Function
 	private JTextField enter;
 	private JLabel instructions, result, examples, balanced;
 	private JButton button;
+	private Equation equation;
 	
 	public EquationReader()
 	{
@@ -56,6 +57,7 @@ public class EquationReader extends Function
 		boxV.add(Box.createVerticalStrut(10));
 		panel = new JPanel();
 		panel.add(boxV);
+		equation = null;
 	}
 	
 	public JPanel getPanel()
@@ -72,11 +74,13 @@ public class EquationReader extends Function
 			try
 			{
 				Equation resultant = Equation.parseEquation(input);
+				equation = resultant;
 				output = "<html>" + resultant + "</html>";
 				boolean balanced = resultant.balance();
 				if(balanced)
 				{
 					output2 = "<html>After balancing: " + resultant + "</html>";
+					equation = resultant;
 				}
 				else
 				{
@@ -96,6 +100,12 @@ public class EquationReader extends Function
 			balanced.setText(output2);
 		}
 	}
+	
+	public Equation getEquation()
+	{
+		return equation;
+	}
+	
 	/*
 	JPanel panel, buttonPanel, enterPanel;
 	JButton arrow, sup, sub, button;
