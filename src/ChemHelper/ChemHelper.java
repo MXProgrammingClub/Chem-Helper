@@ -1,3 +1,10 @@
+/*
+ * The main class for the ChemHelper project
+ * 
+ * Author: Julia McClellan, Luke Giacalone, Ted Pyne -- MXCSClub
+ * Version: 11/22/2015
+ */
+
 package ChemHelper;
 
 import java.awt.BorderLayout;
@@ -28,6 +35,8 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 		
 		createMenu();
 		pane.add(menu, BorderLayout.NORTH);
+		pane.add(funcs[0].getPanel(), BorderLayout.WEST); //sets periodic table to show by default
+		last = funcs[0].getPanel();
 		//pack();
 		setSize(1158, 636);
 		this.setMaximumSize(new Dimension(1158, 636)); //makes sure that the size will never exceed 1158, 636
