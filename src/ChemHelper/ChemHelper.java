@@ -9,7 +9,6 @@ package ChemHelper;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -38,7 +37,7 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 		pane.add(funcs[0].getPanel(), BorderLayout.WEST); //sets periodic table to show by default
 		last = funcs[0].getPanel();
 		pack();
-		this.setPreferredSize(new Dimension(this.getWidth(), this.getHeight()));
+		this.setPreferredSize(this.getSize());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
 	}
