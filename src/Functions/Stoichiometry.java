@@ -30,6 +30,7 @@ public class Stoichiometry extends Function
 	private JTextField enter;
 	private JRadioButton mole1, gram1, mole2, gram2;
 	private Compound known, unknown;
+	private Box box1, box2;
 	
 	public Stoichiometry()
 	{
@@ -38,14 +39,14 @@ public class Stoichiometry extends Function
 		acceptEquation = new JButton("Use equation");
 		acceptEquation.addActionListener(new AcceptEquation());
 		errorMessage = new JLabel();
-		Box box1 = Box.createVerticalBox();
+		box1 = Box.createVerticalBox();
 		box1.add(reader.getPanel());
 		equationPanel = new JPanel();
 		equationPanel.add(acceptEquation);
 		equationPanel.add(errorMessage);
 		box1.add(equationPanel);
 		
-		displayEquation = displayEquation();
+		displayEquation = new JPanel();
 		instructions = new JLabel("Click on the compound you know the quantity of.");
 		knownPanel = new JPanel();
 		unknownPanel = new JPanel();
@@ -53,7 +54,7 @@ public class Stoichiometry extends Function
 		calculate = new JButton("Calculate");
 		calculate.addActionListener(new CalculateListener());
 		
-		Box box2 = Box.createVerticalBox();
+		box2 = Box.createVerticalBox();
 		box2.add(instructions);
 		box2.add(displayEquation);
 		box2.add(knownPanel);
@@ -82,7 +83,8 @@ public class Stoichiometry extends Function
 			}
 			else
 			{
-				panel = new JPanel();
+				panel.remove(box1);
+				displayEquation.add(displayEquation());
 				panel.add(stoicPanel);
 			}
 		}
@@ -91,11 +93,11 @@ public class Stoichiometry extends Function
 	private JPanel displayEquation()
 	{
 		ArrayList<Compound> left = equation.getLeft(), right = equation.getRight();
-		JPanel panel = new JPanel();
-		panel.add(generateSide(left));
-		panel.add(new JLabel("\u2192"));
-		panel.add(generateSide(right));
-		return panel;
+		JPanel thisPanel = new JPanel();
+		thisPanel.add(generateSide(left));
+		thisPanel.add(new JLabel("\u2192"));
+		thisPanel.add(generateSide(right));
+		return thisPanel;
 	}
 	
 	private JPanel generateSide(ArrayList<Compound> side)
@@ -107,7 +109,7 @@ public class Stoichiometry extends Function
 			sidePanel.add(new JLabel("+"));
 			sidePanel.add(new CompoundLabel(side.get(index)));
 		}
-		return null;
+		return sidePanel;
 	}
 	
 	private class CompoundLabel extends JLabel
@@ -116,7 +118,7 @@ public class Stoichiometry extends Function
 		
 		public CompoundLabel(Compound compound)
 		{
-			super(compound.toString());
+			super("<html>" + compound + "<html>");
 			this.compound = compound;
 			addMouseListener(new CompoundListener());
 		}
@@ -129,7 +131,7 @@ public class Stoichiometry extends Function
 				{
 					known = compound;
 					knownPanel.add(new JLabel(compound.toString()));
-					enter = new JTextField("    ");
+					enter = new JTextField(5);
 					knownPanel.add(enter);
 					mole1 = new JRadioButton("Moles");
 					gram1 = new JRadioButton("Grams", true);
@@ -186,8 +188,8 @@ public class Stoichiometry extends Function
 		double moles;
 		if(inGrams1) moles = toMoles(c1, amount);
 		else moles = amount;
-		double molesC2 = moles * c2.getNum();
-		if(inGrams2) return molesC2;
+		double molesC2 = moles / c1.getNum() * c2.getNum();
+		if(!inGrams2) return molesC2;
 		else return toGrams(c2, molesC2);
 	}
 	

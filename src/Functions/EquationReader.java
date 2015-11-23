@@ -25,7 +25,7 @@ public class EquationReader extends Function
 	public EquationReader()
 	{
 		super("Equation Reader");
-		enter = new JTextField("Enter your equation here");
+		enter = new JTextField("Enter your equation here", 15);
 		result = new JLabel();
 		balanced = new JLabel();
 		instructions = new JLabel("<html>When entering an equation, use the following guidelines:<br>\t\u2022In a compound, put \"/\" between each element"
