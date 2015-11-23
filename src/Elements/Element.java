@@ -214,4 +214,9 @@ public class Element
     	else if(group == 18) return "Noble Gas";
     	else return "None";
     }
+    
+    public boolean equals(Element other)
+    {
+    	return other.getName().equals(name);
+    }
 }

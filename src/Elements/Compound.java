@@ -84,6 +84,11 @@ public class Compound
 	{
 		return validStates;
 	}
+	
+	public Ions[] getIons()
+	{
+		return ions;
+	}
 
 	public String toString()
 	{

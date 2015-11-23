@@ -16,9 +16,9 @@ import ChemHelper.InvalidInputException;
 public class EquationReader extends Function
 {
 	
-	private JPanel panel, enterPanel, panel1;
+	private JPanel panel, enterPanel, panel1, resultPanel;
 	private JTextField enter;
-	private JLabel instructions, result, examples;
+	private JLabel instructions, result, examples, balanced;
 	private JButton button;
 	
 	public EquationReader()
@@ -26,6 +26,7 @@ public class EquationReader extends Function
 		super("Equation Reader");
 		enter = new JTextField("Enter your equation here");
 		result = new JLabel();
+		balanced = new JLabel();
 		instructions = new JLabel("<html>When entering an equation, use the following guidelines:<br>\t\u2022In a compound, put \"/\" between each element"
 				+ "<br>\t\u2022If an element has a charge, put it after \"^\"<br>\t\u2022Put coefficients after charges and following \".\"<br>\t\u2022"
 				+ "Separate compounds with \"+\"<br>\t\u2022In place of an arrow, put \"=\"<br>\t\u2022Do not include spaces");
@@ -39,7 +40,11 @@ public class EquationReader extends Function
 		panel1 = new JPanel();
 		panel1.setLayout(new GridLayout(2, 1));
 		panel1.add(enterPanel);
-		panel1.add(result);
+		resultPanel = new JPanel();
+		resultPanel.setLayout(new GridLayout(2, 1));
+		resultPanel.add(result);
+		resultPanel.add(balanced);
+		panel1.add(resultPanel);
 		Box boxV = Box.createVerticalBox();
 		Box boxH = Box.createHorizontalBox();
 		boxH.add(panel1);
@@ -62,17 +67,29 @@ public class EquationReader extends Function
 	{
 		public void actionPerformed(ActionEvent arg0) 
 		{
-			String input = enter.getText(), output;
+			String input = enter.getText(), output, output2;
 			try
 			{
-				output = "<html>" + Equation.parseEquation(input) + "</html>";
+				Equation resultant = Equation.parseEquation(input);
+				output = "<html>" + resultant + "</html>";
+				boolean balanced = resultant.balance();
+				if(balanced)
+				{
+					output2 = "<html>After balancing: " + resultant + "</html>";
+				}
+				else
+				{
+					output2 = "This equation could not be balanced";
+				}
 			}
 			catch(Throwable e)
 			{
 				if(!(e instanceof InvalidInputException)) e = new InvalidInputException(-1);
 				output = e.getMessage();
+				output2 = "";
 			}
 			result.setText(output);
+			balanced.setText(output2);
 		}
 	}
 	/*
