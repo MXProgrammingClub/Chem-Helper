@@ -3,8 +3,10 @@ package Elements;
  * Represents an element of the periodic table. 
  * Current functions: finding the electron shell configuration, phase at room temperature, whether it is metal, non-metal, or metalloid
  * 
+ * EDITED 11/22/2015 Luke Giacalone: added the rest of the family names
+ * 
  * Author: Julia McClellan
- * Version: 11/10/2015
+ * Version: 11/22/2015
  */
 public class Element
 {
@@ -199,10 +201,15 @@ public class Element
      */
     public String getGroupName()
     {
-    	if(group == 1 && ! name.equals("Hydrogen")) return "Alkali Metal";
+    	if(num >= 57 && num <= 70) return "Lanthanide";
+    	else if(num >= 89 && num <= 102) return "Actinide";
+    	else if(group == 1 && !name.equals("Hydrogen")) return "Alkali Metal";
     	else if(group == 2) return "Alkaline Earth Metal";
-    	else if(group == 15) return "Pnictogen";
-    	else if(group == 16) return "Chalcogen";
+    	else if(group >= 3 && group <= 12) return "Transition Metal";
+    	else if(group == 13) return "Icosagen (Boron Family)";
+    	else if(group == 14) return "Tetragen (Carbon Family)";
+    	else if(group == 15) return "Pnictogen (Nitrogen Family)";
+    	else if(group == 16) return "Chalcogen (Oxygen Family)";
     	else if(group == 17) return "Halogen";
     	else if(group == 18) return "Noble Gas";
     	else return "None";
