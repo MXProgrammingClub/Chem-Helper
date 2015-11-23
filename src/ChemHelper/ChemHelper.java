@@ -37,9 +37,8 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 		pane.add(menu, BorderLayout.NORTH);
 		pane.add(funcs[0].getPanel(), BorderLayout.WEST); //sets periodic table to show by default
 		last = funcs[0].getPanel();
-		//pack();
-		setSize(1185, 665);
-		this.setPreferredSize(new Dimension(1185, 665));
+		pack();
+		this.setPreferredSize(new Dimension(this.getWidth(), this.getHeight()));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
 	}
