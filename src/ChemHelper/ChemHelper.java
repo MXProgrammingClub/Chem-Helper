@@ -39,8 +39,7 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 		last = funcs[0].getPanel();
 		//pack();
 		setSize(1158, 636);
-		this.setMaximumSize(new Dimension(1158, 636)); //makes sure that the size will never exceed 1158, 636
-		this.setMinimumSize(new Dimension(1158, 636)); //makes sure that the size will never be lower than 1158, 636
+		this.setPreferredSize(new Dimension(1158, 636));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
 	}
