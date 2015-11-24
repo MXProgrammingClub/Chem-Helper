@@ -16,7 +16,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import ChemHelper.Equation;
-import ChemHelper.Ions;
 import Elements.Compound;
 
 public class Stoichiometry extends Function 
@@ -34,7 +33,7 @@ public class Stoichiometry extends Function
 	
 	public Stoichiometry()
 	{
-		super("Stoichiometry");
+		super("Ideal Stoichiometry");
 		reader = new EquationReader();
 		acceptEquation = new JButton("Use equation");
 		acceptEquation.addActionListener(new AcceptEquation());
@@ -51,6 +50,7 @@ public class Stoichiometry extends Function
 		knownPanel = new JPanel();
 		unknownPanel = new JPanel();
 		resultPanel = new JPanel();
+		resultPanel.setVisible(false);
 		calculate = new JButton("Calculate");
 		calculate.addActionListener(new CalculateListener());
 		reset = new JButton("Reset");
@@ -64,9 +64,11 @@ public class Stoichiometry extends Function
 		box2.add(resultPanel);
 		stoicPanel = new JPanel();
 		stoicPanel.add(box2);
+		stoicPanel.setVisible(false);
 		
 		panel = new JPanel();
 		panel.add(box1);
+		panel.add(stoicPanel);
 	}
 
 	public JPanel getPanel() 
@@ -87,8 +89,7 @@ public class Stoichiometry extends Function
 			{
 				panel.remove(box1);
 				displayEquation.add(displayEquation());
-				panel.add(stoicPanel);
-				panel.repaint();
+				stoicPanel.setVisible(true);
 			}
 		}
 	}
@@ -133,7 +134,8 @@ public class Stoichiometry extends Function
 				if(given)
 				{
 					known = compound;
-					knownPanel.add(new JLabel("<html>" + compound + "</html>"));
+					if(known.getNum() == 1) knownPanel.add(new JLabel("<html>" + compound + "</html>"));
+					else knownPanel.add(new JLabel("<html>" + compound.toString().substring(1) + "</html>"));
 					enter = new JTextField(5);
 					knownPanel.add(enter);
 					mole1 = new JRadioButton("Moles");
@@ -149,7 +151,8 @@ public class Stoichiometry extends Function
 				else if (!done)
 				{
 					unknown = compound;
-					unknownPanel.add(new JLabel("<html>" + compound + "</html>"));
+					if(unknown.getNum() == 1) unknownPanel.add(new JLabel("<html>" + compound + "</html>"));
+					else unknownPanel.add(new JLabel("<html>" + compound.toString().substring(1) + "</html>"));
 					mole2 = new JRadioButton("Moles");
 					gram2 = new JRadioButton("Grams", true);
 					ButtonGroup group = new ButtonGroup();
@@ -184,6 +187,7 @@ public class Stoichiometry extends Function
 			}
 			resultPanel.add(new JLabel(resultString));
 			resultPanel.add(reset);
+			resultPanel.setVisible(true);
 		}
 	}
 	
@@ -192,25 +196,20 @@ public class Stoichiometry extends Function
 		public void actionPerformed(ActionEvent arg0)
 		{
 			Stoichiometry newPanel = new Stoichiometry();
+			panel.setVisible(false);
 			panel.removeAll();
 			panel.add(newPanel.getPanel());
-			panel.repaint();
+			panel.setVisible(true);
 		}
 	}
 	
 	private double calculate(Compound c1, double amount, boolean inGrams1, Compound c2, boolean inGrams2)
 	{
 		double moles;
-		if(inGrams1) moles = toMoles(c1, amount);
+		if(inGrams1) moles = amount / c1.getMolarMass();
 		else moles = amount;
 		double molesC2 = moles / c1.getNum() * c2.getNum();
 		if(!inGrams2) return molesC2;
 		else return c2.getMolarMass() * molesC2;
-	}
-	
-	private double toMoles(Compound c, double grams)
-	{
-		double forOne = c.getMolarMass();
-		return grams / forOne;
 	}
 }

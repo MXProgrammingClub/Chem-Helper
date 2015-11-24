@@ -44,16 +44,17 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 
 	private void createMenu()
 	{
-		funcs = new Function[5];
+		funcs = new Function[6];
 		funcs[0] = new PeriodicTable();
 		funcs[1] = new ElectronShell();
 		funcs[2] = new Stoichiometry();
-		funcs[3] = new EquationReader();
-		funcs[4] = new ParticleEquations();
+		funcs[3] = new LimitingReactant();
+		funcs[4] = new EquationReader();
+		funcs[5] = new ParticleEquations();
 		
 		//Currently this system is completely random as there are not enough things to make an actually useful system but I wanted to make the framework
-		String[] menuNames = {"Things you may want to use", "Things that are currently unusable"}; //Lists the names of the different menus on the menu bar.
-		int[] menuCutoffs = {0, 3}; //Specifies the indices where a new menu would start from funcs
+		String[] menuNames = {"General Information", "Stoichiometry", "Other"}; //Lists the names of the different menus on the menu bar.
+		int[] menuCutoffs = {0, 2, 4}; //Specifies the indices where a new menu would start from funcs
 		
 		menu = new JMenuBar();
 		for(int menuNum = 0; menuNum < menuCutoffs.length; menuNum++)
@@ -93,13 +94,8 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 				if(last!=null) pane.remove(last);
 				JPanel func = ((FunctionMenuItem)arg0.getSource()).getFunction().getPanel();
 				pane.add(func, BorderLayout.WEST);
-				
-				//func.setVisible(true);
-				//func.repaint();
 				pane.repaint();
 				pack();
-				
-				//repaint();
 				last = func;
 			}
 		}

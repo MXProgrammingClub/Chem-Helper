@@ -25,7 +25,7 @@ public class PeriodicTable extends Function
 	
 	public PeriodicTable()
 	{
-		super("Element Information");
+		super("Periodic Table");
 		panels = new ElementPanel[7][18];
 		alPanels = new ElementPanel[2][14];
 		for(int row = 0; row < panels.length; row++)
