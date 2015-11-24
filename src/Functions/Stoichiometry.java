@@ -23,7 +23,7 @@ public class Stoichiometry extends Function
 {
 	private JPanel panel, equationPanel, stoicPanel, displayEquation, knownPanel, unknownPanel, resultPanel;
 	private EquationReader reader;
-	private JButton acceptEquation, calculate;
+	private JButton acceptEquation, calculate, reset;
 	private Equation equation;
 	private JLabel errorMessage, instructions;
 	private boolean given = true, done = false;
@@ -53,6 +53,8 @@ public class Stoichiometry extends Function
 		resultPanel = new JPanel();
 		calculate = new JButton("Calculate");
 		calculate.addActionListener(new CalculateListener());
+		reset = new JButton("Reset");
+		reset.addActionListener(new ResetListener());
 		
 		box2 = Box.createVerticalBox();
 		box2.add(instructions);
@@ -86,6 +88,7 @@ public class Stoichiometry extends Function
 				panel.remove(box1);
 				displayEquation.add(displayEquation());
 				panel.add(stoicPanel);
+				panel.repaint();
 			}
 		}
 	}
@@ -180,6 +183,18 @@ public class Stoichiometry extends Function
 				resultString = "There was a problem with your input";
 			}
 			resultPanel.add(new JLabel(resultString));
+			resultPanel.add(reset);
+		}
+	}
+	
+	private class ResetListener implements ActionListener
+	{
+		public void actionPerformed(ActionEvent arg0)
+		{
+			Stoichiometry newPanel = new Stoichiometry();
+			panel.removeAll();
+			panel.add(newPanel.getPanel());
+			panel.repaint();
 		}
 	}
 	
