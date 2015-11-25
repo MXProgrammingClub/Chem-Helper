@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -225,14 +224,5 @@ public class LimitingReactant extends Function
 	public JPanel getPanel()
 	{
 		return panel;
-	}
-	
-	public static void main(String[] args)
-	{
-		JFrame frame = new JFrame();
-		LimitingReactant r = new LimitingReactant();
-		frame.add(r.getPanel());
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
 	}
 }

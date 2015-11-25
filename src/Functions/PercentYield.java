@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-
 import java.util.ArrayList;
 
 import javax.swing.Box;
@@ -18,22 +17,22 @@ import javax.swing.JTextField;
 import ChemHelper.Equation;
 import Elements.Compound;
 
-public class Stoichiometry extends Function 
+public class PercentYield extends Function 
 {
-	private JPanel panel, equationPanel, stoicPanel, displayEquation, knownPanel, unknownPanel, resultPanel;
+	private JPanel panel, equationPanel, stoicPanel, displayEquation, reactantPanel, productPanel, resultPanel;
 	private EquationReader reader;
 	private JButton acceptEquation, calculate, reset;
 	private Equation equation;
 	private JLabel errorMessage, instructions;
-	private boolean given = true, done = false;
-	private JTextField enter;
+	private boolean onReactant = true, done = false;
+	private JTextField enterR, enterP;
 	private JRadioButton mole1, gram1, mole2, gram2;
-	private Compound known, unknown;
+	private Compound reactant, product;
 	private Box box1, box2;
 	
-	public Stoichiometry()
+	public PercentYield()
 	{
-		super("Ideal Stoichiometry");
+		super("Percent Yield");
 		reader = new EquationReader();
 		acceptEquation = new JButton("Use equation");
 		acceptEquation.addActionListener(new AcceptEquation());
@@ -46,22 +45,24 @@ public class Stoichiometry extends Function
 		box1.add(equationPanel);
 		
 		displayEquation = new JPanel();
-		instructions = new JLabel("Click on the compound you know the quantity of.");
-		knownPanel = new JPanel();
-		unknownPanel = new JPanel();
+		instructions = new JLabel("Click on the reactant you know the quantity of.");
+		reactantPanel = new JPanel();
+		productPanel = new JPanel();
 		resultPanel = new JPanel();
 		resultPanel.setVisible(false);
 		calculate = new JButton("Calculate");
 		calculate.addActionListener(new CalculateListener());
 		reset = new JButton("Reset");
 		reset.addActionListener(new ResetListener());
+		reset.setVisible(false);
 		
 		box2 = Box.createVerticalBox();
 		box2.add(instructions);
 		box2.add(displayEquation);
-		box2.add(knownPanel);
-		box2.add(unknownPanel);
+		box2.add(reactantPanel);
+		box2.add(productPanel);
 		box2.add(resultPanel);
+		box2.add(reset);
 		stoicPanel = new JPanel();
 		stoicPanel.add(box2);
 		stoicPanel.setVisible(false);
@@ -69,11 +70,6 @@ public class Stoichiometry extends Function
 		panel = new JPanel();
 		panel.add(box1);
 		panel.add(stoicPanel);
-	}
-
-	public JPanel getPanel() 
-	{
-		return panel;
 	}
 	
 	private class AcceptEquation implements ActionListener
@@ -131,38 +127,62 @@ public class Stoichiometry extends Function
 		{
 			public void mouseClicked(MouseEvent arg0) 
 			{
-				if(given)
+				stoicPanel.setVisible(false);
+				stoicPanel.remove(errorMessage);
+				if(!done)
 				{
-					known = compound;
-					if(known.getNum() == 1) knownPanel.add(new JLabel("<html>" + compound + "</html>"));
-					else knownPanel.add(new JLabel("<html>" + compound.toString().substring(1) + "</html>"));
-					enter = new JTextField(5);
-					knownPanel.add(enter);
-					mole1 = new JRadioButton("Moles");
-					gram1 = new JRadioButton("Grams", true);
-					ButtonGroup group = new ButtonGroup();
-					group.add(gram1);
-					group.add(mole1);
-					knownPanel.add(mole1);
-					knownPanel.add(gram1);
-					instructions.setText("Now click on the compound of which you wish to find the quanitity");
-					given = false;
-				}
-				else if (!done)
-				{
-					unknown = compound;
-					if(unknown.getNum() == 1) unknownPanel.add(new JLabel("<html>" + compound + "</html>"));
-					else unknownPanel.add(new JLabel("<html>" + compound.toString().substring(1) + "</html>"));
-					mole2 = new JRadioButton("Moles");
-					gram2 = new JRadioButton("Grams", true);
-					ButtonGroup group = new ButtonGroup();
-					group.add(gram2);
-					group.add(mole2);
-					unknownPanel.add(mole2);
-					unknownPanel.add(gram2);
-					unknownPanel.add(calculate);
-					instructions.setText("Once you have entered the quantities and units, click the calculate button");
-					done = true;
+					if(onReactant)
+					{
+						if(equation.getLeft().indexOf(compound) != -1)
+						{
+							reactant = compound;
+							if(reactant.getNum() == 1) reactantPanel.add(new JLabel("<html>" + compound + "</html>"));
+							else reactantPanel.add(new JLabel("<html>" + compound.toString().substring(1) + "</html>"));
+							enterR = new JTextField(5);
+							reactantPanel.add(enterR);
+							mole1 = new JRadioButton("Moles");
+							gram1 = new JRadioButton("Grams", true);
+							ButtonGroup group = new ButtonGroup();
+							group.add(gram1);
+							group.add(mole1);
+							reactantPanel.add(mole1);
+							reactantPanel.add(gram1);
+							instructions.setText("Now click on the product you know the quantity of.");
+							onReactant = false;
+						}
+						else
+						{
+							errorMessage.setText("That is not a reactant");
+							stoicPanel.add(errorMessage);				
+						}
+					}
+					else
+					{
+						if(equation.getRight().indexOf(compound) != -1)
+						{
+							product = compound;
+							if(product.getNum() == 1) productPanel.add(new JLabel("<html>" + compound + "</html>"));
+							else productPanel.add(new JLabel("<html>" + compound.toString().substring(1) + "</html>"));
+							enterP = new JTextField(5);
+							productPanel.add(enterP);
+							mole2 = new JRadioButton("Moles");
+							gram2 = new JRadioButton("Grams", true);
+							ButtonGroup group = new ButtonGroup();
+							group.add(gram2);
+							group.add(mole2);
+							productPanel.add(mole2);
+							productPanel.add(gram2);
+							productPanel.add(calculate);
+							instructions.setText("Once you have entered the quantities and units, click the calculate button");
+							done = true;
+						}
+						else
+						{
+							errorMessage.setText("That is not a product");
+							stoicPanel.add(errorMessage);
+						}
+					}
+					stoicPanel.setVisible(true);
 				}
 			}
 			public void mouseEntered(MouseEvent arg0) {}
@@ -171,23 +191,27 @@ public class Stoichiometry extends Function
 			public void mouseReleased(MouseEvent arg0) {}
 		}
 	}
+
 	
 	private class CalculateListener implements ActionListener
 	{
 		public void actionPerformed(ActionEvent arg0)
 		{
-			String resultString;
 			try
 			{
-				resultString = "" + calculate(known, Double.parseDouble(enter.getText()), gram1.isSelected(), unknown, gram2.isSelected());
+				resultPanel.setVisible(false);
+				double amount = Double.parseDouble(enterR.getText()), amount1 = Double.parseDouble(enterP.getText()), 
+						amount2 = Stoichiometry.calculate(reactant, amount, gram1.isSelected(), product, gram2.isSelected()),
+						percent = amount1 / amount2 * 100;
+				resultPanel.removeAll();
+				resultPanel.add(new JLabel("The percent yield was " + percent));
+				reset.setVisible(true);
+				resultPanel.setVisible(true);
 			}
 			catch(Throwable e)
 			{
-				resultString = "There was a problem with your input";
+				errorMessage.setText("There was a problem with your input");
 			}
-			resultPanel.add(new JLabel(resultString));
-			resultPanel.add(reset);
-			resultPanel.setVisible(true);
 		}
 	}
 	
@@ -195,7 +219,7 @@ public class Stoichiometry extends Function
 	{
 		public void actionPerformed(ActionEvent arg0)
 		{
-			Stoichiometry newPanel = new Stoichiometry();
+			PercentYield newPanel = new PercentYield();
 			panel.setVisible(false);
 			panel.removeAll();
 			panel.add(newPanel.getPanel());
@@ -203,13 +227,8 @@ public class Stoichiometry extends Function
 		}
 	}
 	
-	public static double calculate(Compound c1, double amount, boolean inGrams1, Compound c2, boolean inGrams2)
+	public JPanel getPanel()
 	{
-		double moles;
-		if(inGrams1) moles = amount / c1.getMolarMass();
-		else moles = amount;
-		double molesC2 = moles / c1.getNum() * c2.getNum();
-		if(!inGrams2) return molesC2;
-		else return c2.getMolarMass() * molesC2;
+		return panel;
 	}
 }
