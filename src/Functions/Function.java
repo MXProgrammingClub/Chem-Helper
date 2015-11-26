@@ -123,36 +123,43 @@ public abstract class Function {
 
 	/*
 	 * Returns a String representation of the number with the given number of significant figures, unless that would require scientific notation
-	 * because I didn't feel like doing that and might do it later. Also doesn't round properly because I just remembered I should do that but
-	 * it's already past my bedtime and I'm tired so I'll do it tomorrow.
+	 * because I didn't feel like doing that and might do it later. 
 	 * pre: sigFigs >= 1
 	 */
-	public static String withSigFigs(double num, int sigFigs)
-	{
-		int count = 0;
-		boolean neg = num < 0;
-		num = Math.abs(num);
-		String original = "" + num, numString = "";
-		int index;
-		if(num > 1)
-		{
-			for(; count < original.length() && original.charAt(count) != '.' && count < sigFigs; numString += original.charAt(count), count++);
-			if(count == sigFigs) // Adding extra zeros to the end if necessary.
-			{
-				for(int i = count; i < original.length() && original.charAt(i) != '.'; i++, numString += '0');
-				if(neg) numString = '-' + numString;
-				return numString;
-			}
-			index = count + 1;
-		}
-		else 
-		{
-			numString = "0";
-			index = 2;
-		}
-		numString += '.';
-		for(; index < original.length() && count < sigFigs;  numString += original.charAt(index), count++, index++);
-		for(; count < sigFigs; count++, numString += '0');
-		return numString;
-	}
+    public static String withSigFigs(double num, int sigFigs)
+    {
+        int count = 0;
+        boolean neg = num < 0;
+        num = Math.abs(num);
+        String original = "" + num, numString = "";
+        int index;
+        if(num > 1)
+        {
+            for(; count < original.length() && original.charAt(count) != '.' && count < sigFigs; numString += original.charAt(count), count++);
+            if(count == sigFigs) // Adding extra zeros to the end if necessary.
+            {
+                if(count + 1 < original.length() && original.charAt(count) == '.' && original.charAt(count + 1) >= '5')
+                {
+                    numString = numString.substring(0, numString.length() - 1) + ((char)(original.charAt(count - 1) + 1));
+                }
+                for(int i = count; i < original.length() && original.charAt(i) != '.'; i++, numString += '0');
+                if(neg) numString = '-' + numString;
+                return numString;
+            }
+            index = count + 1;
+        }
+        else 
+        {
+            numString = "0";
+            index = 2;
+        }
+        numString += '.';
+        for(; index < original.length() && count < sigFigs;  numString += original.charAt(index), count++, index++);
+        if(count == sigFigs && index < original.length() && original.charAt(index) >= '5') 
+        {
+            numString = numString.substring(0, numString.length() - 1) + ((char)(original.charAt(index - 1) + 1));
+        }
+        for(; count < sigFigs; count++, numString += '0');
+        return numString;
+    }
 }
