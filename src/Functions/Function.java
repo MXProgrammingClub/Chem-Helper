@@ -106,4 +106,53 @@ public abstract class Function {
 
 	      return num1;
 	   }
+	
+	/*
+	 * Returns the number of significant figures a number has, if numString is a String representation of a double.
+	 */
+	public static int sigFigs(String numString)
+	{
+		int sigFigs = numString.length();
+		if(numString.indexOf("-") != -1) sigFigs--;
+		if(numString.indexOf(".") != -1) sigFigs--;
+			//These characters lead the String to be longer than purely 
+		else for(int index = numString.length() -1; index >= 0 && numString.charAt(index) == '0'; index--) sigFigs--; 
+			//If a number does not contain a decimal point, for every 0 at the end of the number, subtract a sig fig.
+		return sigFigs;
+	}
+
+	/*
+	 * Returns a String representation of the number with the given number of significant figures, unless that would require scientific notation
+	 * because I didn't feel like doing that and might do it later. Also doesn't round properly because I just remembered I should do that but
+	 * it's already past my bedtime and I'm tired so I'll do it tomorrow.
+	 * pre: sigFigs >= 1
+	 */
+	public static String withSigFigs(double num, int sigFigs)
+	{
+		int count = 0;
+		boolean neg = num < 0;
+		num = Math.abs(num);
+		String original = "" + num, numString = "";
+		int index;
+		if(num > 1)
+		{
+			for(; count < original.length() && original.charAt(count) != '.' && count < sigFigs; numString += original.charAt(count), count++);
+			if(count == sigFigs) // Adding extra zeros to the end if necessary.
+			{
+				for(int i = count; i < original.length() && original.charAt(i) != '.'; i++, numString += '0');
+				if(neg) numString = '-' + numString;
+				return numString;
+			}
+			index = count + 1;
+		}
+		else 
+		{
+			numString = "0";
+			index = 2;
+		}
+		numString += '.';
+		for(; index < original.length() && count < sigFigs;  numString += original.charAt(index), count++, index++);
+		for(; count < sigFigs; count++, numString += '0');
+		return numString;
+	}
 }

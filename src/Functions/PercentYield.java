@@ -200,11 +200,13 @@ public class PercentYield extends Function
 			try
 			{
 				resultPanel.setVisible(false);
+				int sigFigs = Math.min(Function.sigFigs(enterR.getText()), Function.sigFigs(enterP.getText()));
 				double amount = Double.parseDouble(enterR.getText()), amount1 = Double.parseDouble(enterP.getText()), 
 						amount2 = Stoichiometry.calculate(reactant, amount, gram1.isSelected(), product, gram2.isSelected()),
 						percent = amount1 / amount2 * 100;
+				String percentString = Function.withSigFigs(percent, sigFigs);
 				resultPanel.removeAll();
-				resultPanel.add(new JLabel("The percent yield was " + percent));
+				resultPanel.add(new JLabel("The percent yield was " + percentString));
 				reset.setVisible(true);
 				resultPanel.setVisible(true);
 			}

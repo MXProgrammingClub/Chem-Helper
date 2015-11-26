@@ -179,7 +179,9 @@ public class Stoichiometry extends Function
 			String resultString;
 			try
 			{
-				resultString = "" + calculate(known, Double.parseDouble(enter.getText()), gram1.isSelected(), unknown, gram2.isSelected());
+				int sigFigs = Function.sigFigs(enter.getText());
+				double calculated = calculate(known, Double.parseDouble(enter.getText()), gram1.isSelected(), unknown, gram2.isSelected());
+				resultString = Function.withSigFigs(calculated, sigFigs);
 			}
 			catch(Throwable e)
 			{

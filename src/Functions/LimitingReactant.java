@@ -154,7 +154,7 @@ public class LimitingReactant extends Function
 		{
 			double[] amounts = new double[compounds.size()];
 			Compound limiting = null;
-			int limitIndex = 0;
+			int limitIndex = 0, sigFigs = Integer.MAX_VALUE;
 			double min = Double.MAX_VALUE;
 			for(int index = 0; index < amounts.length; index++)
 			{
@@ -164,6 +164,8 @@ public class LimitingReactant extends Function
 				panel.repaint();
 				try
 				{
+					int thisSigFigs = Function.sigFigs(compounds.get(index).getAmount());
+					if(thisSigFigs < sigFigs) sigFigs = thisSigFigs;
 					amount = Double.parseDouble(compounds.get(index).getAmount());
 				}
 				catch(Throwable e)
@@ -197,10 +199,11 @@ public class LimitingReactant extends Function
 				if(index != limitIndex)
 				{
 					amount *= compound.getNum();
+					String amountString = Function.withSigFigs(amount, sigFigs);
 					if(compounds.get(index).inGrams()) amount *= compound.getMolarMass();
 					String compoundString = compound.toString();
 					if(compound.getNum() != 1) compoundString = compoundString.substring(1);
-					resultBox.add(new JLabel("<html>Amount " + compoundString + " remaining: " + amount));
+					resultBox.add(new JLabel("<html>Amount " + compoundString + " remaining: " + amountString));
 				}
 			}
 			resultPanel.add(reset);
