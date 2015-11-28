@@ -17,7 +17,7 @@ import Elements.Compound;
 
 public class LimitingReactant extends Function
 {
-	private JPanel panel, equationPanel, stoicPanel, enterPanel, resultPanel;
+	private JPanel panel, equationPanel, stoicPanel, enterPanel, resultPanel, stepsPanel;
 	private EquationReader reader;
 	private JButton acceptEquation, calculate, reset;
 	private Equation equation;
@@ -44,6 +44,8 @@ public class LimitingReactant extends Function
 		calculate.addActionListener(new CalculateListener());
 		reset = new JButton("Reset");
 		reset.addActionListener(new ResetListener());
+		stepsPanel = new JPanel();
+		stepsPanel.setVisible(false);
 		
 		box2 = Box.createVerticalBox();
 		equationDisplay = new JLabel();
@@ -53,6 +55,7 @@ public class LimitingReactant extends Function
 		resultPanel = new JPanel();
 		resultPanel.setVisible(false);
 		box2.add(resultPanel);
+		box2.add(stepsPanel);
 		stoicPanel = new JPanel();
 		stoicPanel.add(box2);
 		stoicPanel.setVisible(false);
@@ -153,12 +156,15 @@ public class LimitingReactant extends Function
 		public void actionPerformed(ActionEvent arg0)
 		{
 			double[] amounts = new double[compounds.size()];
+			String steps = "<html>Find which is the limiting reactant by diving moles of each reactant by its coefficient:<br>";
 			Compound limiting = null;
 			int limitIndex = 0, sigFigs = Integer.MAX_VALUE;
 			double min = Double.MAX_VALUE;
 			for(int index = 0; index < amounts.length; index++)
 			{
 				Compound compound = compounds.get(index).getCompound();
+				String compoundName = compound.toString();
+				if(compound.getNum() != 1) compoundName = compoundName.substring(1);
 				double amount;
 				enterPanel.remove(errorMessage);
 				panel.repaint();
@@ -176,8 +182,18 @@ public class LimitingReactant extends Function
 					enterPanel.setVisible(true);
 					return;
 				}
-				if(compounds.get(index).inGrams()) amount = amount / compound.getMolarMass();
+				if(compounds.get(index).inGrams()) 
+				{
+					String massString = compound.getMolarMassSteps();
+					steps += "Calculate the molar mass of " + compoundName + ":<br>\u2003" + massString;
+					double mass = Double.parseDouble(massString.substring(massString.lastIndexOf("=") + 1, massString.lastIndexOf("g")));
+					steps += "<br>Convert grams to moles by dividing grams of " +  compoundName + " by its molar mass:<br>\u2003" + amount + " g / " + mass;
+					amount = amount / mass;
+					steps += " g/mol " + " = " + amount + " mol<br>";
+				}
+				steps += " Divide by the coefficient of " + compoundName + ":<br>\u2003" + amount + " mol / " + compound.getNum();
 				amount = amount / compound.getNum();
+				steps += " = " + amount + " mol<br>";
 				amounts[index] = amount;
 				if(amount < min)
 				{
@@ -188,27 +204,43 @@ public class LimitingReactant extends Function
 			}
 			String limitingString = limiting.toString();
 			if(limiting.getNum() != 1) limitingString = limitingString.substring(1);
-			limitingLabel = new JLabel("<html>Limiting Reactant: " + limitingString + "</html");
+			limitingLabel = new JLabel("<html>Limiting Reactant: " + limitingString + "</html>");
 			Box resultBox = Box.createVerticalBox();
 			resultBox.add(limitingLabel);
+			steps += "<br>The smallest of these is " + limitingString + ", so it is the limiting reactant.";
 			for(int index = 0; index < amounts.length; index++)
 			{
 				Compound compound = compounds.get(index).getCompound();
+				String compoundString = compound.toString();
+				if(compound.getNum() != 1) compoundString = compoundString.substring(1);
 				double amount = amounts[index];
 				amount -= min;
 				if(index != limitIndex)
 				{
 					amount *= compound.getNum();
-					String amountString = Function.withSigFigs(amount, sigFigs);
-					if(compounds.get(index).inGrams()) amount *= compound.getMolarMass();
-					String compoundString = compound.toString();
-					if(compound.getNum() != 1) compoundString = compoundString.substring(1);
+					steps += "<br>The amount of " + compoundString + " leftover: (" + amounts[index] + " mol - " + min + " mol) * " + compound.getNum() + 
+							" = " + amount + " mol";
+					String unit = "mol";
+					if(compounds.get(index).inGrams()) 
+					{
+						String massString = compound.getMolarMassSteps();
+						steps += "<br>Calculate the molar mass of " + compoundString + "<br>\u2003" + massString;
+						double mass = Double.parseDouble(massString.substring(massString.lastIndexOf('=') + 1, massString.lastIndexOf('g')));
+						steps += "<br>Convert the amount " + compoundString + " leftover to grams<br>\u2003" + amount + " mol * " + mass + " g/mol = ";
+						amount *= compound.getMolarMass();
+						steps += amount + " g";
+						unit = "g";
+					}
+					String amountString = Function.withSigFigs(amount, sigFigs) + " " + unit;
 					resultBox.add(new JLabel("<html>Amount " + compoundString + " remaining: " + amountString));
 				}
 			}
-			resultPanel.add(reset);
 			resultPanel.add(resultBox);
 			resultPanel.setVisible(true);
+			stepsPanel.add(new JLabel(steps));
+			stepsPanel.setVisible(true);
+			box2.add(reset);
+			box2.setVisible(true);
 		}
 	}
 	

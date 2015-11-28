@@ -19,7 +19,7 @@ import Elements.Compound;
 
 public class PercentYield extends Function 
 {
-	private JPanel panel, equationPanel, stoicPanel, displayEquation, reactantPanel, productPanel, resultPanel;
+	private JPanel panel, equationPanel, stoicPanel, displayEquation, reactantPanel, productPanel, resultPanel, stepsPanel;
 	private EquationReader reader;
 	private JButton acceptEquation, calculate, reset;
 	private Equation equation;
@@ -55,6 +55,8 @@ public class PercentYield extends Function
 		reset = new JButton("Reset");
 		reset.addActionListener(new ResetListener());
 		reset.setVisible(false);
+		stepsPanel = new JPanel();
+		stepsPanel.setVisible(false);
 		
 		box2 = Box.createVerticalBox();
 		box2.add(instructions);
@@ -62,6 +64,7 @@ public class PercentYield extends Function
 		box2.add(reactantPanel);
 		box2.add(productPanel);
 		box2.add(resultPanel);
+		box2.add(stepsPanel);
 		box2.add(reset);
 		stoicPanel = new JPanel();
 		stoicPanel.add(box2);
@@ -201,14 +204,20 @@ public class PercentYield extends Function
 			{
 				resultPanel.setVisible(false);
 				int sigFigs = Math.min(Function.sigFigs(enterR.getText()), Function.sigFigs(enterP.getText()));
-				double amount = Double.parseDouble(enterR.getText()), amount1 = Double.parseDouble(enterP.getText()), 
-						amount2 = Stoichiometry.calculate(reactant, amount, gram1.isSelected(), product, gram2.isSelected()),
-						percent = amount1 / amount2 * 100;
-				String percentString = Function.withSigFigs(percent, sigFigs);
+				double amount = Double.parseDouble(enterR.getText()), actual = Double.parseDouble(enterP.getText());
+				String steps = "<html>First, find the theoretical yield-<br>" + Stoichiometry.calculate(reactant, amount, gram1.isSelected(), product, 
+						gram2.isSelected());
+				double expected = Double.parseDouble(steps.substring(steps.lastIndexOf("=") + 1, steps.lastIndexOf("g"))), percent = 100 * actual / expected;
+				String percentString = Function.withSigFigs(percent, sigFigs) + "%", unit = "mol";
+				if(gram2.isSelected()) unit = "g";
+				steps += "<br>Then divide the actual yield by the theoretical to find the percent yield:<br>\u2003" + actual + " " + unit + " / " + expected + 
+						" " + unit + " * 100 = " + percent + "%</html>";
 				resultPanel.removeAll();
-				resultPanel.add(new JLabel("The percent yield was " + percentString));
+				resultPanel.add(new JLabel(percentString));
 				reset.setVisible(true);
 				resultPanel.setVisible(true);
+				stepsPanel.add(new JLabel(steps));
+				stepsPanel.setVisible(true);
 			}
 			catch(Throwable e)
 			{

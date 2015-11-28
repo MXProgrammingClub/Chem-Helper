@@ -20,7 +20,7 @@ import Elements.Compound;
 
 public class Stoichiometry extends Function 
 {
-	private JPanel panel, equationPanel, stoicPanel, displayEquation, knownPanel, unknownPanel, resultPanel;
+	private JPanel panel, equationPanel, stoicPanel, displayEquation, knownPanel, unknownPanel, resultPanel, stepsPanel;
 	private EquationReader reader;
 	private JButton acceptEquation, calculate, reset;
 	private Equation equation;
@@ -55,6 +55,8 @@ public class Stoichiometry extends Function
 		calculate.addActionListener(new CalculateListener());
 		reset = new JButton("Reset");
 		reset.addActionListener(new ResetListener());
+		stepsPanel = new JPanel();
+		stepsPanel.setVisible(false);
 		
 		box2 = Box.createVerticalBox();
 		box2.add(instructions);
@@ -62,6 +64,7 @@ public class Stoichiometry extends Function
 		box2.add(knownPanel);
 		box2.add(unknownPanel);
 		box2.add(resultPanel);
+		box2.add(stepsPanel);
 		stoicPanel = new JPanel();
 		stoicPanel.add(box2);
 		stoicPanel.setVisible(false);
@@ -180,15 +183,21 @@ public class Stoichiometry extends Function
 			try
 			{
 				int sigFigs = Function.sigFigs(enter.getText());
-				double calculated = calculate(known, Double.parseDouble(enter.getText()), gram1.isSelected(), unknown, gram2.isSelected());
-				resultString = Function.withSigFigs(calculated, sigFigs);
+				String calculated = "<html>" + calculate(known, Double.parseDouble(enter.getText()), gram1.isSelected(), unknown, gram2.isSelected()) + 
+						"</html>";
+				resultString = Function.withSigFigs(Double.parseDouble(calculated.substring(calculated.lastIndexOf("=") + 1, calculated.lastIndexOf("g"))), 
+						sigFigs);
+				if(gram2.isSelected()) resultString += " g";
+				else resultString += " mol";
+				stepsPanel.add(new JLabel(calculated));
+				stepsPanel.setVisible(true);
 			}
 			catch(Throwable e)
 			{
 				resultString = "There was a problem with your input";
 			}
 			resultPanel.add(new JLabel(resultString));
-			resultPanel.add(reset);
+			box2.add(reset);
 			resultPanel.setVisible(true);
 		}
 	}
@@ -205,13 +214,32 @@ public class Stoichiometry extends Function
 		}
 	}
 	
-	public static double calculate(Compound c1, double amount, boolean inGrams1, Compound c2, boolean inGrams2)
+	public static String calculate(Compound c1, double amount, boolean inGrams1, Compound c2, boolean inGrams2)
 	{
 		double moles;
-		if(inGrams1) moles = amount / c1.getMolarMass();
+		String steps = "", c1Name = c1.toString(), c2Name = c2.toString();
+		if(c1.getNum() != 1) c1Name = c1Name.substring(1);
+		if(c2.getNum() != 1) c2Name = c2Name.substring(1);
+		if(inGrams1) 
+		{
+			String molarMass = c1.getMolarMassSteps();
+			steps += "Calculate the molar mass of " + c1Name + ":<br>\u2003" + molarMass;
+			double mass = Double.parseDouble(molarMass.substring(molarMass.indexOf('=') + 1, molarMass.lastIndexOf("g/mol")));
+			moles = amount / mass;
+			steps += "<br>Convert " + c1Name + " from grams to moles:<br>\u2003" + amount + " g / " + mass + " g/mol = " + moles + " mol<br>";
+		}
 		else moles = amount;
 		double molesC2 = moles / c1.getNum() * c2.getNum();
-		if(!inGrams2) return molesC2;
-		else return c2.getMolarMass() * molesC2;
+		steps += "Multiply by the mole ratio of " + c1Name + " and " + c2Name + ":<br>\u2003" + moles + " mol " + c1Name + " * " + c2.getNum() + " mol " + 
+				c2Name + " / " + c1.getNum() + " mol " + c1Name +  " = " + molesC2 + " mol " + c2Name;
+		if(!inGrams2) return steps;
+		else
+		{
+			String molarMass = c2.getMolarMassSteps();
+			steps += "<br>Calculate the molar mass of " + c2Name + ": <br>\u2003" + molarMass;
+			double mass = Double.parseDouble(molarMass.substring(molarMass.indexOf('=') + 1, molarMass.lastIndexOf("g/mol"))), answer = mass * molesC2;
+			steps += "<br>Convert " + c2Name + " from moles to grams:<br>\u2003" + mass + " g/mol * " + molesC2 + " mol = " + answer + " g";
+			return steps;
+		}
 	}
 }

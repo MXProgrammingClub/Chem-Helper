@@ -112,6 +112,22 @@ public class Compound
 		return total;
 	}
 	
+	/*
+	 * Returns a String explaining how to find the molar mass of the compound.
+	 */
+	public String getMolarMassSteps()
+	{
+		String instruction = "Multiply the molar mass of each element by its coefficient:";
+		double total = 0;
+		for(Ions ion: ions)
+		{
+			instruction += " (" + ion.getNum() + " * " + ion.getElement().getMolarMass() + " g/mol) +";
+			total += ion.getNum() * ion.getElement().getMolarMass();
+		}
+		instruction = instruction.substring(0, instruction.length() - 1) + " = " + total + " g/mol";
+		return instruction;
+	}
+	
 	public static Compound parseCompound(String cmp) throws InvalidInputException
 	{
 		int stateIndex = cmp.indexOf("("), num;
