@@ -15,8 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
-import ChemHelper.Equation;
-import Elements.Compound;
+import ChemHelper.Compound;
+import Equation.Equation;
 
 public class Stoichiometry extends Function 
 {

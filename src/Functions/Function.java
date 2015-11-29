@@ -10,9 +10,9 @@ import javax.swing.JPanel;
 
 import org.scilab.forge.jlatexmath.*;
 
-import ChemHelper.Equation;
 import ChemHelper.Ions;
-import Elements.Compound;
+import ChemHelper.Compound;
+import Equation.Equation;
 
 public abstract class Function {
 	public static final double C = 300000000, h = 6.626*Math.pow(10, -34);

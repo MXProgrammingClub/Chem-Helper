@@ -10,8 +10,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import ChemHelper.Equation;
 import ChemHelper.InvalidInputException;
+import Equation.Equation;
 
 public class EquationReader extends Function
 {

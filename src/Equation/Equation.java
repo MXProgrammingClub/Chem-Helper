@@ -1,9 +1,11 @@
-package ChemHelper;
+package Equation;
 
 import java.util.ArrayList;
 
-import Elements.Compound;
-import Functions.Function;
+import ChemHelper.Compound;
+import ChemHelper.InvalidInputException;
+import ChemHelper.Ions;
+
 
 public class Equation
 {

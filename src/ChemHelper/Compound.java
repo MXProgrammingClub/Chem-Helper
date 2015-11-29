@@ -6,10 +6,8 @@
  * This represents something which Julia has not told me. Clearly I did in fact write this entire class.
  */
 
-package Elements;
+package ChemHelper;
 
-import ChemHelper.InvalidInputException;
-import ChemHelper.Ions;
 
 public class Compound 
 {
