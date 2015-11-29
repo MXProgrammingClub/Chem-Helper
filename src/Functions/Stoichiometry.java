@@ -242,4 +242,20 @@ public class Stoichiometry extends Function
 			return steps;
 		}
 	}
+	
+	public boolean equation()
+	{
+		return true;
+	}
+	
+	public Equation saveEquation()
+	{
+		Equation equation = reader.saveEquation();
+		return equation;
+	}
+	
+	public void useSaved(Equation equation)
+	{
+		reader.useSaved(equation);
+	}
 }

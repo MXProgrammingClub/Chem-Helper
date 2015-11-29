@@ -12,21 +12,26 @@ import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
+import Equation.Equation;
 import Functions.*;
 
 
 
 public class ChemHelper extends JFrame{		//Primary GUI class
 	Container pane;
-	JPanel last;
+	JPanel last, buttons;
 	JMenuBar menu;
 	Function[] funcs;
+	JButton save, use;
+	Equation equation;
+	Function lastFunc;
 	
 	public ChemHelper(){
 		pane = getContentPane();
@@ -36,6 +41,19 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 		pane.add(menu, BorderLayout.NORTH);
 		pane.add(funcs[0].getPanel(), BorderLayout.WEST); //sets periodic table to show by default
 		last = funcs[0].getPanel();
+		lastFunc = funcs[0];
+		
+		save = new JButton("Save equation");
+		save.addActionListener(new EquationSaver());
+		use = new JButton("Use saved");
+		use.addActionListener(new EquationSaver());
+		buttons = new JPanel();
+		buttons.add(save);
+		buttons.add(use);
+		pane.add(buttons, BorderLayout.SOUTH);
+		buttons.setVisible(false);
+		equation = null;
+		
 		pack();
 		this.setPreferredSize(this.getSize());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -92,11 +110,29 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 			public void actionPerformed(ActionEvent arg0) 
 			{
 				if(last!=null) pane.remove(last);
-				JPanel func = ((FunctionMenuItem)arg0.getSource()).getFunction().getPanel();
+				lastFunc = ((FunctionMenuItem)arg0.getSource()).getFunction();
+				JPanel func = lastFunc.getPanel();
 				pane.add(func, BorderLayout.WEST);
+				if(lastFunc.equation()) buttons.setVisible(true);
+				else buttons.setVisible(false);
 				pane.repaint();
 				pack();
 				last = func;
+			}
+		}
+	}
+	
+	private class EquationSaver implements ActionListener
+	{
+		public void actionPerformed(ActionEvent arg0)
+		{
+			if(((JButton)arg0.getSource()).getText().equals("Save equation"))
+			{
+				equation = lastFunc.saveEquation();
+			}
+			else
+			{
+				if(equation != null) lastFunc.useSaved(equation);
 			}
 		}
 	}

@@ -238,6 +238,22 @@ public class PercentYield extends Function
 		}
 	}
 	
+	public boolean equation()
+	{
+		return true;
+	}
+	
+	public Equation saveEquation()
+	{
+		Equation equation = reader.saveEquation();
+		return equation;
+	}
+	
+	public void useSaved(Equation equation)
+	{
+		reader.useSaved(equation);
+	}
+	
 	public JPanel getPanel()
 	{
 		return panel;

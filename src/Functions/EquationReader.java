@@ -69,15 +69,15 @@ public class EquationReader extends Function
 	{
 		public void actionPerformed(ActionEvent arg0) 
 		{
-			String input = enter.getText(), output, output2;
+			String input = enter.getText();//, output, output2;
 			JLabel label = new JLabel();
 			try
 			{
 				Equation resultant = Equation.parseEquation(input);
 				equation = resultant;
-				output = "<html>" + resultant + "</html>";
+				//output = "<html>" + resultant + "</html>";
 				boolean balanced = resultant.balance();
-				if(balanced)
+				/*if(balanced)
 				{
 					output2 = "<html>After balancing: " + resultant + "</html>";
 					equation = resultant;
@@ -85,24 +85,41 @@ public class EquationReader extends Function
 				else
 				{
 					output2 = "This equation could not be balanced";
-				}
+				}*/
 				label = latex(resultant);
 				
 			}
 			catch(Throwable e)
 			{
 				if(!(e instanceof InvalidInputException)) e = new InvalidInputException(-1);
-				output = e.getMessage();
-				output2 = "";
+				//output = e.getMessage();
+				//output2 = "";
 			}
 			//result.setText(output);
 			result.setIcon(label.getIcon());
-			balanced.setText(output2);
+			//balanced.setText(output2);
 		}
 	}
 	
 	public Equation getEquation()
 	{
 		return equation;
+	}
+	
+	public boolean equation()
+	{
+		return true;
+	}
+	
+	public Equation saveEquation()
+	{
+		return equation;
+	}
+	
+	public void useSaved(Equation equation)
+	{
+		this.equation = equation;
+		JLabel label = latex(equation);
+		result.setIcon(label.getIcon());
 	}
 }

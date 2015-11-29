@@ -30,6 +30,15 @@ public abstract class Function {
 		return name;
 	}
 	
+	/*
+	 * If equation() returns true, then the function can save equations and use saved ones. saveEquation and useSaved should be implemented by those functions.
+	 */
+	public boolean equation()
+	{
+		return false;
+	}
+	public Equation saveEquation(){return null;}
+	public void useSaved(Equation equation){}
 	
 	public static JPanel wrapInFlow(Component comp){			//Wrap a component in a FlowLayout
 		JPanel panel = new JPanel();
