@@ -147,7 +147,7 @@ public abstract class Function {
             for(; count < original.length() && original.charAt(count) != '.' && count < sigFigs; numString += original.charAt(count), count++);
             if(count == sigFigs) // Adding extra zeros to the end if necessary.
             {
-                if(count + 1 < original.length() && original.charAt(count) == '.' && original.charAt(count + 1) >= '5')
+                if(count + 1 < original.length() && original.charAt(count + 1) >= '5')
                 {
                     numString = numString.substring(0, numString.length() - 1) + ((char)(original.charAt(count - 1) + 1));
                 }

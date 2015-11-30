@@ -263,8 +263,7 @@ public class LimitingReactant extends Function
 	
 	public Equation saveEquation()
 	{
-		Equation equation = reader.saveEquation();
-		return equation;
+		return reader.saveEquation();
 	}
 	
 	public void useSaved(Equation equation)
