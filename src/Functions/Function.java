@@ -135,40 +135,62 @@ public abstract class Function {
 	 * because I didn't feel like doing that and might do it later. 
 	 * pre: sigFigs >= 1
 	 */
-    public static String withSigFigs(double num, int sigFigs)
-    {
-        int count = 0;
-        boolean neg = num < 0;
-        num = Math.abs(num);
-        String original = "" + num, numString = "";
-        int index;
-        if(num > 1)
-        {
-            for(; count < original.length() && original.charAt(count) != '.' && count < sigFigs; numString += original.charAt(count), count++);
-            if(count == sigFigs) // Adding extra zeros to the end if necessary.
-            {
-                if(count + 1 < original.length() && original.charAt(count + 1) >= '5')
-                {
-                    numString = numString.substring(0, numString.length() - 1) + ((char)(original.charAt(count - 1) + 1));
-                }
-                for(int i = count; i < original.length() && original.charAt(i) != '.'; i++, numString += '0');
-                if(neg) numString = '-' + numString;
-                return numString;
-            }
-            index = count + 1;
-        }
-        else 
-        {
-            numString = "0";
-            index = 2;
-        }
-        numString += '.';
-        for(; index < original.length() && count < sigFigs;  numString += original.charAt(index), count++, index++);
-        if(count == sigFigs && index < original.length() && original.charAt(index) >= '5') 
-        {
-            numString = numString.substring(0, numString.length() - 1) + ((char)(original.charAt(index - 1) + 1));
-        }
-        for(; count < sigFigs; count++, numString += '0');
-        return numString;
-    }
+	public static String withSigFigs(double num, int sigFigs)
+	{
+		int count = 0;
+		boolean neg = num < 0;
+		num = Math.abs(num);
+		String original = "" + num, numString = "";
+		int index;
+		if(num > 1)
+		{
+			for(; count < original.length() && original.charAt(count) != '.' && count < sigFigs; numString += original.charAt(count), count++);
+			if(count == sigFigs) // Adding extra zeros to the end if necessary.
+			{
+				if((count + 1 < original.length() && original.charAt(count) == '.' && original.charAt(count + 1) >= '5') || 
+						(count < original.length() && original.charAt(count) >= '5'))
+				{
+					numString = roundUp(numString);
+				}
+				for(int i = count; i < original.length() && original.charAt(i) != '.'; i++, numString += '0');
+				if(neg) numString = '-' + numString;
+				return numString;
+			}
+			index = count + 1;
+		}
+		else 
+		{
+			numString = "0";
+			index = 2;
+		}
+		numString += '.';
+		for(; index < original.length() && count < sigFigs;  numString += original.charAt(index), count++, index++);
+		if(count == sigFigs && index < original.length() && original.charAt(index) >= '5') 
+		{
+			numString = roundUp(numString);
+		}
+		for(; count < sigFigs; count++, numString += '0');
+		return numString;
+	}
+
+	private static String roundUp(String toRound)
+	{
+		String resultant = toRound.substring(0, toRound.length() - 1) + (char)(toRound.charAt(toRound.length() - 1) + 1);
+		for(int index = resultant.length() - 1; index > 0 && resultant.charAt(index) == ':'; index--)
+		{
+			if(resultant.charAt(index - 1) == '.')
+			{
+				resultant = resultant.substring(0, index - 2) + ((char)(resultant.charAt(index - 2) + 1)) + ".0";
+				index--;
+			}
+			else resultant = resultant.substring(0, index - 1) + (char)(resultant.charAt(index - 1) + 1) + '0';
+		}
+		if(resultant.charAt(0) == ':') 
+		{
+			resultant = "100" + resultant.substring(1);
+			if(resultant.charAt(resultant.length() - 1) > '5') resultant = roundUp(resultant.substring(0, resultant.length() - 1));
+			else resultant = resultant.substring(0, resultant.length() - 1);
+		}
+		return resultant;
+	}
 }

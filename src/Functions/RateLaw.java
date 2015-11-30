@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -287,7 +286,7 @@ public class RateLaw extends Function
 				for(; Math.abs(Math.pow(toOrder, testOrder) - rateRatio) < .01; testOrder++);
 				orders[order] = testOrder;
 			}
-			String rateLaw = "<html>Rate = ";
+			String rateLaw = "<html>Rate = k";
 			double withoutK = 1;
 			int sumOrders = 0;
 			for(int index = 0; index < orders.length; index ++)
@@ -303,7 +302,7 @@ public class RateLaw extends Function
 			law.setText(rateLaw);
 			double k = Double.parseDouble(rows.get(0).getRate()) / withoutK;
 			String unit = "L<sup>" + (sumOrders - 1) + "</sup>/mol<sup>" + (sumOrders - 1) + "</sup>*s";
-			kValue.setText("<html>" + Function.withSigFigs(k, sigFigs) + unit + "<html>");
+			kValue.setText("<html>k = " + Function.withSigFigs(k, sigFigs) + unit + "<html>");
 			resultPanel.setVisible(true);
 		}
 	}
@@ -336,14 +335,5 @@ public class RateLaw extends Function
 	public void useSaved(Equation equation)
 	{
 		reader.useSaved(equation);
-	}
-	
-	public static void main(String[] args)
-	{
-		JFrame frame = new JFrame();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		RateLaw law = new RateLaw();
-		frame.add(law.getPanel());
-		frame.setVisible(true);
 	}
 }
