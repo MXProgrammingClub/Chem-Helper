@@ -69,35 +69,30 @@ public class EquationReader extends Function
 	{
 		public void actionPerformed(ActionEvent arg0) 
 		{
-			String input = enter.getText();//, output, output2;
-			JLabel label = new JLabel();
+			String input = enter.getText();
 			try
 			{
 				Equation resultant = Equation.parseEquation(input);
+
 				equation = resultant;
-				//output = "<html>" + resultant + "</html>";
-				boolean balanced = resultant.balance();
-				/*if(balanced)
+				result.setIcon(latex(equation).getIcon());
+				boolean isBalanced = resultant.balance();
+
+				if(isBalanced)
 				{
-					output2 = "<html>After balancing: " + resultant + "</html>";
-					equation = resultant;
+					balanced.setIcon(latex(resultant).getIcon());
 				}
 				else
 				{
-					output2 = "This equation could not be balanced";
-				}*/
-				label = latex(resultant);
-				
+					balanced.setText("This equation could not be balanced");
+				}
 			}
 			catch(Throwable e)
 			{
 				if(!(e instanceof InvalidInputException)) e = new InvalidInputException(-1);
-				//output = e.getMessage();
-				//output2 = "";
+				String output = e.getMessage();
+				result.setText(output);
 			}
-			//result.setText(output);
-			result.setIcon(label.getIcon());
-			//balanced.setText(output2);
 		}
 	}
 	
