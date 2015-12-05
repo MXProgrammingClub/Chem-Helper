@@ -114,6 +114,38 @@ public class Effusion extends Function
 					double results = Math.sqrt(mass1 / mass2);
 					result.setText("Ratio of rates = " + results);
 				}
+				else if(!comp1.getText().equals("") && !ratio.getText().equals("") && formula1.isSelected())
+				{
+					double mass1 = Compound.parseCompound(comp1.getText()).getMolarMass();
+					double rate = Double.parseDouble(ratio.getText());
+					double results = mass1 / (rate * rate);
+					result.setText("Mass of compound 2 = " + results);
+				}
+				else if(!comp1.getText().equals("") && !ratio.getText().equals("") && !formula1.isSelected())
+				{
+					double mass1 = Double.parseDouble(comp1.getText());
+					double rate = Double.parseDouble(ratio.getText());
+					double results = mass1 / (rate * rate);
+					result.setText("Mass of compound 2 = " + results);
+				}
+				else if(!comp2.getText().equals("") && !ratio.getText().equals("") && formula2.isSelected())
+				{
+					double mass2 = Compound.parseCompound(comp2.getText()).getMolarMass();
+					double rate = Double.parseDouble(ratio.getText());
+					double results = (rate * rate) / mass2;
+					result.setText("Mass of compound 1 = " + results);
+				}
+				else if(!comp2.getText().equals("") && !ratio.getText().equals("") && !formula2.isSelected())
+				{
+					double mass2 = Double.parseDouble(comp2.getText());
+					double rate = Double.parseDouble(ratio.getText());
+					double results = (rate * rate) / mass2;
+					result.setText("Mass of compound 1 = " + results);
+				}
+				else
+				{
+					result.setText("You did not enter enough information to make any calulations.");
+				}
 			}
 			catch(Throwable e)
 			{
