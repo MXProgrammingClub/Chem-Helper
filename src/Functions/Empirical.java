@@ -17,7 +17,7 @@ import Elements.*;
 
 public class Empirical extends Function
 {
-	private static final double ERROR = 101, REST = -1, TOLERANCE = .01;
+	private static final double ERROR_VALUE = 101, REST = -1, TOLERANCE = .05;
 	private static final String ENTER_REST = "R";
 	private static final int MAX_TEST = 20;
 	
@@ -123,12 +123,12 @@ public class Empirical extends Function
 			try
 			{
 				double percent = Double.parseDouble(text);
-				if(percent >= 100 || percent <= 0) return ERROR;
+				if(percent >= 100 || percent <= 0) return ERROR_VALUE;
 				else return percent;
 			}
 			catch(Throwable e)
 			{
-				return ERROR;
+				return ERROR_VALUE;
 			}
 		}
 	}
@@ -145,7 +145,7 @@ public class Empirical extends Function
 			{
 				values[index] = rows.get(index).getPercent();
 				elements[index] = rows.get(index).getElement();
-				if(values[index] == ERROR)
+				if(values[index] == ERROR_VALUE)
 				{
 					error.setText("Value entered outside range of 0 to 100.");
 					return;
@@ -218,7 +218,7 @@ public class Empirical extends Function
 			}
 			formula += "     Molar Mass: " + eMass + "</html>";
 			empirical.setText(formula);
-			if(mass.getText() != null)
+			if(!mass.getText().trim().equals(""))
 			{
 				try
 				{
@@ -236,7 +236,7 @@ public class Empirical extends Function
 				}
 				catch(Throwable e)
 				{
-					error.setText("There was a problem with your input.");
+					molecular.setText("Insuffiecient information to calculate molecular formula.");
 				}
 			}
 		}
