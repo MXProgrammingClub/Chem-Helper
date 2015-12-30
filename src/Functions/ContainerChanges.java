@@ -131,8 +131,8 @@ public class ContainerChanges extends Function
 				double value = Double.parseDouble(before.getText());
 				if(name.equals(values[0]))
 				{
-					if(beforeUnit.getSelectedIndex() == 1) value = IdealGas.atmTotorr(value);
-					else if(beforeUnit.getSelectedIndex() == 2) value = IdealGas.atmTokPa(value);
+					if(beforeUnit.getSelectedIndex() == 1) value = IdealGas.torrToatm(value);
+					else if(beforeUnit.getSelectedIndex() == 2) value = IdealGas.kPaToatm(value);
 				}
 				else if(name.equals(values[3]))
 				{
@@ -153,7 +153,16 @@ public class ContainerChanges extends Function
 			try
 			{
 				double value = Double.parseDouble(after.getText());
-				//Deal with units
+				if(name.equals(values[0]))
+				{
+					if(afterUnit.getSelectedIndex() == 1) value = IdealGas.torrToatm(value);
+					else if(afterUnit.getSelectedIndex() == 2) value = IdealGas.kPaToatm(value);
+				}
+				else if(name.equals(values[3]))
+				{
+					if(afterUnit.getSelectedIndex() == 1) value = IdealGas.celsiusToKelvin(value);
+					else if(afterUnit.getSelectedIndex() == 2) value = IdealGas.fahrenheitToKelvin(value);
+				}
 				if(!isLeft) value = 1 / value;
 				return value;
 			}
@@ -225,8 +234,8 @@ public class ContainerChanges extends Function
 				}
 				else if(unknown.getName().equals(values[3]))
 				{
-					if(unknown.getDesiredUnit().equals(IdealGas.UNITS[0][1])) resultant = IdealGas.kelvinToCelsius(resultant);
-					else if(unknown.getDesiredUnit().equals(IdealGas.UNITS[0][2])) resultant = IdealGas.kelvinToFahrenheit(resultant);
+					if(unknown.getDesiredUnit().equals(IdealGas.UNITS[3][1])) resultant = IdealGas.kelvinToCelsius(resultant);
+					else if(unknown.getDesiredUnit().equals(IdealGas.UNITS[3][2])) resultant = IdealGas.kelvinToFahrenheit(resultant);
 				}
 				result.setText(unknown.getName() + " = " + resultant + " " + unknown.getDesiredUnit());
 			}
