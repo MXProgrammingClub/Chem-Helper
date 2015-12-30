@@ -14,9 +14,9 @@ import javax.swing.JTextField;
 public class IdealGas extends Function 
 {
 	public static final double R = .0821, STANDARD_PRESSURE = 1, STANDARD_TEMPERATURE = 273.15;
-
+	public static final String[][] UNITS = {{"atm", "torr", "kPa"}, {"L"}, {"mol"}, {"K", "\u2103", "\u2109"}};
+	
 	private static final int UNKNOWN_VALUE = -500, ERROR_VALUE = -501; // Values which none of the entered values could be.
-	private static final String[][] UNITS = {{"atm", "torr", "kPa"}, {"L"}, {"mol"}, {"K", "\u2103", "\u2109"}};
 	private static final String[] VALUES = {"      Pressure", "          Volume", "             Moles", "Temperature"};
 	
 	private JPanel panel;
@@ -143,13 +143,13 @@ public class IdealGas extends Function
 				{
 					if(index == 0)
 					{
-						if(values[index].getUnit() == 1) quantities[index] *= 0.00131579;
-						else quantities[index] *= 0.00986923;
+						if(values[index].getUnit() == 1) quantities[index] = torrToatm(quantities[index]);
+						else quantities[index] = kPaToatm(quantities[index]);
 					}
 					else if(index == 3)
 					{
-						if(values[index].getUnit() == 1) quantities[index] += 273.15;
-						else quantities[index] = (quantities[index] + 459.67) * 5 / 9;
+						if(values[index].getUnit() == 1) quantities[index] = celsiusToKelvin(quantities[index]);
+						else quantities[index] = fahrenheitToKelvin(quantities[index]);
 					}
 				}
 			}
@@ -159,8 +159,8 @@ public class IdealGas extends Function
 			if(blank == 0)
 			{
 				unknown = R * quantities[2] * quantities[3] / quantities[1];
-				if(unitNum == 1) unknown /= 0.00131579;
-				else if(unitNum == 2) unknown /= 0.00986923;
+				if(unitNum == 1) unknown = atmTotorr(unknown);
+				else if(unitNum == 2) unknown = atmTokPa(unknown);
 				
 			}
 			else if(blank == 1) unknown = R * quantities[2] * quantities[3] / quantities[0];
@@ -168,11 +168,51 @@ public class IdealGas extends Function
 			else
 			{
 				unknown = quantities[0] * quantities[1] / (R * quantities[2]);
-				if(unitNum == 1) unknown -= 273.15;
-				else if(unitNum == 2) unknown = (unknown - 459.67) * 9 / 5;
+				if(unitNum == 1) unknown = kelvinToCelsius(unknown);
+				else if(unitNum == 2) unknown = kelvinToFahrenheit(unknown);
 			}
 			result.setText(VALUES[blank].trim() + " = " + unknown + " " + unit);
 		}
+	}
+	
+	public static double fahrenheitToKelvin(double fahrenheit)
+	{
+		return (fahrenheit + 459.67) * 5 / 9;
+	}
+	
+	public static double kelvinToFahrenheit(double kelvin)
+	{
+		return (kelvin  * 9 / 5) - 459.67;
+	}
+	
+	public static double celsiusToKelvin(double celsius)
+	{
+		return celsius + 273.15;
+	}
+	
+	public static double kelvinToCelsius(double kelvin)
+	{
+		return kelvin - 273.15;
+	}
+	
+	public static double torrToatm(double torr)
+	{
+		return torr * 0.00131579;
+	}
+	
+	public static double atmTotorr(double atm)
+	{
+		return atm / 0.00131579;
+	}
+	
+	public static double kPaToatm(double kPa)
+	{
+		return kPa * 0.00986923;
+	}
+	
+	public static double atmTokPa(double atm)
+	{
+		return atm / 0.00986923;
 	}
 	
 	public JPanel getPanel()
