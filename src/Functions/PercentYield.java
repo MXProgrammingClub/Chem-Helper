@@ -10,6 +10,7 @@ import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
@@ -29,6 +30,7 @@ public class PercentYield extends Function
 	private JRadioButton mole1, gram1, mole2, gram2;
 	private Compound reactant, product;
 	private Box box1, box2;
+	private double toSave;
 	
 	public PercentYield()
 	{
@@ -73,6 +75,8 @@ public class PercentYield extends Function
 		panel = new JPanel();
 		panel.add(box1);
 		panel.add(stoicPanel);
+		
+		toSave = 0;
 	}
 	
 	private class AcceptEquation implements ActionListener
@@ -208,6 +212,7 @@ public class PercentYield extends Function
 				String steps = "<html>First, find the theoretical yield-<br>" + Stoichiometry.calculate(reactant, amount, gram1.isSelected(), product, 
 						gram2.isSelected());
 				double expected = Double.parseDouble(steps.substring(steps.lastIndexOf("=") + 1, steps.lastIndexOf("g"))), percent = 100 * actual / expected;
+				toSave = percent;
 				String percentString = Function.withSigFigs(percent, sigFigs) + "%", unit = "mol";
 				if(gram2.isSelected()) unit = "g";
 				steps += "<br>Then divide the actual yield by the theoretical to find the percent yield:<br>\u2003" + actual + " " + unit + " / " + expected + 
@@ -251,6 +256,25 @@ public class PercentYield extends Function
 	public void useSaved(Equation equation)
 	{
 		reader.useSaved(equation);
+	}
+	
+	public boolean number()
+	{
+		return true;
+	}
+	
+	public double saveNumber()
+	{
+		return toSave;
+	}
+	
+	public void useSavedNumber(double num)
+	{
+		String[] options = {"Reactant", "Product"};
+		Object selected = JOptionPane.showInputDialog(panel, "Choose where to use the number", "Choose Number", JOptionPane.PLAIN_MESSAGE, 
+				null, options, "Reactant");
+		if(selected.equals("Reactant") && enterR != null) enterR.setText("" + num);
+		else if(selected.equals("Product") && enterP != null) enterP.setText("" + num);
 	}
 	
 	public JPanel getPanel()

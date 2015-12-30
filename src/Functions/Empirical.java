@@ -10,10 +10,11 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import Elements.*;
+import Elements.Element;
 
 public class Empirical extends Function
 {
@@ -26,7 +27,9 @@ public class Empirical extends Function
 	private ArrayList<TableRow> rows;
 	private Box rowBox;
 	private JButton calculate, addRow;
-	private JLabel error, empirical, molecular;
+	private JLabel error, empirical, mass1, molecular, mass2;
+	
+	private Double[] toSave;
 	
 	public Empirical()
 	{
@@ -70,7 +73,9 @@ public class Empirical extends Function
 		
 		error = new JLabel();
 		empirical = new JLabel();
+		mass1 = new JLabel();
 		molecular = new JLabel();
+		mass2 = new JLabel();
 		
 		moles = new JTextField(5);
 		mass = new JTextField(5);
@@ -91,10 +96,14 @@ public class Empirical extends Function
 		box.add(calculate);
 		box.add(error);
 		box.add(empirical);
+		box.add(mass1);
 		box.add(molecular);
+		box.add(mass2);
 		
 		panel = new JPanel();
 		panel.add(box);
+		
+		toSave = new Double[2];
 	}
 	
 	private class TableRow extends JPanel
@@ -216,8 +225,10 @@ public class Empirical extends Function
 				formula += elements[index].getSymbol();
 				if(coefficients[index] != 1) formula += "<sub>" + coefficients[index] + "</sub>";
 			}
-			formula += "     Molar Mass: " + eMass + "</html>";
+			formula += "<html";
 			empirical.setText(formula);
+			mass1.setText("Molar Mass = " + eMass + " g/mol");
+			toSave[0] = eMass;
 			if(!mass.getText().trim().equals(""))
 			{
 				try
@@ -231,8 +242,10 @@ public class Empirical extends Function
 						formula += elements[index].getSymbol();
 						if(coefficients[index] != 1) formula += "<sub>" + coefficients[index] + "</sub>";
 					}
-					formula += "     Molar Mass: " + mMass + "</html>";
+					formula += "</html>";
 					molecular.setText(formula);
+					mass2.setText("Molar Mass = " + mMass + " g/mol");
+					toSave[1] = mMass;
 				}
 				catch(Throwable e)
 				{
@@ -252,6 +265,42 @@ public class Empirical extends Function
 			int round = (int)num;
 			if(round + .5 > num) return round;
 			else return round + 1;
+		}
+	}
+	
+	public boolean number()
+	{
+		return true;
+	}
+	
+	public double saveNumber()
+	{
+		if(toSave[0] != 0)
+		{
+			if(toSave[1] != 0)
+			{
+				Object selected = JOptionPane.showInputDialog(panel, "Choose which number to save", "Choose Number", JOptionPane.PLAIN_MESSAGE, 
+						null, toSave, toSave[0]);
+				if(selected instanceof Double)
+				{
+					if(selected.equals(toSave[0])) return toSave[0];
+					return toSave[1];
+				}
+			}
+			return toSave[0];
+		}
+		return 0;
+	}
+	
+	public void useSavedNumber(double num)
+	{
+		String[] options = {"Moles", "Mass"};
+		Object selected = JOptionPane.showInputDialog(panel, "Choose where to use the number", "Choose Number", JOptionPane.PLAIN_MESSAGE, 
+				null, options, "Moles");
+		if(selected instanceof String)
+		{
+			if(selected.equals("Moles")) moles.setText("" + num);
+			else mass.setText("" + num);
 		}
 	}
 	

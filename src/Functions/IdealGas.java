@@ -8,6 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -18,12 +19,14 @@ public class IdealGas extends Function
 	
 	private static final int UNKNOWN_VALUE = -500, ERROR_VALUE = -501; // Values which none of the entered values could be.
 	private static final String[] VALUES = {"      Pressure", "          Volume", "             Moles", "Temperature"};
-	
+	private static final String[] NO_SPACES = {"Pressure", "Volume", "Moles", "Temperature"};
 	private JPanel panel;
 	private JButton calculate;
 	private JCheckBox stp;
 	private EnterField[] values;
 	private JLabel result;
+	
+	private double save;
 	
 	public IdealGas()
 	{
@@ -57,7 +60,6 @@ public class IdealGas extends Function
 		calculate.addActionListener(new Calculate());
 		
 		result = new JLabel();
-		
 		Box box = Box.createVerticalBox();
 		box.add(new JLabel("Enter known information and select desired unit for the unknown quantity."));
 		box.add(valueBox);
@@ -67,6 +69,8 @@ public class IdealGas extends Function
 		
 		panel = new JPanel();
 		panel.add(box);
+		
+		save = 0;
 	}
 	
 	private class EnterField extends JPanel
@@ -172,6 +176,31 @@ public class IdealGas extends Function
 				else if(unitNum == 2) unknown = kelvinToFahrenheit(unknown);
 			}
 			result.setText(VALUES[blank].trim() + " = " + unknown + " " + unit);
+			save = unknown;
+		}
+	}
+	
+	public boolean number()
+	{
+		return true;
+	}
+	
+	public double saveNumber()
+	{
+		return save;
+	}
+	
+	public void useSavedNumber(double num)
+	{
+		String selected = (String)JOptionPane.showInputDialog(panel, "Choose where to use the number", "Choose Number", JOptionPane.PLAIN_MESSAGE, 
+				null, NO_SPACES, "Pressure");
+		for(int index = 0; index < NO_SPACES.length; index++)
+		{
+			if(NO_SPACES[index].equals(selected))
+			{
+				values[index].setAmount(num);
+				break;
+			}
 		}
 	}
 	

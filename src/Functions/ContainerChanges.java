@@ -12,6 +12,7 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -25,7 +26,8 @@ public class ContainerChanges extends Function
 	private ArrayList<EnterField> information;
 	private JButton calculate, reset;
 	private JLabel result;
-
+	private double toSave;
+	
 	public ContainerChanges()
 	{
 		super("Change of Container");
@@ -64,6 +66,8 @@ public class ContainerChanges extends Function
 		
 		panel = new JPanel();
 		panel.add(box);
+		
+		toSave = 0;
 	}
 	
 	private class ClickLabel
@@ -146,6 +150,16 @@ public class ContainerChanges extends Function
 			{
 				return ERROR_VALUE;
 			}
+		}
+		
+		public void setBeforeValue(double value)
+		{
+			before.setText("" + value);
+		}
+		
+		public void setAfterValue(double value)
+		{
+			after.setText("" + value);
 		}
 		
 		public double getAfterValue()
@@ -237,9 +251,41 @@ public class ContainerChanges extends Function
 					if(unknown.getDesiredUnit().equals(IdealGas.UNITS[3][1])) resultant = IdealGas.kelvinToCelsius(resultant);
 					else if(unknown.getDesiredUnit().equals(IdealGas.UNITS[3][2])) resultant = IdealGas.kelvinToFahrenheit(resultant);
 				}
+				toSave = resultant;
 				result.setText(unknown.getName() + " = " + resultant + " " + unknown.getDesiredUnit());
 			}
 			else result.setText("Leave a value blank.");
+		}
+	}
+	
+	public boolean number()
+	{
+		return true;
+	}
+	
+	public double saveNumber()
+	{
+		return toSave;
+	}
+	
+	public void useSavedNumber(double num)
+	{
+		if(information.size() != 0)
+		{
+			ArrayList<String> options = new ArrayList<String>();
+			for(EnterField field: information)
+			{
+				options.add(field.getName() + " - before");
+				options.add(field.getName() + " - after");
+			}
+			Object selected = JOptionPane.showInputDialog(panel, "Choose where to use the number", "Choose Number", JOptionPane.PLAIN_MESSAGE, 
+					null, options.toArray(), options.get(0));
+			if(selected instanceof String)
+			{
+				int index = options.indexOf(selected);
+				if(index % 2 == 0) information.get(index / 2).setBeforeValue(num); 
+				else information.get(index / 2).setAfterValue(num); 
+			}
 		}
 	}
 	

@@ -8,6 +8,7 @@ import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
@@ -25,6 +26,7 @@ public class LimitingReactant extends Function
 	private Box box1, box2;
 	private ArrayList<EnterPanel> compounds;
 	private JRadioButton grams, moles;
+	private double toSave;
 	
 	public LimitingReactant()
 	{
@@ -64,6 +66,7 @@ public class LimitingReactant extends Function
 		panel.add(box1);
 		panel.add(stoicPanel);
 		
+		toSave = 0;
 	}
 	
 	private class AcceptEquation implements ActionListener
@@ -113,6 +116,11 @@ public class LimitingReactant extends Function
 		public Compound getCompound()
 		{
 			return compound;
+		}
+		
+		public void setAmount(double newAmount)
+		{
+			enter.setText("" + newAmount);
 		}
 		
 		public String getAmount()
@@ -231,6 +239,7 @@ public class LimitingReactant extends Function
 						steps += amount + " g";
 						unit = "g";
 					}
+					toSave = amount;
 					String amountString = Function.withSigFigs(amount, sigFigs) + " " + unit;
 					resultBox.add(new JLabel("<html>Amount " + compoundString + " remaining: " + amountString));
 				}
@@ -269,6 +278,34 @@ public class LimitingReactant extends Function
 	public void useSaved(Equation equation)
 	{
 		reader.useSaved(equation);
+	}
+	
+	public boolean number()
+	{
+		return true;
+	}
+	
+	public double saveNumber()
+	{
+		return toSave;
+	}
+	
+	public void useSavedNumber(double num)
+	{
+		ArrayList<String> compoundString = new ArrayList<String>();
+		for(int index = 0; index < compounds.size(); index++)
+		{
+			Compound c = compounds.get(index).getCompound();
+			String string = c.toString();
+			if(c.getNum() != 1) compoundString.add(string.substring(1));
+			else compoundString.add(string);
+		}
+		Object selected = JOptionPane.showInputDialog(panel, "Choose where to use the number", "Choose Number", JOptionPane.PLAIN_MESSAGE, 
+				null, compoundString.toArray(), compoundString.get(0));
+		if(selected instanceof String)
+		{
+			compounds.get(compoundString.indexOf((String)selected)).setAmount(num);
+		}
 	}
 	
 	public JPanel getPanel()

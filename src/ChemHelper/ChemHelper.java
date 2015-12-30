@@ -11,12 +11,14 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import Equation.Equation;
@@ -26,12 +28,13 @@ import Functions.*;
 
 public class ChemHelper extends JFrame{		//Primary GUI class
 	Container pane;
-	JPanel last, buttons;
+	JPanel last, buttons, eqButtons, numButtons;
 	JMenuBar menu;
 	Function[] funcs;
-	JButton save, use;
+	JButton saveEq, useEq, saveNum, useNum;
 	Equation equation;
 	Function lastFunc;
+	ArrayList<Double> savedNumbers;
 	
 	public ChemHelper(){
 		pane = getContentPane();
@@ -43,13 +46,28 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 		last = funcs[0].getPanel();
 		lastFunc = funcs[0];
 		
-		save = new JButton("Save equation");
-		save.addActionListener(new EquationSaver());
-		use = new JButton("Use saved");
-		use.addActionListener(new EquationSaver());
+		saveEq = new JButton("Save equation");
+		saveEq.addActionListener(new EquationSaver());
+		useEq = new JButton("Use saved");
+		useEq.addActionListener(new EquationSaver());
+		eqButtons = new JPanel();
+		eqButtons.add(saveEq);
+		eqButtons.add(useEq);
+		eqButtons.setVisible(false);
+		
+		saveNum = new JButton("Save numbers");
+		saveNum.addActionListener(new NumberSaver());
+		useNum = new JButton("Use saved");
+		useNum.addActionListener(new NumberSaver());
+		numButtons = new JPanel();
+		numButtons.add(saveNum);
+		numButtons.add(useNum);
+		numButtons.setVisible(false);
+		savedNumbers = new ArrayList<Double>();
+		
 		buttons = new JPanel();
-		buttons.add(save);
-		buttons.add(use);
+		buttons.add(eqButtons);
+		buttons.add(numButtons);
 		pane.add(buttons, BorderLayout.SOUTH);
 		buttons.setVisible(false);
 		equation = null;
@@ -118,8 +136,11 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 				lastFunc = ((FunctionMenuItem)arg0.getSource()).getFunction();
 				JPanel func = lastFunc.getPanel();
 				pane.add(func, BorderLayout.WEST);
-				if(lastFunc.equation()) buttons.setVisible(true);
-				else buttons.setVisible(false);
+				if(lastFunc.equation()) eqButtons.setVisible(true);
+				else eqButtons.setVisible(false);
+				if(lastFunc.number()) numButtons.setVisible(true);
+				else numButtons.setVisible(false);
+				buttons.setVisible(true);
 				pane.repaint();
 				pack();
 				last = func;
@@ -138,6 +159,24 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 			else
 			{
 				if(equation != null) lastFunc.useSaved(equation);
+			}
+		}
+	}
+
+	private class NumberSaver implements ActionListener
+	{
+		public void actionPerformed(ActionEvent arg0)
+		{
+			if(((JButton)arg0.getSource()).getText().equals("Save numbers"))
+			{
+				double toSave = lastFunc.saveNumber();
+				if(toSave != 0 && savedNumbers.indexOf(toSave) == -1) savedNumbers.add(toSave);
+			}
+			else
+			{
+				Object selected = JOptionPane.showInputDialog(pane, "Choose a number to use", "Choose Number", JOptionPane.PLAIN_MESSAGE, 
+						null, savedNumbers.toArray(), new Double(0));
+				if(selected instanceof Double) lastFunc.useSavedNumber((Double)selected);
 			}
 		}
 	}

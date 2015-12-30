@@ -3,10 +3,12 @@ package Functions;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -19,6 +21,7 @@ public class CompoundStoichiometry extends Function
 	private JTextField compound, mass, massUnit, moles;
 	private JButton calculate;
 	private JLabel result;
+	private double toSave;
 	
 	public CompoundStoichiometry()
 	{
@@ -64,6 +67,8 @@ public class CompoundStoichiometry extends Function
 		
 		panel = new JPanel();
 		panel.add(box);
+		
+		toSave = 0;
 	}
 	
 	private class Calculate implements ActionListener
@@ -156,10 +161,47 @@ public class CompoundStoichiometry extends Function
 				}
 			}
 			
-			if(molarMass == blank) result.setText("Molar mass = " + (givenMass / givenMoles) + " g/mol");
-			else if(givenMass == blank) result.setText("Mass = " + (molarMass * givenMoles) + " g");
-			else result.setText("Moles = " + (givenMass / molarMass) + " mol");
+			if(molarMass == blank)
+			{
+				toSave = givenMass / givenMoles;
+				result.setText("Molar mass = " + toSave + " g/mol");
+			}
+			else if(givenMass == blank)
+			{
+				toSave = molarMass * givenMoles;
+				result.setText("Mass = " + toSave + " g");
+			}
+			else
+			{
+				toSave = givenMass / molarMass;
+				result.setText("Moles = " + toSave + " mol");
+			}
 		}
+	}
+	
+	public boolean number()
+	{
+		return true;
+	}
+	
+	public double saveNumber()
+	{
+		return toSave;
+	}
+	
+	public void useSavedNumber(double num)
+	{
+		ArrayList<String> options = new ArrayList<String>();
+		options.add("Mass");
+		options.add("Moles");
+		Object selected = JOptionPane.showInputDialog(panel, "Choose where to use the number", "Choose Number", JOptionPane.PLAIN_MESSAGE, 
+				null, options.toArray(), "Mass");
+		if(selected instanceof String)
+		{
+			if(options.indexOf(selected) == 0) mass.setText("" + num);
+			else mass.setText("" + num);
+		}
+		
 	}
 	
 	public JPanel getPanel()

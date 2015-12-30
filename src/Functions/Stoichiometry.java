@@ -30,6 +30,7 @@ public class Stoichiometry extends Function
 	private JRadioButton mole1, gram1, mole2, gram2;
 	private Compound known, unknown;
 	private Box box1, box2;
+	private double toSave;
 	
 	public Stoichiometry()
 	{
@@ -72,6 +73,8 @@ public class Stoichiometry extends Function
 		panel = new JPanel();
 		panel.add(box1);
 		panel.add(stoicPanel);
+		
+		toSave = 0;
 	}
 
 	public JPanel getPanel() 
@@ -185,8 +188,18 @@ public class Stoichiometry extends Function
 				int sigFigs = Function.sigFigs(enter.getText());
 				String calculated = "<html>" + calculate(known, Double.parseDouble(enter.getText()), gram1.isSelected(), unknown, gram2.isSelected()) + 
 						"</html>";
-				resultString = Function.withSigFigs(Double.parseDouble(calculated.substring(calculated.lastIndexOf("=") + 1, calculated.lastIndexOf("g"))), 
-						sigFigs);
+				try
+				{
+					resultString = Function.withSigFigs(Double.parseDouble(calculated.substring(calculated.lastIndexOf("=") + 1, 
+							calculated.lastIndexOf("g"))), sigFigs);
+					toSave = Double.parseDouble(calculated.substring(calculated.lastIndexOf("=") + 1, calculated.lastIndexOf("g")));
+				}
+				catch(Throwable t)
+				{
+					resultString = Function.withSigFigs(Double.parseDouble(calculated.substring(calculated.lastIndexOf("=") + 1, 
+							calculated.lastIndexOf("mol"))), sigFigs);
+					toSave = Double.parseDouble(calculated.substring(calculated.lastIndexOf("=") + 1, calculated.lastIndexOf("mol")));
+				}
 				if(gram2.isSelected()) resultString += " g";
 				else resultString += " mol";
 				stepsPanel.add(new JLabel(calculated));
@@ -256,5 +269,20 @@ public class Stoichiometry extends Function
 	public void useSaved(Equation equation)
 	{
 		reader.useSaved(equation);
+	}
+	
+	public boolean number()
+	{
+		return true;
+	}
+	
+	public double saveNumber()
+	{
+		return toSave;
+	}
+	
+	public void useSavedNumber(double num)
+	{
+		if(enter != null) enter.setText("" + num);
 	}
 }

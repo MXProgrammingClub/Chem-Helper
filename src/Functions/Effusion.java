@@ -7,6 +7,7 @@ import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
@@ -22,6 +23,7 @@ public class Effusion extends Function
 	private JRadioButton formula1, formula2, mass1, mass2;
 	private JButton calculate;
 	private Box box;
+	private double toSave;
 	
 	public Effusion()
 	{
@@ -78,6 +80,8 @@ public class Effusion extends Function
 		
 		panel = new JPanel();
 		panel.add(box);
+		
+		toSave = 0;
 	}
 	
 	private class Calculate implements ActionListener
@@ -86,66 +90,69 @@ public class Effusion extends Function
 		{
 			try
 			{
+				double results;
 				if(!comp1.getText().equals("") && !comp2.getText().equals("") && formula1.isSelected() && formula2.isSelected())
 				{
 					Compound c1 = Compound.parseCompound(comp1.getText());
 					Compound c2 = Compound.parseCompound(comp2.getText());
-					double results = Math.sqrt(c1.getMolarMass() / c2.getMolarMass());
+					results = Math.sqrt(c1.getMolarMass() / c2.getMolarMass());
 					result.setText("Ratio of rates = " + results);
 				}
 				else if(!comp1.getText().equals("") && !comp2.getText().equals("") && formula1.isSelected() && !formula2.isSelected())
 				{
 					Compound c1 = Compound.parseCompound(comp1.getText());
 					double mass2 = Double.parseDouble(comp2.getText());
-					double results = Math.sqrt(c1.getMolarMass() / mass2);
+					results = Math.sqrt(c1.getMolarMass() / mass2);
 					result.setText("Ratio of rates = " + results);
 				}
 				else if(!comp1.getText().equals("") && !comp2.getText().equals("") && !formula1.isSelected() && formula2.isSelected())
 				{
 					double mass1 = Double.parseDouble(comp1.getText());
 					Compound c2 = Compound.parseCompound(comp2.getText());
-					double results = Math.sqrt(mass1 / c2.getMolarMass());
+					results = Math.sqrt(mass1 / c2.getMolarMass());
 					result.setText("Ratio of rates = " + results);
 				}
 				else if(!comp1.getText().equals("") && !comp2.getText().equals("") && !formula1.isSelected() && !formula2.isSelected())
 				{
 					double mass1 = Double.parseDouble(comp1.getText());
 					double mass2 = Double.parseDouble(comp2.getText());
-					double results = Math.sqrt(mass1 / mass2);
+					results = Math.sqrt(mass1 / mass2);
 					result.setText("Ratio of rates = " + results);
 				}
 				else if(!comp1.getText().equals("") && !ratio.getText().equals("") && formula1.isSelected())
 				{
 					double mass1 = Compound.parseCompound(comp1.getText()).getMolarMass();
 					double rate = Double.parseDouble(ratio.getText());
-					double results = mass1 / (rate * rate);
+					results = mass1 / (rate * rate);
 					result.setText("Mass of compound 2 = " + results);
 				}
 				else if(!comp1.getText().equals("") && !ratio.getText().equals("") && !formula1.isSelected())
 				{
 					double mass1 = Double.parseDouble(comp1.getText());
 					double rate = Double.parseDouble(ratio.getText());
-					double results = mass1 / (rate * rate);
+					results = mass1 / (rate * rate);
 					result.setText("Mass of compound 2 = " + results);
 				}
 				else if(!comp2.getText().equals("") && !ratio.getText().equals("") && formula2.isSelected())
 				{
 					double mass2 = Compound.parseCompound(comp2.getText()).getMolarMass();
 					double rate = Double.parseDouble(ratio.getText());
-					double results = (rate * rate) / mass2;
+					results = (rate * rate) / mass2;
 					result.setText("Mass of compound 1 = " + results);
 				}
 				else if(!comp2.getText().equals("") && !ratio.getText().equals("") && !formula2.isSelected())
 				{
 					double mass2 = Double.parseDouble(comp2.getText());
 					double rate = Double.parseDouble(ratio.getText());
-					double results = (rate * rate) / mass2;
+					results = (rate * rate) / mass2;
 					result.setText("Mass of compound 1 = " + results);
 				}
 				else
 				{
 					result.setText("You did not enter enough information to make any calulations.");
+					return;
 				}
+				toSave = results;
 			}
 			catch(Throwable e)
 			{
@@ -155,6 +162,37 @@ public class Effusion extends Function
 				}
 				result.setText(((InvalidInputException)e).getMessage());
 			}
+		}
+	}
+	
+	public boolean number()
+	{
+		return true;
+	}
+	
+	public double saveNumber()
+	{
+		return toSave;
+	}
+	
+	public void useSavedNumber(double num)
+	{
+		String[] options = {"Compound 1", "Compound 2", "Ratio"};
+		Object selected = JOptionPane.showInputDialog(panel, "Choose where to use the number", "Choose Number", JOptionPane.PLAIN_MESSAGE, 
+				null, options, "Compound 1");
+		if(selected instanceof String)
+		{
+			if(selected.equals("Compound 1"))
+			{
+				comp1.setText("" + num);
+				mass1.setSelected(true);
+			}
+			else if(selected.equals("Compound 2"))
+			{
+				comp2.setText("" + num);
+				mass2.setSelected(true);
+			}
+			else ratio.setText("" + num);
 		}
 	}
 	
