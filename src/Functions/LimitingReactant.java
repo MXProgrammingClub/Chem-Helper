@@ -31,6 +31,14 @@ public class LimitingReactant extends Function
 	public LimitingReactant()
 	{
 		super("Limiting Reactant");
+		toSave = 0;
+		
+		panel = new JPanel();
+		setPanel();
+	}
+	
+	private void setPanel()
+	{
 		reader = new EquationReader();
 		acceptEquation = new JButton("Use equation");
 		acceptEquation.addActionListener(new AcceptEquation());
@@ -57,16 +65,13 @@ public class LimitingReactant extends Function
 		resultPanel = new JPanel();
 		resultPanel.setVisible(false);
 		box2.add(resultPanel);
-		box2.add(stepsPanel);
 		stoicPanel = new JPanel();
 		stoicPanel.add(box2);
 		stoicPanel.setVisible(false);
 		
-		panel = new JPanel();
 		panel.add(box1);
 		panel.add(stoicPanel);
-		
-		toSave = 0;
+		panel.add(stepsPanel);
 	}
 	
 	private class AcceptEquation implements ActionListener
@@ -257,10 +262,9 @@ public class LimitingReactant extends Function
 	{
 		public void actionPerformed(ActionEvent arg0)
 		{
-			LimitingReactant newPanel = new LimitingReactant();
 			panel.setVisible(false);
 			panel.removeAll();
-			panel.add(newPanel.getPanel());
+			setPanel();
 			panel.setVisible(true);
 		}
 	}

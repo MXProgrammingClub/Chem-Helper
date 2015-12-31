@@ -25,7 +25,7 @@ public class Stoichiometry extends Function
 	private JButton acceptEquation, calculate, reset;
 	private Equation equation;
 	private JLabel errorMessage, instructions;
-	private boolean given = true, done = false;
+	private boolean given, done;
 	private JTextField enter;
 	private JRadioButton mole1, gram1, mole2, gram2;
 	private Compound known, unknown;
@@ -35,6 +35,14 @@ public class Stoichiometry extends Function
 	public Stoichiometry()
 	{
 		super("Ideal Stoichiometry");
+		toSave = 0;
+		
+		panel = new JPanel();
+		setPanel();
+	}
+
+	private void setPanel()
+	{
 		reader = new EquationReader();
 		acceptEquation = new JButton("Use equation");
 		acceptEquation.addActionListener(new AcceptEquation());
@@ -65,18 +73,18 @@ public class Stoichiometry extends Function
 		box2.add(knownPanel);
 		box2.add(unknownPanel);
 		box2.add(resultPanel);
-		box2.add(stepsPanel);
 		stoicPanel = new JPanel();
 		stoicPanel.add(box2);
 		stoicPanel.setVisible(false);
 		
-		panel = new JPanel();
+		given = true;
+		done = false;
+		
 		panel.add(box1);
 		panel.add(stoicPanel);
-		
-		toSave = 0;
+		panel.add(stepsPanel);
 	}
-
+	
 	public JPanel getPanel() 
 	{
 		return panel;
@@ -219,10 +227,9 @@ public class Stoichiometry extends Function
 	{
 		public void actionPerformed(ActionEvent arg0)
 		{
-			Stoichiometry newPanel = new Stoichiometry();
 			panel.setVisible(false);
 			panel.removeAll();
-			panel.add(newPanel.getPanel());
+			setPanel();
 			panel.setVisible(true);
 		}
 	}

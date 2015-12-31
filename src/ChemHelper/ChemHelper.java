@@ -154,7 +154,7 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 		{
 			if(((JButton)arg0.getSource()).getText().equals("Save equation"))
 			{
-				equation = lastFunc.saveEquation();
+				if(lastFunc.saveEquation() != null) equation = lastFunc.saveEquation();
 			}
 			else
 			{

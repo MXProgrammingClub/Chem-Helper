@@ -199,7 +199,7 @@ public class CompoundStoichiometry extends Function
 		if(selected instanceof String)
 		{
 			if(options.indexOf(selected) == 0) mass.setText("" + num);
-			else mass.setText("" + num);
+			else moles.setText("" + num);
 		}
 		
 	}

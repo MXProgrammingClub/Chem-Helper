@@ -49,9 +49,12 @@ public class ContainerChanges extends Function
 					public void actionPerformed(ActionEvent arg0)
 					{
 						panel.setVisible(false);
-						panel.removeAll();
-						ContainerChanges c = new ContainerChanges();
-						panel.add(c.getPanel());
+						options.removeAll();
+						information.removeAll(information);
+						for(int index = 0; index < values.length; index++) new ClickLabel(index);
+						valueBox.removeAll();
+						calculate.setVisible(false);
+						result.setText("");
 						panel.setVisible(true);
 					}
 				});

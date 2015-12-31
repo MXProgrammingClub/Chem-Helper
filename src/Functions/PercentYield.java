@@ -25,7 +25,7 @@ public class PercentYield extends Function
 	private JButton acceptEquation, calculate, reset;
 	private Equation equation;
 	private JLabel errorMessage, instructions;
-	private boolean onReactant = true, done = false;
+	private boolean onReactant, done;
 	private JTextField enterR, enterP;
 	private JRadioButton mole1, gram1, mole2, gram2;
 	private Compound reactant, product;
@@ -35,6 +35,14 @@ public class PercentYield extends Function
 	public PercentYield()
 	{
 		super("Percent Yield");
+		toSave = 0;
+		
+		panel = new JPanel();
+		setPanel();
+	}
+	
+	private void setPanel()
+	{
 		reader = new EquationReader();
 		acceptEquation = new JButton("Use equation");
 		acceptEquation.addActionListener(new AcceptEquation());
@@ -66,17 +74,17 @@ public class PercentYield extends Function
 		box2.add(reactantPanel);
 		box2.add(productPanel);
 		box2.add(resultPanel);
-		box2.add(stepsPanel);
 		box2.add(reset);
 		stoicPanel = new JPanel();
 		stoicPanel.add(box2);
 		stoicPanel.setVisible(false);
 		
-		panel = new JPanel();
 		panel.add(box1);
 		panel.add(stoicPanel);
+		panel.add(stepsPanel);
 		
-		toSave = 0;
+		onReactant = true;
+		done = false;
 	}
 	
 	private class AcceptEquation implements ActionListener
