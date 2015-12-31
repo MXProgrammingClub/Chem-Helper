@@ -64,7 +64,7 @@ public abstract class Function {
 		
 		for (ArrayList<Compound> side: sides) {
 			for (Compound comp: side) {
-				str += comp.getNum();
+				if(comp.getNum() != 1) str += comp.getNum();
 				
 				for (Ions ion: comp.getIons()) {
 					
@@ -89,7 +89,7 @@ public abstract class Function {
 			
 			str+= "\\textbf{\\longrightarrow}";
 		}
-		str = str.substring(0,str.length()-26);//remove last rightarrow
+		str = str.substring(0,str.length()-25);//remove last rightarrow
 		
 		
 		

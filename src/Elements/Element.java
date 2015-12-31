@@ -216,4 +216,12 @@ public class Element
     	else if(group == 18) return "Noble Gas";
     	else return "None";
     }
+    
+    /*
+     * Returns true if the elements have the same name.
+     */
+    public boolean equals(Element e)
+    {
+    	 return e.getName().equals(name);
+    }
 }

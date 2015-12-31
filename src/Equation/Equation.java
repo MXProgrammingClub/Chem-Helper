@@ -95,7 +95,7 @@ public class Equation
 			c.setNum(coefficients[index]);
 			index++;
 		}
-		return true;
+		return isBalanced();
 	}
 	
 	//creates equations for each ion

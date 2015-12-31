@@ -11,7 +11,7 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -34,7 +34,7 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 	JButton saveEq, useEq, saveNum, useNum;
 	Equation equation;
 	Function lastFunc;
-	ArrayList<Double> savedNumbers;
+	LinkedList<Double> savedNumbers;
 	
 	public ChemHelper(){
 		pane = getContentPane();
@@ -63,7 +63,7 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 		numButtons.add(saveNum);
 		numButtons.add(useNum);
 		numButtons.setVisible(false);
-		savedNumbers = new ArrayList<Double>();
+		savedNumbers = new LinkedList<Double>();
 		
 		buttons = new JPanel();
 		buttons.add(eqButtons);
@@ -80,7 +80,7 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 
 	private void createMenu()
 	{
-		funcs = new Function[12];
+		funcs = new Function[14];
 		funcs[0] = new PeriodicTable();
 		funcs[1] = new ElectronShell();
 		funcs[2] = new CompoundStoichiometry();
@@ -92,10 +92,12 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 		funcs[8] = new Effusion();
 		funcs[9] = new EquationReader();
 		funcs[10] = new RateLaw();
-		funcs[11] = new Empirical();
+		funcs[11] = new Combustion();
+		funcs[12] = new Empirical();
+		funcs[13] = new Density();
 		
-		String[] menuNames = {"General Information", "Stoichiometry", "Gas Laws", "Other"}; //Lists the names of the different menus on the menu bar.
-		int[] menuCutoffs = {0, 2, 6, 9}; //Specifies the indices where a new menu would start from funcs
+		String[] menuNames = {"General Information", "Stoichiometry", "Gas Laws", "Reactions", "Other"}; //Lists the names of the different menus on the menu bar.
+		int[] menuCutoffs = {0, 2, 6, 9, 12}; //Specifies the indices where a new menu would start from funcs
 		
 		menu = new JMenuBar();
 		for(int menuNum = 0; menuNum < menuCutoffs.length; menuNum++)
@@ -170,7 +172,7 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 			if(((JButton)arg0.getSource()).getText().equals("Save numbers"))
 			{
 				double toSave = lastFunc.saveNumber();
-				if(toSave != 0 && savedNumbers.indexOf(toSave) == -1) savedNumbers.add(toSave);
+				if(toSave != 0 && savedNumbers.indexOf(toSave) == -1) savedNumbers.addFirst(toSave);
 			}
 			else
 			{

@@ -8,6 +8,7 @@
 
 package ChemHelper;
 
+import Elements.Element;
 
 public class Compound 
 {
@@ -126,17 +127,39 @@ public class Compound
 		return instruction;
 	}
 	
+	public boolean contains(Element e)
+	{
+		for(Ions thisOne: ions)
+		{
+			if(thisOne.getElement().equals(e)) return true;
+		}
+		return false;
+	}
+	
+	public int indexOf(Element e)
+	{
+		for(int index = 0; index < ions.length; index++)
+		{
+			if(ions[index].getElement().equals(e)) return index;
+		}
+		return -1;
+	}
+	
 	public static Compound parseCompound(String cmp) throws InvalidInputException
 	{
-		int stateIndex = cmp.indexOf("("), num;
+		int stateIndex = cmp.indexOf("("), num = 0;
 		try
 		{
-			num = Integer.parseInt(cmp.substring(0, 1));
-			cmp = cmp.substring(1);
+			while(true)
+			{
+				int next = Integer.parseInt(cmp.substring(0, 1));
+				num = num * 10 + next;
+				cmp = cmp.substring(1);
+			}
 		}
 		catch(NumberFormatException e)
 		{
-			num = 1;
+			if(num == 0) num = 1;
 		}
 		String state = "";
 		if(stateIndex != -1)
