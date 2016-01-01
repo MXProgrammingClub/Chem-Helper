@@ -26,7 +26,7 @@ public class Empirical extends Function
 	private JTextField moles, mass;
 	private ArrayList<TableRow> rows;
 	private Box rowBox;
-	private JButton calculate, addRow;
+	private JButton calculate, addRow, reset;
 	private JLabel error, empirical, mass1, molecular, mass2;
 	
 	private Double[] toSave;
@@ -35,6 +35,12 @@ public class Empirical extends Function
 	{
 		super("Empirical Formula");
 		
+		rows = new ArrayList<TableRow>();
+		for(int num = 0; num < 2; num++)
+		{
+			TableRow row = new TableRow();
+			rows.add(row);
+		}
 		JLabel element = new JLabel(" Element  ");
 		element.setBorder(BorderFactory.createLineBorder(Color.black));
 		JLabel percent = new JLabel(" Percent  ");
@@ -42,16 +48,10 @@ public class Empirical extends Function
 		JPanel topRow = new JPanel();
 		topRow.add(element);
 		topRow.add(percent);
-		
+		topRow.add(new JLabel("              "));
 		rowBox = Box.createVerticalBox();
 		rowBox.add(topRow);
-		rows = new ArrayList<TableRow>();
-		for(int num = 0; num < 2; num++)
-		{
-			TableRow row = new TableRow();
-			rowBox.add(row);
-			rows.add(row);
-		}
+		for(TableRow row: rows) rowBox.add(row);
 		
 		addRow = new JButton("Add row");
 		addRow.addActionListener(new ActionListener()
@@ -95,8 +95,10 @@ public class Empirical extends Function
 		box.add(Box.createVerticalStrut(10));
 		box.add(calculate);
 		box.add(error);
+		box.add(Box.createVerticalStrut(10));
 		box.add(empirical);
 		box.add(mass1);
+		box.add(Box.createVerticalStrut(10));
 		box.add(molecular);
 		box.add(mass2);
 		
@@ -109,6 +111,7 @@ public class Empirical extends Function
 	private class TableRow extends JPanel
 	{
 		private JTextField element, percent;
+		RemoveButton remove;
 		
 		public TableRow()
 		{
@@ -116,8 +119,10 @@ public class Empirical extends Function
 			element.setBorder(BorderFactory.createLineBorder(Color.black));
 			percent = new JTextField(5);
 			percent.setBorder(BorderFactory.createLineBorder(Color.black));
+			remove = new RemoveButton(this);
 			add(element);
 			add(percent);
+			add(remove);
 		}
 		
 		public Element getElement()
@@ -139,6 +144,27 @@ public class Empirical extends Function
 			{
 				return ERROR_VALUE;
 			}
+		}
+	}
+	
+	private class RemoveButton extends JButton
+	{
+		private TableRow row;
+		
+		public RemoveButton(TableRow row)
+		{
+			super("X");
+			this.row = row;
+			addActionListener(new ActionListener()
+					{
+						public void actionPerformed(ActionEvent arg0)
+						{
+							panel.setVisible(false);
+							rows.remove(row);
+							rowBox.remove(row);
+							panel.setVisible(true);
+						}
+					});
 		}
 	}
 	

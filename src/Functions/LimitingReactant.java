@@ -301,8 +301,8 @@ public class LimitingReactant extends Function
 		{
 			Compound c = compounds.get(index).getCompound();
 			String string = c.toString();
-			if(c.getNum() != 1) compoundString.add(string.substring(1));
-			else compoundString.add(string);
+			if(c.getNum() != 1) compoundString.add("<html>" + string.substring(1) + "</html>");
+			else compoundString.add("<html>" + string + "</html>");
 		}
 		Object selected = JOptionPane.showInputDialog(panel, "Choose where to use the number", "Choose Number", JOptionPane.PLAIN_MESSAGE, 
 				null, compoundString.toArray(), compoundString.get(0));

@@ -31,7 +31,12 @@ public class RateLaw extends Function
 	public RateLaw()
 	{
 		super("Rate Law");
-		
+		panel = new JPanel();
+		setPanel();
+	}
+	
+	private void setPanel()
+	{
 		reader = new EquationReader();
 		useEquation = new JButton("Use equation");
 		useEquation.addActionListener(new UseEquation());
@@ -76,7 +81,6 @@ public class RateLaw extends Function
 		box3.add(tablePanel);
 		box3.add(resultPanel);
 		
-		panel = new JPanel();
 		panel.add(equationPanel);
 		panel.add(box3);
 	}
@@ -311,9 +315,10 @@ public class RateLaw extends Function
 	{
 		public void actionPerformed(ActionEvent arg0)
 		{
+			panel.setVisible(false);
 			panel.removeAll();
-			RateLaw newRate = new RateLaw();
-			panel.add(newRate.getPanel());
+			setPanel();
+			panel.setVisible(true);
 		}
 	}
 	
