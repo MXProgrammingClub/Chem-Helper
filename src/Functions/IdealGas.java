@@ -1,5 +1,11 @@
+//Edited 01/02/2016 Luke Giacalone--Added a gridbaglayout to the enterfield class to make it look better
+//PS Julia you should add comments to everything
+
 package Functions;
 
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -18,7 +24,7 @@ public class IdealGas extends Function
 	public static final String[][] UNITS = {{"atm", "torr", "kPa"}, {"L"}, {"mol"}, {"K", "\u2103", "\u2109"}};
 	
 	private static final int UNKNOWN_VALUE = -500, ERROR_VALUE = -501; // Values which none of the entered values could be.
-	private static final String[] VALUES = {"      Pressure", "          Volume", "             Moles", "Temperature"};
+	private static final String[] VALUES = {"Pressure", "Volume", "Moles", "Temperature"};
 	private static final String[] NO_SPACES = {"Pressure", "Volume", "Moles", "Temperature"};
 	private JPanel panel;
 	private JButton calculate;
@@ -84,15 +90,26 @@ public class IdealGas extends Function
 		
 		public EnterField(String name, String[] units)
 		{
+			GridBagConstraints c = new GridBagConstraints();
+			this.setLayout(new GridBagLayout());
+			
+			this.setSize(300, this.getHeight());
 			this.name = name;
 			amount = new JTextField(5);
 			unit = new JComboBox<String>(units);
 			unit.setEditable(true);
 			unit.setSelectedIndex(0);
+			unit.setPreferredSize(new Dimension(70, 28));
 			
-			add(new JLabel(name));
-			add(amount);
-			add(unit);
+			JLabel label = new JLabel(name);
+			label.setPreferredSize(new Dimension(80, 16));
+			
+			c.gridx = 0;
+			add(label, c);
+			c.gridx = 1;
+			add(amount, c);
+			c.gridx = 2;
+			add(unit, c);
 		}
 		
 		public void setAmount(double newAmount)
