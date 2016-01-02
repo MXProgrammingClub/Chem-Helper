@@ -22,7 +22,7 @@ public class Effusion extends Function
 	private JTextField comp1, comp2, ratio;
 	private JRadioButton formula1, formula2, mass1, mass2;
 	private JButton calculate;
-	private Box box;
+	private Box box, steps;
 	private double toSave;
 	
 	public Effusion()
@@ -78,8 +78,11 @@ public class Effusion extends Function
 		box.add(Box.createVerticalStrut(10));
 		box.add(result);
 		
+		steps = Box.createVerticalBox();
+		
 		panel = new JPanel();
 		panel.add(box);
+		panel.add(steps);
 		
 		toSave = 0;
 	}
@@ -88,80 +91,132 @@ public class Effusion extends Function
 	{
 		public void actionPerformed(ActionEvent arg0)
 		{
-			try
+			steps.removeAll();
+			steps.setVisible(false);
+			double mass1 = 0, mass2 = 0, rate = 0;
+			
+			if(!comp1.getText().trim().equals(""))
 			{
-				double results;
-				if(!comp1.getText().equals("") && !comp2.getText().equals("") && formula1.isSelected() && formula2.isSelected())
+				if(formula1.isSelected())
 				{
-					Compound c1 = Compound.parseCompound(comp1.getText());
-					Compound c2 = Compound.parseCompound(comp2.getText());
-					results = Math.sqrt(c1.getMolarMass() / c2.getMolarMass());
-					result.setText("Ratio of rates = " + results);
+					Compound c1;
+					try 
+					{
+						c1 = Compound.parseCompound(comp1.getText());
+					} 
+					catch (InvalidInputException e) 
+					{
+						if(!(e instanceof InvalidInputException)) e = new InvalidInputException(-1);
+						result.setText(e.getMessage());
+						return;
+					}
+					String m1 = c1.getMolarMassSteps();
+					mass1 = Double.parseDouble(m1.substring(m1.lastIndexOf('=') + 1, m1.lastIndexOf('g')));
+					steps.add(new JLabel("<html>Find molar mass of " + c1 + ":</html>"));
+					steps.add(new JLabel(m1));
 				}
-				else if(!comp1.getText().equals("") && !comp2.getText().equals("") && formula1.isSelected() && !formula2.isSelected())
+				else 
 				{
-					Compound c1 = Compound.parseCompound(comp1.getText());
-					double mass2 = Double.parseDouble(comp2.getText());
-					results = Math.sqrt(c1.getMolarMass() / mass2);
-					result.setText("Ratio of rates = " + results);
+					try
+					{
+						mass1 = Double.parseDouble(comp1.getText());
+					}
+					catch(Throwable e)
+					{
+						result.setText("Invalid input for compound 1.");
+						return;
+					}
 				}
-				else if(!comp1.getText().equals("") && !comp2.getText().equals("") && !formula1.isSelected() && formula2.isSelected())
-				{
-					double mass1 = Double.parseDouble(comp1.getText());
-					Compound c2 = Compound.parseCompound(comp2.getText());
-					results = Math.sqrt(mass1 / c2.getMolarMass());
-					result.setText("Ratio of rates = " + results);
+				steps.add(new JLabel("Mass 1 = " + mass1));
+				steps.add(Box.createVerticalStrut(5));
+			}
+			
+			if(!comp2.getText().trim().equals(""))
+			{
+				if(formula2.isSelected())
+				{	
+					Compound c2;
+					try
+					{
+						c2 = Compound.parseCompound(comp2.getText());
+					} 
+					catch (Throwable e) 
+					{
+						if(!(e instanceof InvalidInputException)) e = new InvalidInputException(-1);
+						result.setText(e.getMessage());
+						return;
+					}
+					String m2 = c2.getMolarMassSteps();
+					mass2 = Double.parseDouble(m2.substring(m2.lastIndexOf('=') + 1, m2.lastIndexOf('g')));
+					steps.add(new JLabel("<html>Find molar mass of " + c2 + ":</html>"));
+					steps.add(new JLabel(m2));
 				}
-				else if(!comp1.getText().equals("") && !comp2.getText().equals("") && !formula1.isSelected() && !formula2.isSelected())
+				else 
 				{
-					double mass1 = Double.parseDouble(comp1.getText());
-					double mass2 = Double.parseDouble(comp2.getText());
-					results = Math.sqrt(mass1 / mass2);
-					result.setText("Ratio of rates = " + results);
+					try
+					{
+						mass2 = Double.parseDouble(comp2.getText());
+					}
+					catch(Throwable e)
+					{
+						result.setText("Invalid input for compound 2.");
+						return;
+					}
 				}
-				else if(!comp1.getText().equals("") && !ratio.getText().equals("") && formula1.isSelected())
+				steps.add(new JLabel("Mass 2 = " + mass2));
+				steps.add(Box.createVerticalStrut(5));
+			}
+			else if(mass1 == 0)
+			{
+				result.setText("Leave only one field blank.");
+				return;
+			}
+			
+			if(!ratio.getText().trim().equals(""))
+			{
+				try
 				{
-					double mass1 = Compound.parseCompound(comp1.getText()).getMolarMass();
-					double rate = Double.parseDouble(ratio.getText());
-					results = mass1 / (rate * rate);
-					result.setText("Mass of compound 2 = " + results);
+					rate = Double.parseDouble(ratio.getText());
 				}
-				else if(!comp1.getText().equals("") && !ratio.getText().equals("") && !formula1.isSelected())
+				catch(Throwable e)
 				{
-					double mass1 = Double.parseDouble(comp1.getText());
-					double rate = Double.parseDouble(ratio.getText());
-					results = mass1 / (rate * rate);
-					result.setText("Mass of compound 2 = " + results);
-				}
-				else if(!comp2.getText().equals("") && !ratio.getText().equals("") && formula2.isSelected())
-				{
-					double mass2 = Compound.parseCompound(comp2.getText()).getMolarMass();
-					double rate = Double.parseDouble(ratio.getText());
-					results = (rate * rate) / mass2;
-					result.setText("Mass of compound 1 = " + results);
-				}
-				else if(!comp2.getText().equals("") && !ratio.getText().equals("") && !formula2.isSelected())
-				{
-					double mass2 = Double.parseDouble(comp2.getText());
-					double rate = Double.parseDouble(ratio.getText());
-					results = (rate * rate) / mass2;
-					result.setText("Mass of compound 1 = " + results);
-				}
-				else
-				{
-					result.setText("You did not enter enough information to make any calulations.");
+					result.setText("Invalid input for ratio.");
 					return;
 				}
-				toSave = results;
+				steps.add(new JLabel("Ratio of rates = " + rate));
+				steps.add(Box.createVerticalStrut(10));
 			}
-			catch(Throwable e)
+			else if(mass1 == 0 || mass2 == 0)
 			{
-				if(!(e instanceof InvalidInputException))
-				{
-					e = new InvalidInputException(-1);
-				}
-				result.setText(((InvalidInputException)e).getMessage());
+				result.setText("Leave only one field blank.");
+				return;
 			}
+			else steps.add(Box.createVerticalStrut(5));
+			
+			if(rate == 0)
+			{
+				toSave = Math.sqrt(mass1 / mass2);
+				steps.add(new JLabel("Ratio of rates = \u221A(" + mass1 + " / " + mass2 + ") = " + toSave));
+				result.setText("Ratio of rates = " + toSave);
+			}
+			else if(mass2 == 0)
+			{
+				toSave = mass1 / (rate * rate);
+				steps.add(new JLabel("<html>Mass 2 = " + mass1 + " / " + rate + "<sup>2</sup> = " + toSave + "</html>"));
+				result.setText("Mass of compound 2 = " + toSave);
+			}
+			else if(mass1 == 0)
+			{
+				toSave = (rate * rate) / mass2;
+				steps.add(new JLabel("<html>Mass 1 = " + rate + "<sup>2</sup> / " + mass2 + " = " + toSave + "</html>"));
+				result.setText("Mass of compound 1 = " + toSave);
+			}
+			else
+			{
+				result.setText("You did not enter enough information to make any calulations.");
+				return;
+			}
+			steps.setVisible(true);
 		}
 	}
 	
