@@ -25,8 +25,8 @@ public class Empirical extends Function
 	private JPanel panel, amounts;
 	private JTextField moles, mass;
 	private ArrayList<TableRow> rows;
-	private Box rowBox;
-	private JButton calculate, addRow, reset;
+	private Box rowBox, steps;
+	private JButton calculate, addRow;
 	private JLabel error, empirical, mass1, molecular, mass2;
 	
 	private Double[] toSave;
@@ -102,8 +102,11 @@ public class Empirical extends Function
 		box.add(molecular);
 		box.add(mass2);
 		
+		steps = Box.createVerticalBox();
+		
 		panel = new JPanel();
 		panel.add(box);
+		panel.add(steps);
 		
 		toSave = new Double[2];
 	}
@@ -148,13 +151,10 @@ public class Empirical extends Function
 	}
 	
 	private class RemoveButton extends JButton
-	{
-		private TableRow row;
-		
+	{	
 		public RemoveButton(TableRow row)
 		{
 			super("X");
-			this.row = row;
 			addActionListener(new ActionListener()
 					{
 						public void actionPerformed(ActionEvent arg0)
@@ -172,9 +172,16 @@ public class Empirical extends Function
 	{
 		public void actionPerformed(ActionEvent arg0)
 		{
+			steps.removeAll();
+			steps.setVisible(false);
+			empirical.setText("");
+			mass1.setText("");
+			molecular.setText("");
+			mass2.setText("");
 			double[] values = new double[rows.size()];
 			Element[] elements = new Element[rows.size()];
 			int rest = -1;
+			JLabel restLabel = new JLabel();
 			double sum = 0;
 			for(int index = 0; index < rows.size(); index++)
 			{
@@ -198,9 +205,11 @@ public class Empirical extends Function
 						return;
 					}
 					rest = index;
+					steps.add(restLabel);
 				}
 				else
 				{
+					steps.add(new JLabel(elements[index] + ": " + values[index]));
 					sum += values[index];
 				}
 			}
@@ -212,22 +221,34 @@ public class Empirical extends Function
 					return;
 				}
 				values[rest] = 100 - sum;
+				restLabel.setText(elements[rest] + ": " + values[rest]);
 			}
 			else if(Math.abs(100 - sum) > TOLERANCE)
 			{
 				error.setText("Your percent values do not add up to 100.");
 				return;
 			}
+			steps.add(Box.createVerticalStrut(5));
+			
+			steps.add(new JLabel("Divide each amount by the element's molar mass:"));
 			double min = Double.MAX_VALUE;
 			for(int index = 0; index < values.length; index++)
 			{
-				values[index] /= elements[index].getMolarMass();
+				double molarMass = elements[index].getMolarMass();
+				String step = elements[index] + ": " + values[index] + " / " + molarMass + " = ";
+				values[index] /= molarMass;
+				steps.add(new JLabel(step + values[index]));
 				if(min > values[index]) min = values[index];
 			}
+			steps.add(Box.createVerticalStrut(5));
+			
+			steps.add(new JLabel("Divide each value by the smallest, " + min + ":"));
 			int times = 1;
 			for(int index = 0; index < values.length; index++)
 			{
+				String step = elements[index] + ": " + values[index] + " / " + min + " = ";
 				values[index] /= min;
+				steps.add(new JLabel(step + values[index]));
 				if(!closeToInt(values[index]))
 				{
 					for(int num = 2; num < MAX_TEST; num++)
@@ -241,26 +262,50 @@ public class Empirical extends Function
 					}
 				}
 			}
+			steps.add(Box.createVerticalStrut(5));
+			
+			steps.add(new JLabel("Multiply by " + times + " to round to an integer value:"));
 			int[] coefficients = new int[values.length];
-			String formula = "<html>Empirical formula: ";
+			String formula = "<html>Empirical formula: ", massString = "<html>Calculate molar mass by multiplying each element's mass by its coefficient:<br>";
 			double eMass = 0;
 			for(int index = 0; index < coefficients.length; index++)
 			{
+				String step = elements[index] + ": " + values[index] + " * " + times + " \u2248 ";
 				coefficients[index] = round(values[index] * times);
-				eMass += coefficients[index] * elements[index].getMolarMass();
+				steps.add(new JLabel(step + coefficients[index]));
+				double mass = elements[index].getMolarMass();
+				eMass += coefficients[index] * mass;
+				massString += "(" + coefficients[index] + " * " + mass + ") + ";
 				formula += elements[index].getSymbol();
 				if(coefficients[index] != 1) formula += "<sub>" + coefficients[index] + "</sub>";
 			}
-			formula += "<html";
+			formula += "</html>";
 			empirical.setText(formula);
+			steps.add(new JLabel(formula));
+			steps.add(new JLabel(massString.substring(0, massString.length() - 2) + "= " + eMass));
 			mass1.setText("Molar Mass = " + eMass + " g/mol");
 			toSave[0] = eMass;
+			
 			if(!mass.getText().trim().equals(""))
 			{
 				try
 				{
-					double mMass = Double.parseDouble(mass.getText()) / Double.parseDouble(moles.getText());
+					double mole = Double.parseDouble(moles.getText()), mMass;
+					if(mole == 1)
+					{
+						mMass = Double.parseDouble(mass.getText());
+						steps.add(new JLabel("Molar mass = " + mMass + " g/mol"));
+					}
+					else
+					{
+						double massForMoles = Double.parseDouble(mass.getText());
+						String step = "Molar mass = " + massForMoles + " g / " + mole + " mol = ";
+						mMass = massForMoles / mole;
+						steps.add(new JLabel(step + mMass + " g/mol"));
+					}
 					int factor = round(mMass / eMass);
+					steps.add(new JLabel("Find ratio of masses and round to an integer: " + mMass + " / " + eMass + " \u2248 " + factor));
+					steps.add(new JLabel("Multiply all of the coefficients by " + factor + ":"));
 					formula = "<html>Molecular formula: ";
 					for(int index = 0; index < coefficients.length; index++)
 					{
@@ -270,6 +315,7 @@ public class Empirical extends Function
 					}
 					formula += "</html>";
 					molecular.setText(formula);
+					steps.add(new JLabel(formula));
 					mass2.setText("Molar Mass = " + mMass + " g/mol");
 					toSave[1] = mMass;
 				}
@@ -278,6 +324,7 @@ public class Empirical extends Function
 					molecular.setText("Insuffiecient information to calculate molecular formula.");
 				}
 			}
+			steps.setVisible(true);
 		}
 		
 		private boolean closeToInt(double num)

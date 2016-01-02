@@ -224,4 +224,9 @@ public class Element
     {
     	 return e.getName().equals(name);
     }
+    
+    public String toString()
+    {
+    	return name;
+    }
 }
