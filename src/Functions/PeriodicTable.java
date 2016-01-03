@@ -1,3 +1,10 @@
+/*
+ * Displays the periodic table and information about the currently selected element. Has static methods to search for elements in the table.
+ * 
+ * Authors: Luke Giacalone, Julia McClellan
+ * Version: 11/24/2015
+ */
+
 package Functions; 
 
 import java.awt.Color;

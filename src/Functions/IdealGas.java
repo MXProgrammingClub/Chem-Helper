@@ -1,5 +1,11 @@
-//Edited 01/02/2016 Luke Giacalone--Added a gridbaglayout to the enterfield class to make it look better
-//PS Julia you should add comments to everything
+/*
+ * Calculates missing value of PV=nRT when the others are given and shows calculation steps. Has static methods to perform conversions from kPa or torr to atm
+ * and from C or F to K.
+ * number() returns true- saves the latest calculated value, can use saved for P, V, n, or T.
+ * 
+ * Author: Julia McClellan
+ * Edited 01/02/2016 Luke Giacalone--Added a gridbaglayout to the enterfield class to make it look better
+ */
 
 package Functions;
 
@@ -97,7 +103,6 @@ public class IdealGas extends Function
 			this.name = name;
 			amount = new JTextField(5);
 			unit = new JComboBox<String>(units);
-			unit.setEditable(true);
 			unit.setSelectedIndex(0);
 			unit.setPreferredSize(new Dimension(70, 28));
 			

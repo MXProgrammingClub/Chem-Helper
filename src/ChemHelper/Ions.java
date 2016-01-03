@@ -1,3 +1,10 @@
+/*
+ * Represents a collection of ions of the same element and charge.
+ * 
+ * Author: Julia McClellan
+ * Version: 11/20/2015
+ */
+
 package ChemHelper;
 
 import Elements.Element;

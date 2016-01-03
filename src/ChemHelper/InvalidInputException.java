@@ -1,3 +1,10 @@
+/*
+ * An exception with some prewritten error messages.
+ * 
+ * Author: Julia McClellan
+ * Version: 11/18/2015
+ */
+
 package ChemHelper;
 
 public class InvalidInputException extends Throwable 

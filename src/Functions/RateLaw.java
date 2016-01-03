@@ -1,3 +1,11 @@
+/*
+ * Determines the rate law of a reaction given several trials.
+ * equation() returns true- has an EquationReader as an instance variable.
+ * 
+ * Author: Julia McClellan
+ * Version: 12/31/2015
+ */
+
 package Functions;
 
 import java.awt.Color;

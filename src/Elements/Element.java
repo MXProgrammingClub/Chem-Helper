@@ -1,13 +1,12 @@
-package Elements;
 /*
  * Represents an element of the periodic table. 
- * Current functions: finding the electron shell configuration, phase at room temperature, whether it is metal, non-metal, or metalloid
  * 
- * EDITED 11/22/2015 Luke Giacalone: added the rest of the family names
- * 
- * Author: Julia McClellan
- * Version: 11/22/2015
+ * Author: Julia McClellan, Luke Giacalone, Hyun Choi
+ * Version: 1/2/2015
  */
+
+package Elements;
+
 public class Element
 {
 	public final static int S = 2, P = 6, D = 10, F = 14; //The number of electrons in each part of the shell configuration

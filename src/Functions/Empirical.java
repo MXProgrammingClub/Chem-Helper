@@ -1,3 +1,12 @@
+/*
+ * Calculates the empirical formula of a compound given its percent composition with the option of finding the molecular formula if an amount of the compound
+ * is given. Shows calculation steps
+ * number() returns true- can save either the empirical or molecular molar mass, and use a saved number in moles or mass for molecular calculations.
+ * 
+ * Author: Julia McClellan
+ * Version: 1/2/2016
+ */
+
 package Functions;
 
 import java.awt.Color;

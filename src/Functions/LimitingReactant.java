@@ -1,3 +1,12 @@
+/*
+ * Given an equation and amounts of each reactant, determines limiting reactant and calculates leftover amounts of excess reactants. Shows calculation steps.
+ * equation() returns true- has an EquationReader as a parameter.
+ * number() returns true- can save any of calculated leftovers and use saved for any of the reactants.
+ * 
+ * Author: Julia McClellan
+ * Version: 1/2/2016
+ */
+
 package Functions;
 
 import java.awt.event.ActionEvent;
@@ -26,12 +35,12 @@ public class LimitingReactant extends Function
 	private Box box1, box2;
 	private ArrayList<EnterPanel> compounds;
 	private JRadioButton grams, moles;
-	private double toSave;
+	private ArrayList<Double> toSave;
 	
 	public LimitingReactant()
 	{
 		super("Limiting Reactant");
-		toSave = 0;
+		toSave = new ArrayList<Double>();
 		
 		panel = new JPanel();
 		setPanel();
@@ -72,6 +81,8 @@ public class LimitingReactant extends Function
 		panel.add(box1);
 		panel.add(stoicPanel);
 		panel.add(stepsPanel);
+		
+		toSave = new ArrayList<Double>();
 	}
 	
 	private class AcceptEquation implements ActionListener
@@ -244,7 +255,7 @@ public class LimitingReactant extends Function
 						steps += amount + " g";
 						unit = "g";
 					}
-					toSave = amount;
+					toSave.add(amount);
 					String amountString = Function.withSigFigs(amount, sigFigs) + " " + unit;
 					resultBox.add(new JLabel("<html>Amount " + compoundString + " remaining: " + amountString));
 				}
@@ -291,7 +302,11 @@ public class LimitingReactant extends Function
 	
 	public double saveNumber()
 	{
-		return toSave;
+		if(toSave.size() == 0) return 0;
+		Object selected = JOptionPane.showInputDialog(panel, "Choose which number to save", "Save Number", JOptionPane.PLAIN_MESSAGE, 
+				null, toSave.toArray(), toSave.get(0));
+		if(selected instanceof Double) return (Double)selected;
+		return 0;
 	}
 	
 	public void useSavedNumber(double num)

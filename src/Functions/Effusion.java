@@ -1,3 +1,12 @@
+/*
+ * Calculates the molar mass of one compound or the ratio of the rates with Graham's law of effusion. Can take either a formula or mass for the compounds.
+ * Shows calculation steps.
+ * number() returns true- saves latest calculated value and can used saved for a molar mass or ratio.
+ * 
+ * Author: Julia McClellan
+ * Version: 1/2/2016
+ */
+
 package Functions;
 
 import java.awt.event.ActionEvent;

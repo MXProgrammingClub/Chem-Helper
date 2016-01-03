@@ -2,7 +2,7 @@
  * The main class for the ChemHelper project
  * 
  * Author: Julia McClellan, Luke Giacalone, Ted Pyne -- MXCSClub
- * Version: 11/22/2015
+ * Version: 12/31/2015
  */
 
 package ChemHelper;

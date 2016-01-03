@@ -1,3 +1,10 @@
+/*
+ * Represents a chemical equation. 
+ * 
+ * Authors: Luke Giacalone, Julia McClellan, Hyun Choi
+ * Version: 12/31/2015
+ */
+
 package Equation;
 
 import java.util.ArrayList;

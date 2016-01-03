@@ -1,3 +1,11 @@
+/*
+ * Calculates something's density, mass, or volume given the other two.
+ * number() returns true- saves last calculated value and can use saved for density, mass, or volume.
+ * 
+ * Author: Julia McClellan
+ * Version: 12/31/2015
+ */
+
 package Functions;
 
 import java.awt.event.ActionEvent;

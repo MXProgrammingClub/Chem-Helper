@@ -1,3 +1,11 @@
+/*
+ * Parses and balances an equation. Displays equations with latex.
+ * equation() returns true- saves latest balanced equation and can display a saved one.
+ * 
+ * Author: Julia McClellan, Hyun Choi
+ * Version: 12/31/2015
+ */
+
 package Functions;
 
 import java.awt.GridLayout;

@@ -1,3 +1,10 @@
+/*
+ * Displays with latex an element's electron shell configuration given its atomic number, name, or symbol.
+ * 
+ * Authors: Julia McClellan, Luke Giacalone, Hyun Choi, Ted Pyne
+ * Version: 1/2/2016
+ */
+
 package Functions;
 
 import java.awt.BorderLayout;
@@ -34,7 +41,7 @@ public class ElectronShell extends Function
 	{
 		super("Electron Shell Configuration");
 		options = new ButtonGroup();
-		num = new JRadioButton("Atomic Number");
+		num = new JRadioButton("Atomic Number", true);
 		sym = new JRadioButton("Symbol");
 		name = new JRadioButton("Element Name"); 
 		options.add(num);

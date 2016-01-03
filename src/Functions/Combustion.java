@@ -1,3 +1,11 @@
+/*
+ * Takes a compound and creates a combustion equation with other reactant O.2 and products H.2/O and C/O.2.
+ * equation() returns true- can save latest produced equation, but can't use a saved equation.
+ * 
+ * Author: Julia McClellan
+ * Version: 12/31/2015
+ */
+
 package Functions;
 
 import java.awt.event.ActionEvent;

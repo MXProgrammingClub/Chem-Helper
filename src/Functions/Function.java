@@ -1,3 +1,12 @@
+/*
+ * An abstract class representing a function used in ChemHelper. Contains static methods for latex rendering equations, calculating significant figures, 
+ * and rounds numbers to a given number of significant figures. Provides default operations for equation and number saving, to be implemented by child
+ * classes that need them.
+ * 
+ * Authors: Ted Pyne, Hyun Choi, Julia McClellan
+ * Version: 12/30/2015
+ */
+
 package Functions;
 
 import java.awt.Component;

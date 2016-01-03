@@ -1,3 +1,12 @@
+/*
+ * Given two of the following, computes the third: a compound, moles of a compound, or mass of a compound. If The compound is left blank, its molar mass
+ * is calculated. Also performs unit conversions, which it shouldn't do but the unit conversion class has not yet been created. Shows calculation steps.
+ * number() returns true- saves last calculated value and can use saved in moles or mass.
+ * 
+ * Author: Julia McClellan
+ * Version: 1/1/2015
+ */
+
 package Functions;
 
 import java.awt.Component;

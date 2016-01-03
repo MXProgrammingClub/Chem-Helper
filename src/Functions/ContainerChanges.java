@@ -1,3 +1,11 @@
+/*
+ * For if aspects of a container (P, V, n, T) change and one resultant value is unknown.
+ * number() returns true- saves latest calculated value, uses saved for any field.
+ * 
+ * Author: Julia McClellan
+ * Version: 12/30/2015
+ */
+
 package Functions;
 
 import java.awt.Color;

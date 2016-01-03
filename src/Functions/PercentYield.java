@@ -1,3 +1,12 @@
+/*
+ * Given an amount of a product and of a reactant, calculates the percent yield of a reaction. Shows calculation steps.
+ * equation() returns true- has an EquationReader as an instance variable.
+ * number() returns true - saves most recently calculated value, uses saved as product or reactant amount.
+ * 
+ * Author: Julia McClellan
+ * Version: 12/30/2015
+ */
+
 package Functions;
 
 import java.awt.event.ActionEvent;

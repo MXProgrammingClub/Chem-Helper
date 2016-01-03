@@ -1,3 +1,12 @@
+/*
+ * Determines amount of one compound given the amount of another. Shows calculation steps.
+ * equation() returns true- has an EquationReader as an instance variable.
+ * number() returns true- saves most recently calculated value and uses saved as known amount.
+ * 
+ * Author: Julia McClellan
+ * Version: 12/30/2015
+ */
+
 package Functions;
 
 import java.awt.event.ActionEvent;
