@@ -1,9 +1,9 @@
 /*
- * Calculates something's density, mass, or volume given the other two.
+ * Calculates something's density, mass, or volume given the other two. Shows calculation steps.
  * number() returns true- saves last calculated value and can use saved for density, mass, or volume.
  * 
  * Author: Julia McClellan
- * Version: 12/31/2015
+ * Version: 1/3/2016
  */
 
 package Functions;
@@ -25,6 +25,7 @@ public class Density extends Function
 	private JButton calculate;
 	private JLabel result;
 	private double toSave;
+	private Box steps;
 	
 	private static final String prefixes = "GMkdcmunp";
 	private static final int[] powers = {9, 6, 3, -1, -2, -3, -6, -9, -12};
@@ -67,14 +68,21 @@ public class Density extends Function
 		box.add(calculate);
 		box.add(result);
 		
+		steps = Box.createVerticalBox();
+		
 		panel = new JPanel();
 		panel.add(box);
+		panel.add(steps);
 	}
 	
 	private class Calculate implements ActionListener
 	{
 		public void actionPerformed(ActionEvent arg0)
 		{
+			steps.removeAll();
+			steps.setVisible(false);
+			steps.add(new JLabel("D = M / V"));
+			steps.add(Box.createVerticalStrut(5));
 			double givenMass = 0, givenVolume = 0, givenDensity = 0;
 			String unknown = "", unknownUnit = "";
 			try
@@ -93,6 +101,7 @@ public class Density extends Function
 						return;
 					}
 				}
+				steps.add(new JLabel("Mass = " + givenMass + " " + 'g'));
 			}
 			catch(Throwable t)
 			{
@@ -100,6 +109,7 @@ public class Density extends Function
 				{
 					unknown = "Mass";
 					unknownUnit = mUnit.getText();
+					steps.add(new JLabel("Mass = ?"));
 				}
 				else
 				{
@@ -124,6 +134,7 @@ public class Density extends Function
 						return;
 					}
 				}
+				steps.add(new JLabel("Volume = " + givenVolume + " L"));
 			}
 			catch(Throwable t)
 			{
@@ -134,11 +145,9 @@ public class Density extends Function
 						result.setText("Leave only one field blank.");
 						return;
 					}
-					else
-					{
-						unknown = "Volume";
-						unknownUnit = vUnit.getText();
-					}
+					unknown = "Volume";
+					unknownUnit = vUnit.getText();
+					steps.add(new JLabel("Volume = ?"));
 				}
 				else
 				{
@@ -150,6 +159,7 @@ public class Density extends Function
 			try
 			{
 				givenDensity = Double.parseDouble(density.getText());
+				steps.add(new JLabel("Density = " + givenDensity + " g / L"));
 			}
 			catch(Throwable t)
 			{
@@ -160,7 +170,8 @@ public class Density extends Function
 						result.setText("Leave only one field blank.");
 						return;
 					}
-					else unknown = "Density";
+					unknown = "Density";
+					steps.add(new JLabel("Density = ?"));
 				}
 				else
 				{
@@ -168,16 +179,19 @@ public class Density extends Function
 					return;
 				}
 			}
+			steps.add(Box.createVerticalStrut(5));
 			
-			double amount;
 			if(unknown.equals("Mass"))
 			{
-				amount = givenDensity * givenVolume;
+				toSave = givenDensity * givenVolume;
+				steps.add(new JLabel("Mass = " + givenDensity + " * " + givenVolume + " = " + toSave + " g"));
 				if(!unknownUnit.equals("g"))
 				{
 					if(unknownUnit.length() == 2 && unknownUnit.charAt(1) == 'g' && prefixes.indexOf(unknownUnit.charAt(0)) != -1) 
 					{
-						amount = convertUnit(amount, unknownUnit.charAt(0));
+						String step = toSave + " g = ";
+						toSave = convertUnit(toSave, unknownUnit.charAt(0));
+						steps.add(new JLabel(step + toSave + unknownUnit));
 					}
 					else
 					{
@@ -188,12 +202,15 @@ public class Density extends Function
 			}
 			else if(unknown.equals("Volume"))
 			{
-				amount = givenMass / givenDensity;
+				toSave = givenMass / givenDensity;
+				steps.add(new JLabel("Volume = " + givenMass + " / " + givenDensity + " = " + toSave + " L"));
 				if(!unknownUnit.equals("L"))
 				{
 					if(unknownUnit.length() == 2 && unknownUnit.charAt(1) == 'L' && prefixes.indexOf(unknownUnit.charAt(0)) != -1) 
 					{
-						amount = convertUnit(amount, unknownUnit.charAt(0));
+						String step = toSave + " L = ";
+						toSave = convertUnit(toSave, unknownUnit.charAt(0));
+						steps.add(new JLabel(step + toSave + unknownUnit));
 					}
 					else
 					{
@@ -204,7 +221,8 @@ public class Density extends Function
 			}
 			else if(unknown.equals("Density"))
 			{
-				amount = givenMass / givenVolume;
+				toSave = givenMass / givenVolume;
+				steps.add(new JLabel("Density = " + givenMass + " / " + givenVolume + " = " + toSave + " g/L"));
 				unknownUnit = "g/L";
 			}
 			else
@@ -212,8 +230,8 @@ public class Density extends Function
 				result.setText("Leave one field blank.");
 				return;
 			}
-			toSave = amount;
-			result.setText(unknown + " = " + amount + unknownUnit);
+			result.setText(unknown + " = " + toSave + " " + unknownUnit);
+			steps.setVisible(true);
 		}
 	}
 	
