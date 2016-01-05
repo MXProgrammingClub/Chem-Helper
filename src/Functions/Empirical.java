@@ -160,10 +160,12 @@ public class Empirical extends Function
 	}
 	
 	private class RemoveButton extends JButton
-	{	
+	{
+		private TableRow row;
 		public RemoveButton(TableRow row)
 		{
 			super("X");
+			this.row = row;
 			addActionListener(new ActionListener()
 					{
 						public void actionPerformed(ActionEvent arg0)
