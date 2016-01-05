@@ -104,7 +104,7 @@ public class IdealGas extends Function
 			amount = new JTextField(5);
 			unit = new JComboBox<String>(units);
 			unit.setSelectedIndex(0);
-			unit.setPreferredSize(new Dimension(70, 28));
+			unit.setPreferredSize(new Dimension(75, 28));
 			
 			JLabel label = new JLabel(name);
 			label.setPreferredSize(new Dimension(80, 16));
