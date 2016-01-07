@@ -90,7 +90,27 @@ public class Equation
 	public boolean balance() {
 		if(isBalanced()) return true;
 		String[] equations = createEquations();
-		int[] coefficients = solveEquations(equations);
+		equations = subForA(equations);
+		Matrix m = new Matrix(equations);
+		double[] solved = m.solve();
+		double[] doubleCoeff = new double[solved.length + 1];
+		doubleCoeff[0] = 1.0; //setting a = 1
+		for(int i = 1; i < doubleCoeff.length; i++) //transferring the rest of the variables over
+			doubleCoeff[i] = solved[i - 1];
+		int[] coefficients = integerize(doubleCoeff);
+		
+		int index = 0;
+		for(Compound c: left) {
+			c.setNum(coefficients[index]);
+			index++;
+		}
+		for(Compound c: right) {
+			c.setNum(coefficients[index]);
+			index++;
+		}
+		
+		return true;
+		/*int[] coefficients = solveEquations(equations);
 		if(coefficients[0] == -1) return false; //if the system could not be solved
 		
 		int index = 0;
@@ -102,7 +122,7 @@ public class Equation
 			c.setNum(coefficients[index]);
 			index++;
 		}
-		return isBalanced();
+		return isBalanced();*/
 	}
 	
 	//creates equations for each ion
@@ -152,23 +172,63 @@ public class Equation
 			index++;
 		}
 		
-		//now need to clean up the equations
+		//now add 0s in where needed
 		for(int i = 0; i < equations.length; i++) {
 			String eq = equations[i];
-			for(int j = eq.length() - 1; j > 0; j--) { //gets rid of useless vars everywhere except index 0
-				if((eq.charAt(j) == '+') || (Character.isLetter(eq.charAt(j)) && eq.charAt(j - 1) == '+')) {
-					eq = eq.substring(0, j) + eq.substring(j + 1);
+			for(int j = eq.length() - 1; j > 0; j--) { //everywhere except index 0
+				if(Character.isLetter(eq.charAt(j)) && eq.charAt(j - 1) == '+') {
+					eq = eq.substring(0, j) + "0" + eq.substring(j);
 					j++;
 				}
 			}
-			while(Character.isLetter(eq.charAt(0)) || eq.charAt(0) == '+') //gets rid of useless vars at the beginning
-				eq = eq.substring(1);
+			while(Character.isLetter(eq.charAt(0)) || eq.charAt(0) == '+') //at the beginning
+				eq = "0" + eq;
+			
+			if(Character.isLetter(eq.charAt(1 + eq.indexOf("="))))
+				eq = eq.substring(0, eq.indexOf("=") + 1) + "0" + eq.substring(eq.indexOf("=") + 1);//weird fix for 0 just after =
 			
 			equations[i] = eq;
 		}
 		
 		return equations;
 	}
+	
+	//substitutes 1 for variable a and then rearranges the equations to be vars = constant 
+	private String[] subForA(String[] equations) {
+		String[] newEq = new String[equations.length];
+		
+		int index = 0;
+		for(String eq: equations) {
+			eq = eq.substring(0, eq.indexOf("a")) + eq.substring(eq.indexOf("a")); //a will be the first variable used
+			String firstHalf = eq.substring(0, eq.indexOf("="));
+			String secondHalf = eq.substring(eq.indexOf("=") + 1);
+			String[] firstHalfStuff = firstHalf.split("\\+");
+			while(firstHalfStuff.length > 1) {
+				secondHalf += "+-" + firstHalfStuff[1];
+				String[] temp = new String[firstHalfStuff.length - 1];
+				temp[0] = firstHalfStuff[0];
+				for(int i = 2; i < firstHalfStuff.length; i++)
+					temp[i - 1] = firstHalfStuff[i];
+				firstHalfStuff = temp;
+			}
+			
+			firstHalf = firstHalfStuff[0].substring(0, firstHalfStuff[0].length() - 1);
+			newEq[index] = secondHalf + "=" + firstHalf;
+			index++;
+		}
+		
+		return newEq;
+	}
+	
+	/*public static void main(String[] args) {
+		Equation eq = null;
+		try {
+			eq = Equation.parseEquation("Na+Cl=Na.2/Cl");
+		} catch (InvalidInputException e) {
+			e.printStackTrace();
+		}
+		eq.balance();
+	}*/
 	
 	//provides a new variable
 	//BUG: the variables past the alphabet dont work right  
@@ -183,7 +243,7 @@ public class Equation
 		return var;
 	}
 	
-	//@FIX make more efficient
+	///@TODO make more efficient
 	//returns the number of the variable
 	private static int getVarNum(String var) {
 		int i = 1;
@@ -193,7 +253,7 @@ public class Equation
 	}
 	
 	//attempt at getting the system of equations to solve
-	private int[] solveEquations(String[] equations) {
+	/*private int[] solveEquations(String[] equations) {
 		double[] coefficients = new double[left.size() + right.size()];
 		for(int i = 1; i < coefficients.length; i++) //assign -1 to all but the first slots
 			coefficients[i] = -1;
@@ -364,7 +424,7 @@ public class Equation
 		}
 		
 		return integerize(coefficients);
-	}
+	}*/
 	
 	//takes an array of doubles and makes them into integers
 	private static int[] integerize(double[] coefficients) {
