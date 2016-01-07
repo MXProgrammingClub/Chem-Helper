@@ -86,7 +86,7 @@ public class Equation
 	public ArrayList<Compound> getRight() {
 		return right;
 	}
-	
+/*	
 	public boolean balance() {
 		if(isBalanced()) return true;
 		String[] equations = createEquations();
@@ -518,7 +518,7 @@ public class Equation
 		}
 		return isBalanced();
 	}*/
-	
+	/*
 	private boolean isBalanced()
 	{
 		ArrayList<Ions> leftIons = toIons(left), rightIons = toIons(right);
@@ -561,4 +561,5 @@ public class Equation
 		}
 		return ions;
 	}
+	*/
 }

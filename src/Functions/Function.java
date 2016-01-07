@@ -4,7 +4,7 @@
  * classes that need them.
  * 
  * Authors: Ted Pyne, Hyun Choi, Julia McClellan
- * Version: 12/30/2015
+ * Version: 1/6/2016
  */
 
 package Functions;
@@ -77,7 +77,7 @@ public abstract class Function {
 				
 				for (Ions ion: comp.getIons()) {
 					
-					str += "\\text{" + ion.getElement().getSymbol() + "}";
+					str += "\\text{" + ion + "}";
 					if (ion.getCharge() < 0) {
 						str += "^{" + ion.getCharge() + "}";
 					}

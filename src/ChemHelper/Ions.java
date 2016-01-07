@@ -1,37 +1,23 @@
 /*
- * Represents a collection of ions of the same element and charge.
+ * Represents a collection of ions of the same type and charge. The two implementations are Polyatomic and Monatomic.
  * 
  * Author: Julia McClellan
- * Version: 11/20/2015
+ * Version: 1/6/2015
  */
 
 package ChemHelper;
 
+import java.util.ArrayList;
+
 import Elements.Element;
 import Functions.PeriodicTable;
 
-public class Ions 
+public abstract class Ions 
 {
 	private int num, charge;
-	private Element element;
 	
-	public Ions(Element element)
+	public Ions(int num, int charge)
 	{
-		this.element = element;
-		num = 1;
-		charge = 0;
-	}
-	
-	public Ions(Element element, int num)
-	{
-		this.element = element;
-		this.num = num;
-		charge = 0;
-	}
-	
-	public Ions(Element element, int num, int charge)
-	{
-		this.element = element;
 		this.num = num;
 		this.charge = charge;
 	}
@@ -55,72 +41,87 @@ public class Ions
 	{
 		this.charge = charge;
 	}
-
-	public Element getElement() 
-	{
-		return element;
-	}
 	
-	public String toString()
-	{
-		String str = element.getSymbol();
-		if(charge != 0) 
-		{
-			str += "<sup>";
-			if(charge < 0) str += charge;
-			else str += "+" + charge;
-			str += "</sup>";
-		}
-		if(num != 1) str += "<sub>" + num + "</sub>";
-		return str;
-	}
-
+	public abstract Monatomic[] getElements();
+	
+	public abstract String toString();
+	
+	public abstract double getMolarMass();
+	
+	public abstract String getMolarMassSteps();
+	
 	public static Ions parseIons(String ions) throws InvalidInputException
 	{
-		int symEnd = ions.indexOf("^");
-		boolean isCharge = true, isNum = true;
-		if(symEnd == -1)
+		if(ions.indexOf('/') == -1)
 		{
-			symEnd = ions.indexOf(".");
-			isCharge = false;
-		}
-		if(symEnd == -1)
-			symEnd = ions.length();
-		String symbol = ions.substring(0, symEnd);
-		Element e = PeriodicTable.find(symbol);
-		if(e == null) throw new InvalidInputException(0);
-		int chargeEnd = ions.indexOf("."), charge;
-		if(chargeEnd == -1) 
-		{ 
-			chargeEnd = ions.length();
-			isNum = false;
-		}
-		if(!isCharge) charge = 0;
-		else
-		{
-			try
+			int symEnd = ions.indexOf("^");
+			boolean isCharge = true, isNum = true;
+			if(symEnd == -1)
 			{
-				charge = Integer.parseInt(ions.substring(symEnd + 1, chargeEnd));
+				symEnd = ions.indexOf(".");
+				isCharge = false;
 			}
-			catch(NumberFormatException e1)
-			{
-				throw new InvalidInputException(1);
-			}
-		}
+			if(symEnd == -1)
+				symEnd = ions.length();
 		
-		int num;
-		if(!isNum) num = 1;
-		else
-		{
-			try
-			{
-				num = Integer.parseInt(ions.substring(chargeEnd + 1));
+			String symbol = ions.substring(0, symEnd);
+			Element e = PeriodicTable.find(symbol);
+		
+			if(e == null) throw new InvalidInputException(0);
+			int chargeEnd = ions.indexOf("."), charge;
+			if(chargeEnd == -1) 
+			{ 
+				chargeEnd = ions.length();
+				isNum = false;
 			}
-			catch(NumberFormatException e1)
+			if(!isCharge) charge = 0;
+			else
 			{
-				throw new InvalidInputException(1);
+				try
+				{
+					charge = Integer.parseInt(ions.substring(symEnd + 1, chargeEnd));
+				}
+				catch(NumberFormatException e1)
+				{
+					throw new InvalidInputException(1);
+				}
 			}
+			
+			int num;
+			if(!isNum) num = 1;
+			else
+			{
+				try
+				{
+					num = Integer.parseInt(ions.substring(chargeEnd + 1));
+				}
+				catch(NumberFormatException e1)
+				{
+					throw new InvalidInputException(1);
+				}
+			}
+			return new Monatomic(e, num, charge);
 		}
-		return new Ions(e, num, charge);
+		ions = ions.substring(1);
+		ArrayList<Monatomic> inside = new ArrayList<Monatomic>();
+		while(ions.indexOf('/') != -1)
+		{
+			inside.add((Monatomic)Ions.parseIons(ions.substring(0, ions.indexOf('/'))));
+			ions = ions.substring(ions.indexOf('/') + 1);
+		}
+		inside.add((Monatomic)Ions.parseIons(ions.substring(0, ions.indexOf(')'))));
+		ions = ions.substring(1);
+		int num = 1, numStart = ions.indexOf('.');
+		if(numStart != -1)
+		{
+			num = Integer.parseInt(ions.substring(numStart + 1));
+			ions = ions.substring(0, numStart);
+		}
+		int charge = 0, chargeStart = ions.indexOf('.');
+		if(chargeStart != -1)
+		{
+			charge = Integer.parseInt(ions.substring(chargeStart + 1));
+		}
+		return new Polyatomic(inside, num, charge);
 	}
 }

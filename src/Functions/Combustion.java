@@ -3,7 +3,7 @@
  * equation() returns true- can save latest produced equation, but can't use a saved equation.
  * 
  * Author: Julia McClellan
- * Version: 12/31/2015
+ * Version: 1/6/2016
  */
 
 package Functions;
@@ -21,6 +21,7 @@ import javax.swing.JTextField;
 import ChemHelper.Compound;
 import ChemHelper.InvalidInputException;
 import ChemHelper.Ions;
+import ChemHelper.Monatomic;
 import Elements.Carbon;
 import Elements.Element;
 import Elements.Hydrogen;
@@ -90,7 +91,8 @@ public class Combustion extends Function
 				}
 				
 				ArrayList<Compound> left = new ArrayList<Compound>(), right = new ArrayList<Compound>();
-				Ions[] o2 = {new Ions(oxygen, 2)}, h2o = {new Ions(hydrogen, 2), new Ions(oxygen)}, co2 = {new Ions(carbon), new Ions(oxygen, 2)};
+				Ions[] o2 = {new Monatomic(oxygen, 2)}, h2o = {new Monatomic(hydrogen, 2), new Monatomic(oxygen)}, 
+						co2 = {new Monatomic(carbon), new Monatomic(oxygen, 2)};
 				left.add(new Compound(o2));
 				left.add(c);
 				right.add(new Compound(h2o));

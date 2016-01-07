@@ -4,7 +4,7 @@
  * number() returns true- can save either the empirical or molecular molar mass, and use a saved number in moles or mass for molecular calculations.
  * 
  * Author: Julia McClellan
- * Version: 1/2/2016
+ * Version: 1/5/2016
  */
 
 package Functions;

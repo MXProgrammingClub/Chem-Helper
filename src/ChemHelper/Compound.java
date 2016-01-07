@@ -8,6 +8,8 @@
 
 package ChemHelper;
 
+import java.util.ArrayList;
+
 import Elements.Element;
 
 public class Compound 
@@ -106,7 +108,7 @@ public class Compound
 		double total = 0;
 		for(Ions ion: ions)
 		{
-			total += ion.getNum() * ion.getElement().getMolarMass();
+			total += ion.getNum() * ion.getMolarMass();
 		}
 		return total;
 	}
@@ -120,8 +122,8 @@ public class Compound
 		double total = 0;
 		for(Ions ion: ions)
 		{
-			instruction += " (" + ion.getNum() + " * " + ion.getElement().getMolarMass() + " g/mol) +";
-			total += ion.getNum() * ion.getElement().getMolarMass();
+			instruction += " (" + ion.getNum() + " * " + ion.getMolarMassSteps() + " g/mol) +";
+			total += ion.getNum() * ion.getMolarMass();
 		}
 		instruction = instruction.substring(0, instruction.length() - 1) + " = " + total + " g/mol";
 		return instruction;
@@ -131,7 +133,8 @@ public class Compound
 	{
 		for(Ions thisOne: ions)
 		{
-			if(thisOne.getElement().equals(e)) return true;
+			if(thisOne instanceof Monatomic && ((Monatomic)thisOne).getElement().equals(e)) return true;
+			else if(thisOne instanceof Polyatomic && ((Polyatomic)thisOne).contains(e)) return true;
 		}
 		return false;
 	}
@@ -140,14 +143,15 @@ public class Compound
 	{
 		for(int index = 0; index < ions.length; index++)
 		{
-			if(ions[index].getElement().equals(e)) return index;
+			if(ions[index] instanceof Monatomic && ((Monatomic)ions[index]).getElement().equals(e)) return index;
+			else if(ions[index] instanceof Polyatomic && ((Polyatomic)ions[index]).contains(e)) return index;
 		}
 		return -1;
 	}
 	
 	public static Compound parseCompound(String cmp) throws InvalidInputException
 	{
-		int stateIndex = cmp.indexOf("("), num = 0;
+		int stateIndex = cmp.lastIndexOf("("), num = 0;
 		try
 		{
 			while(true)
@@ -165,22 +169,19 @@ public class Compound
 		if(stateIndex != -1)
 		{
 			state = cmp.substring(stateIndex + 1, cmp.length() - 1);
-			cmp = cmp.substring(0, stateIndex);
+			if(state.indexOf("/") != -1) cmp = cmp.substring(0, stateIndex);
+			else state = "";
 		}
-		int index = 0, count = 1;
-		while(cmp.indexOf("/", index) != -1)
+		ArrayList<Ions> ions = new ArrayList<Ions>();
+		while(cmp.length() > 0)
 		{
-			count++;
-			index = cmp.indexOf("/", index) + 1;
-		}
-		Ions[] ions = new Ions[count];
-		for(int ion = 0; ion < ions.length; ion++)
-		{
-			int end = cmp.indexOf("/");
+			int end = cmp.indexOf("/"), poly = cmp.indexOf('(');
+			if(poly != -1 && poly < end) end = cmp.indexOf('/', cmp.indexOf(')'));
 			if(end == -1) end = cmp.length();
-			ions[ion] = Ions.parseIons(cmp.substring(0, end));
+			ions.add(Ions.parseIons(cmp.substring(0, end)));
 			if(end != cmp.length()) cmp = cmp.substring(end + 1);
+			else cmp = "";
 		}
-		return new Compound(ions, state, num);
+		return new Compound((Ions[])ions.toArray(), state, num);
 	}
 }
