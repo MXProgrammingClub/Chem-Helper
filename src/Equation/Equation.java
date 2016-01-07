@@ -428,16 +428,36 @@ public class Equation
 	
 	//takes an array of doubles and makes them into integers
 	private static int[] integerize(double[] coefficients) {
-		double denom = 1;
-		for(double d: coefficients)
-			if(d % 1 > 0)
-				denom *= (d % 1);
-		int[] newCo = new int[coefficients.length];
-		for(int i = 0; i < coefficients.length; i++)
-			newCo[i] = (int) (coefficients[i] / denom);
+		int[] reciprocals = new int[coefficients.length];
+		for(int i = 0; i < coefficients.length; i++) //e.g. 0.2 (or 1/5) becomes 5
+			reciprocals[i] = (int) (1.0 / coefficients[i]);
 		
-		return newCo;
+		int lcm = reciprocals[0];
+	    for(int i = 1; i < reciprocals.length; i++) //finds the lcm of all the reciprocals
+	    	lcm = lcm(lcm, reciprocals[i]);
+	    
+	    int[] newCo = new int[coefficients.length];
+	    for(int i = 0; i < coefficients.length; i++)
+			newCo[i] = (int) (coefficients[i] * lcm);
+	    
+	    return newCo;
 	}
+	
+	//finds the least common multiple of two numbers
+	private static int lcm(int a, int b){
+	    return a * (b / gcd(a, b));
+	}
+	
+	//finds the greatest common divisor of two numbers
+	private static int gcd(int a, int b){
+	    while (b > 0) {
+	        int temp = b;
+	        b = a % b; // % is remainder
+	        a = temp;
+	    }
+	    return a;
+	}
+	
 	
 	/*public boolean balance()
 	{
