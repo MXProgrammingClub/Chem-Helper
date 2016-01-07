@@ -204,7 +204,7 @@ public class Equation
 			String secondHalf = eq.substring(eq.indexOf("=") + 1);
 			String[] firstHalfStuff = firstHalf.split("\\+");
 			while(firstHalfStuff.length > 1) {
-				secondHalf += "+-" + firstHalfStuff[1];
+				secondHalf = "-" + firstHalfStuff[firstHalfStuff.length - 1] + "+" + secondHalf;
 				String[] temp = new String[firstHalfStuff.length - 1];
 				temp[0] = firstHalfStuff[0];
 				for(int i = 2; i < firstHalfStuff.length; i++)
@@ -223,7 +223,7 @@ public class Equation
 	/*public static void main(String[] args) {
 		Equation eq = null;
 		try {
-			eq = Equation.parseEquation("Na+Cl=Na.2/Cl");
+			eq = Equation.parseEquation("O.2+C.6/H.12/O.6=C/O.2+H.2/O");
 		} catch (InvalidInputException e) {
 			e.printStackTrace();
 		}
