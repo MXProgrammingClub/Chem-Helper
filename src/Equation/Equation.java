@@ -86,7 +86,7 @@ public class Equation
 	public ArrayList<Compound> getRight() {
 		return right;
 	}
-/*	
+	
 	public boolean balance() {
 		if(isBalanced()) return true;
 		String[] equations = createEquations();
