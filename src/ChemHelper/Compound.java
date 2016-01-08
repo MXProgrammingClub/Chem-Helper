@@ -9,7 +9,6 @@
 package ChemHelper;
 
 import java.util.ArrayList;
-
 import Elements.Element;
 
 public class Compound 
@@ -147,6 +146,37 @@ public class Compound
 			else if(ions[index] instanceof Polyatomic && ((Polyatomic)ions[index]).contains(e)) return index;
 		}
 		return -1;
+	}
+	
+	public Monatomic[] getNoPoly()
+	{
+		ArrayList<Monatomic> ionList = new ArrayList<Monatomic>();
+		for(Ions ion: ions)
+		{	
+			for(Monatomic mon: ion.getElements())
+			{
+				int index = -1, factor = 1;
+				Element e = mon.getElement();
+				for(int i = 0; i < ionList.size(); i++)
+				{
+					if(e.equals(ionList.get(i).getElement()))
+					{
+						index = i;
+						break;
+					}
+				}
+				if(ion instanceof Polyatomic) factor = ion.getNum();
+				if(index != -1) ionList.get(index).setNum(ionList.get(index).getNum() + mon.getNum() * factor);
+				else
+				{
+					Monatomic temp = new Monatomic(mon.getElement(), mon.getNum() * factor, mon.getCharge());
+					ionList.add(temp);
+				}
+			}
+		}
+		Monatomic[] array = new Monatomic[ionList.size()];
+		System.out.println(ionList);
+		return ionList.toArray(array);
 	}
 	
 	public static Compound parseCompound(String cmp) throws InvalidInputException

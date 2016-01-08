@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 import ChemHelper.Compound;
 import ChemHelper.InvalidInputException;
-import ChemHelper.Ions;
+import ChemHelper.Monatomic;
 
 
 public class Equation
@@ -128,10 +128,10 @@ public class Equation
 	//creates equations for each ion
 	private String[] createEquations() {
 		String skeleton = "";
-		ArrayList<Ions> ions = new ArrayList<Ions>();
+		ArrayList<Monatomic> ions = new ArrayList<Monatomic>();
 		int var = 1;
 		for(Compound c: left) { //getting and assigning vars to left side compounds
-			for(Ions e: c.getIons()) //getting all the different ions in the equation
+			for(Monatomic e: c.getNoPoly()) //getting all the different ions in the equation
 				if(!ions.contains(e)) ions.add(e);
 			if(!skeleton.equals("")) skeleton += "+";
 			skeleton += getNextVar(var);
@@ -147,12 +147,12 @@ public class Equation
 		String[] equations = new String[ions.size()];
 		int index = 0;
 		//goes and adds coefficients to the equations when needed. Vars w/o coefficients have a coefficient of 0.
-		for(Ions e: ions) {
+		for(Monatomic e: ions) {
 			int var2 = 1;
 			String eq = skeleton;
 			for(Compound c: left) {
-				for(Ions i: c.getIons()) {
-					if(i.getElement().toString().equals(e.getElement().toString())) {
+				for(Monatomic i: c.getNoPoly()) {
+					if(i.getElement().equals(e.getElement())) {
 						eq = eq.substring(0, eq.indexOf(getNextVar(var2))) + i.getNum() + eq.substring(eq.indexOf(getNextVar(var2)));
 						break;
 					}
@@ -160,8 +160,8 @@ public class Equation
 				var2++;
 			}
 			for(Compound c: right) {
-				for(Ions i: c.getIons()) {
-					if(i.getElement().toString().equals(e.getElement().toString())) {
+				for(Monatomic i: c.getNoPoly()) {
+					if(i.getElement().equals(e.getElement())) {
 						eq = eq.substring(0, eq.indexOf(getNextVar(var2))) + i.getNum() + eq.substring(eq.indexOf(getNextVar(var2)));
 						break;
 					}
@@ -458,74 +458,13 @@ public class Equation
 	    return a;
 	}
 	
-	
-	/*public boolean balance()
-	{
-		if(isBalanced()) return true;
-		ArrayList<Compound> oldLeft = left, oldRight = right;
-		final int NUM_METHODS = 1;
-		for(int method = 1; method <= NUM_METHODS; method++)
-		{
-			boolean balanced = tryMethod(method);
-			if(balanced) return true;
-			else
-			{
-				left = oldLeft;
-				right = oldRight;
-			}
-		}
-		return false;
-	}
-	
-	private boolean tryMethod(int num)
-	{
-		if(num == 1) return balance1();
-		return false;
-	}*/
-	
-	/*
-	 * Balances the equation if the right side is one compound and the left side compounds all contain exactly one element.
-	 */
-	/*private boolean balance1()
-	{
-		//Checks if the conditions are met first before using the method.
-		if(right.size() != 1) return false;
-		for(Compound c: left) if(c.getIons().length != 1) return false;
-		Compound rightCompound = right.get(0);
-		for(int index = 0; index < left.size(); index ++)
-		{
-			Ions leftIon = left.get(index).getIons()[0], rightIon = null;
-			for(Ions ion: rightCompound.getIons())
-			{
-				if(ion.getElement().equals(leftIon.getElement())) rightIon = ion;
-			}
-			if(rightIon == null) return false;
-			int num1 = leftIon.getNum() * left.get(index).getNum(), num2 = rightCompound.getNum() * rightIon.getNum(), mult = num1 * num2, gcd = Function.gcd(num1, num2);
-			while(gcd != 1)
-			{
-				mult = mult / gcd;
-				num1 = num1 / gcd;
-				num2 = num2 / gcd;
-				gcd = Function.gcd(num1, num2);
-			}
-			int setRight = mult / rightIon.getNum(), setLeft = mult / leftIon.getNum();
-			rightCompound.setNum(rightCompound.getNum() * setRight);
-			left.get(index).setNum(left.get(index).getNum() * setLeft);
-			for(int index2 = 0; index2 <= index; index2++)
-			{
-				if(index != index2) left.get(index2).setNum(setRight * left.get(index2).getNum());
-			}
-		}
-		return isBalanced();
-	}*/
-	/*
 	private boolean isBalanced()
 	{
-		ArrayList<Ions> leftIons = toIons(left), rightIons = toIons(right);
-		for(Ions leftIon: leftIons)
+		ArrayList<Monatomic> leftIons = toIons(left), rightIons = toIons(right);
+		for(Monatomic leftIon: leftIons)
 		{
 			boolean found = false;
-			for(Ions rightIon: rightIons)
+			for(Monatomic rightIon: rightIons)
 			{
 				if(leftIon.getElement().equals(rightIon.getElement()))
 				{
@@ -538,16 +477,16 @@ public class Equation
 		return true;
 	}
 	
-	private ArrayList<Ions> toIons(ArrayList<Compound> compounds)
+	private ArrayList<Monatomic> toIons(ArrayList<Compound> compounds)
 	{
-		ArrayList<Ions> ions = new ArrayList<Ions>();
+		ArrayList<Monatomic> ions = new ArrayList<Monatomic>();
 		for(Compound c: compounds)
 		{
-			Ions[] compoundIons = c.getIons();
-			for(Ions ion: compoundIons)
+			Monatomic[] compoundIons = c.getNoPoly();
+			for(Monatomic ion: compoundIons)
 			{
 				boolean found = false;;
-				for(Ions test: ions)
+				for(Monatomic test: ions)
 				{
 					if(test.getElement().equals(ion.getElement()))
 					{
@@ -556,10 +495,9 @@ public class Equation
 						break;
 					}
 				}
-				if(!found) ions.add(new Ions(ion.getElement(), (ion.getNum() * c.getNum())));
+				if(!found) ions.add(new Monatomic(ion.getElement(), (ion.getNum() * c.getNum())));
 			}
 		}
 		return ions;
 	}
-	*/
 }
