@@ -2,7 +2,7 @@
  * Represents a polyatomic ion and has a public array of common polyatomic ions.
  * 
  * Author: Julia McClellan
- * Version: 1/6/2016
+ * Version: 1/9/2016
  */
 
 package ChemHelper;
@@ -81,6 +81,17 @@ public class Polyatomic extends Ions
 			ion += e.getElement().getSymbol() + "<sub>" + e.getNum() + "</sub>";
 		}
 		ion += ")<sub>" + getNum() + "</sub><sup>" + getCharge() + "</sup>";
+		return ion;
+	}
+	
+	public String withoutCharge()
+	{
+		String ion = "";
+		for(Monatomic e: elements)
+		{
+			ion += e.getElement().getSymbol() + "<sub>" + e.getNum() + "</sub>";
+		}
+		ion += "<sub>" + getNum() + "</sub>";
 		return ion;
 	}
 	

@@ -102,6 +102,18 @@ public class Compound
 		return str;
 	}
 	
+	public String withoutCharge()
+	{
+		String str = "";
+		if(num != 1) str += num;
+		for(Ions ion: ions)
+		{
+			str += ion.withoutCharge();
+		}
+		if(!state.equals(" ")) str += "(" + state + ")";
+		return str;
+	}
+	
 	public double getMolarMass()
 	{
 		double total = 0;

@@ -2,8 +2,9 @@
  * Represents a monatomic ion.
  * 
  * Author: Julia McClellan
- * Version: 1/6/2016
+ * Version: 1/9/2016
  */
+
 package ChemHelper;
 
 import Elements.Element;
@@ -44,6 +45,11 @@ public class Monatomic extends Ions
 	public String toString() 
 	{
 		return element.getSymbol() + "<sub>" + getNum() + "</sub><sup>" + getCharge() + "</sup>";
+	}
+	
+	public String withoutCharge()
+	{
+		return element.getSymbol() + "<sub>" + getNum() + "</sub>";
 	}
 
 	public double getMolarMass()

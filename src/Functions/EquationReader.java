@@ -33,7 +33,7 @@ public class EquationReader extends Function
 	public EquationReader()
 	{
 		super("Equation Reader");
-		enter = new JTextField("Enter your equation here", 15);
+		enter = new JTextField("Enter your equation here", 25);
 		result = new JLabel();
 		balanced = new JLabel();
 		instructions = new JLabel("<html>When entering an equation, use the following guidelines:<br>\t\u2022In a compound, put \"/\" between each element"
@@ -84,7 +84,7 @@ public class EquationReader extends Function
 
 				equation = resultant;
 				result.setIcon(latex(equation).getIcon());
-				/*boolean isBalanced = resultant.balance();
+				boolean isBalanced = resultant.balance();
 
 				if(isBalanced)
 				{
@@ -93,7 +93,7 @@ public class EquationReader extends Function
 				else
 				{
 					balanced.setText("This equation could not be balanced");
-				}*/
+				}
 			}
 			catch(Throwable e)
 			{

@@ -4,7 +4,7 @@
  * number() returns true- saves most recently calculated value and uses saved as known amount.
  * 
  * Author: Julia McClellan
- * Version: 12/30/2015
+ * Version: 1/9/2016
  */
 
 package Functions;
@@ -145,7 +145,7 @@ public class Stoichiometry extends Function
 		
 		public CompoundLabel(Compound compound)
 		{
-			super("<html>" + compound + "<html>");
+			super("<html>" + compound.withoutCharge() + "<html>");
 			this.compound = compound;
 			addMouseListener(new CompoundListener());
 		}
@@ -157,8 +157,8 @@ public class Stoichiometry extends Function
 				if(given)
 				{
 					known = compound;
-					if(known.getNum() == 1) knownPanel.add(new JLabel("<html>" + compound + "</html>"));
-					else knownPanel.add(new JLabel("<html>" + compound.toString().substring(1) + "</html>"));
+					if(known.getNum() == 1) knownPanel.add(new JLabel("<html>" + compound.withoutCharge() + "</html>"));
+					else knownPanel.add(new JLabel("<html>" + compound.withoutCharge().substring(1) + "</html>"));
 					enter = new JTextField(5);
 					knownPanel.add(enter);
 					mole1 = new JRadioButton("Moles");
@@ -174,8 +174,8 @@ public class Stoichiometry extends Function
 				else if (!done)
 				{
 					unknown = compound;
-					if(unknown.getNum() == 1) unknownPanel.add(new JLabel("<html>" + compound + "</html>"));
-					else unknownPanel.add(new JLabel("<html>" + compound.toString().substring(1) + "</html>"));
+					if(unknown.getNum() == 1) unknownPanel.add(new JLabel("<html>" + compound.withoutCharge() + "</html>"));
+					else unknownPanel.add(new JLabel("<html>" + compound.withoutCharge().substring(1) + "</html>"));
 					mole2 = new JRadioButton("Moles");
 					gram2 = new JRadioButton("Grams", true);
 					ButtonGroup group = new ButtonGroup();

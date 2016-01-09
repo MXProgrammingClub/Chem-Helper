@@ -2,7 +2,7 @@
  * Represents a collection of ions of the same type and charge. The two implementations are Polyatomic and Monatomic.
  * 
  * Author: Julia McClellan
- * Version: 1/8/2015
+ * Version: 1/9/2015
  */
 
 package ChemHelper;
@@ -49,6 +49,8 @@ public abstract class Ions
 	public abstract double getMolarMass();
 	
 	public abstract String getMolarMassSteps();
+	
+	public abstract String withoutCharge();
 	
 	public static Ions parseIons(String ions) throws InvalidInputException
 	{
