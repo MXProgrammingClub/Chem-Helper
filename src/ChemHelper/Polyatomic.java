@@ -40,7 +40,8 @@ public class Polyatomic extends Ions
 	public Polyatomic(ArrayList<Monatomic> elements, int num, int charge)
 	{
 		super(num, charge);
-		this.elements = (Monatomic[]) elements.toArray();
+		Monatomic[] array = new Monatomic[elements.size()];
+		this.elements = elements.toArray(array);
 		name = "";
 	}
 	

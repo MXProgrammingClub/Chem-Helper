@@ -175,7 +175,6 @@ public class Compound
 			}
 		}
 		Monatomic[] array = new Monatomic[ionList.size()];
-		System.out.println(ionList);
 		return ionList.toArray(array);
 	}
 	
@@ -199,7 +198,7 @@ public class Compound
 		if(stateIndex != -1)
 		{
 			state = cmp.substring(stateIndex + 1, cmp.length() - 1);
-			if(state.indexOf("/") != -1) cmp = cmp.substring(0, stateIndex);
+			if(state.indexOf("/") == -1) cmp = cmp.substring(0, stateIndex);
 			else state = "";
 		}
 		ArrayList<Ions> ions = new ArrayList<Ions>();
@@ -212,6 +211,7 @@ public class Compound
 			if(end != cmp.length()) cmp = cmp.substring(end + 1);
 			else cmp = "";
 		}
-		return new Compound((Ions[])ions.toArray(), state, num);
+		Ions[] array = new Ions[ions.size()];
+		return new Compound(ions.toArray(array), state, num);
 	}
 }

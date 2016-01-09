@@ -4,7 +4,7 @@
  * classes that need them.
  * 
  * Authors: Ted Pyne, Hyun Choi, Julia McClellan
- * Version: 1/6/2016
+ * Version: 1/8/2016
  */
 
 package Functions;
@@ -20,6 +20,8 @@ import javax.swing.JPanel;
 import org.scilab.forge.jlatexmath.*;
 
 import ChemHelper.Ions;
+import ChemHelper.Monatomic;
+import ChemHelper.Polyatomic;
 import ChemHelper.Compound;
 import Equation.Equation;
 
@@ -76,19 +78,22 @@ public abstract class Function {
 				if(comp.getNum() != 1) str += comp.getNum();
 				
 				for (Ions ion: comp.getIons()) {
+					if(ion instanceof Polyatomic) str += "(";
 					
-					str += "\\text{" + ion + "}";
-					if (ion.getCharge() < 0) {
-						str += "^{" + ion.getCharge() + "}";
-					}
-					else if (ion.getCharge() > 0) {
-						str += "^{+" + ion.getCharge() + "}";
-					}
+					for(Monatomic sub: ion.getElements())
+					{
+						str += "\\text{" + sub.getElement().getSymbol() + "}";
 					
-					if (ion.getNum()>1) {
-						str+= "_{" + ion.getNum() + "}";
+						if (sub.getNum()>1) {
+							str+= "_{" + sub.getNum() + "}";
+						}
 					}
-					
+					if(ion instanceof Polyatomic)
+					{
+						str += ")";
+						if (ion.getNum()>1) str+= "_{" + ion.getNum() + "}";
+						
+					}
 				}
 				str += "+";
 				

@@ -2,7 +2,7 @@
  * Represents a collection of ions of the same type and charge. The two implementations are Polyatomic and Monatomic.
  * 
  * Author: Julia McClellan
- * Version: 1/6/2015
+ * Version: 1/8/2015
  */
 
 package ChemHelper;
@@ -110,14 +110,15 @@ public abstract class Ions
 			ions = ions.substring(ions.indexOf('/') + 1);
 		}
 		inside.add((Monatomic)Ions.parseIons(ions.substring(0, ions.indexOf(')'))));
-		ions = ions.substring(1);
+		ions = ions.substring(ions.indexOf(')')+ 1);
 		int num = 1, numStart = ions.indexOf('.');
 		if(numStart != -1)
 		{
 			num = Integer.parseInt(ions.substring(numStart + 1));
+			if(numStart == 0) return new Polyatomic(inside, num, 0);
 			ions = ions.substring(0, numStart);
 		}
-		int charge = 0, chargeStart = ions.indexOf('.');
+		int charge = 0, chargeStart = ions.indexOf('^');
 		if(chargeStart != -1)
 		{
 			charge = Integer.parseInt(ions.substring(chargeStart + 1));
