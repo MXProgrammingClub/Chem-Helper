@@ -2,7 +2,7 @@
  * Represents a polyatomic ion and has a public array of common polyatomic ions.
  * 
  * Author: Julia McClellan
- * Version: 1/9/2016
+ * Version: 1/10/2016
  */
 
 package ChemHelper;
@@ -78,9 +78,11 @@ public class Polyatomic extends Ions
 		String ion = "(";
 		for(Monatomic e: elements)
 		{
-			ion += e.getElement().getSymbol() + "<sub>" + e.getNum() + "</sub>";
+			ion += e;
 		}
-		ion += ")<sub>" + getNum() + "</sub><sup>" + getCharge() + "</sup>";
+		ion += ")";
+		if(getNum() != 1) ion += "<sub>" + getNum() + "</sub>";
+		if(getCharge() != 0) ion += "<sup>" + getCharge() + "</sup>";
 		return ion;
 	}
 	
@@ -99,14 +101,16 @@ public class Polyatomic extends Ions
 	{
 		double mass = 0;
 		for(Monatomic ion: elements) mass += ion.getMolarMass();
+		mass *= getNum();
 		return mass;
 	}
 
 	public String getMolarMassSteps() 
 	{
-		String mass = "";
+		String mass = "(" + getNum() + " * (";
 		for(Monatomic ion: elements) mass += ion.getMolarMassSteps() + " + ";
 		if(mass.length() != 0) mass = mass.substring(0, mass.length() - 3);
+		mass += "))";
 		return mass;
 	}
 	

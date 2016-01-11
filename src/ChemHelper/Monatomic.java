@@ -2,7 +2,7 @@
  * Represents a monatomic ion.
  * 
  * Author: Julia McClellan
- * Version: 1/9/2016
+ * Version: 1/10/2016
  */
 
 package ChemHelper;
@@ -44,7 +44,10 @@ public class Monatomic extends Ions
 
 	public String toString() 
 	{
-		return element.getSymbol() + "<sub>" + getNum() + "</sub><sup>" + getCharge() + "</sup>";
+		String ion = element.getSymbol();
+		if(getNum() != 1) ion += "<sub>" + getNum() + "</sub>"; 
+		if(getCharge() != 0) ion += "<sup>" + getCharge() + "</sup>";
+		return ion;
 	}
 	
 	public String withoutCharge()

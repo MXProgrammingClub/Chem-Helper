@@ -119,7 +119,7 @@ public class Compound
 		double total = 0;
 		for(Ions ion: ions)
 		{
-			total += ion.getNum() * ion.getMolarMass();
+			total += ion.getMolarMass();
 		}
 		return total;
 	}
@@ -133,8 +133,8 @@ public class Compound
 		double total = 0;
 		for(Ions ion: ions)
 		{
-			instruction += " (" + ion.getNum() + " * " + ion.getMolarMassSteps() + " g/mol) +";
-			total += ion.getNum() * ion.getMolarMass();
+			instruction += ion.getMolarMassSteps() + " + ";
+			total += ion.getMolarMass();
 		}
 		instruction = instruction.substring(0, instruction.length() - 1) + " = " + total + " g/mol";
 		return instruction;
