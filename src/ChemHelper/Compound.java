@@ -129,14 +129,14 @@ public class Compound
 	 */
 	public String getMolarMassSteps()
 	{
-		String instruction = "Multiply the molar mass of each element by its coefficient:";
+		String instruction = "Multiply the molar mass of each element by its coefficient: ";
 		double total = 0;
 		for(Ions ion: ions)
 		{
 			instruction += ion.getMolarMassSteps() + " + ";
 			total += ion.getMolarMass();
 		}
-		instruction = instruction.substring(0, instruction.length() - 1) + " = " + total + " g/mol";
+		instruction = instruction.substring(0, instruction.length() - 3) + " = " + total + " g/mol";
 		return instruction;
 	}
 	
