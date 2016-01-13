@@ -2,7 +2,7 @@
  * The main class for the ChemHelper project
  * 
  * Author: Julia McClellan, Luke Giacalone, Ted Pyne, Hyun Choi -- MXCSClub
- * Version: 12/31/2015
+ * Version: 1/13/2016
  */
 
 package ChemHelper;
@@ -147,6 +147,7 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 				pane.repaint();
 				pack();
 				last = func;
+				lastFunc.resetFocus();
 			}
 		}
 	}

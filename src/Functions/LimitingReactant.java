@@ -4,7 +4,7 @@
  * number() returns true- can save any of calculated leftovers and use saved for any of the reactants.
  * 
  * Author: Julia McClellan
- * Version: 1/2/2016
+ * Version: 1/13/2016
  */
 
 package Functions;
@@ -280,6 +280,11 @@ public class LimitingReactant extends Function
 		}
 	}
 	
+	public void resetFocus()
+	{
+		reader.resetFocus();
+	}
+	
 	public boolean equation()
 	{
 		return true;
@@ -287,11 +292,13 @@ public class LimitingReactant extends Function
 	
 	public Equation saveEquation()
 	{
+		reader.resetFocus();
 		return reader.saveEquation();
 	}
 	
 	public void useSaved(Equation equation)
 	{
+		reader.resetFocus();
 		reader.useSaved(equation);
 	}
 	
@@ -305,6 +312,7 @@ public class LimitingReactant extends Function
 		if(toSave.size() == 0) return 0;
 		Object selected = JOptionPane.showInputDialog(panel, "Choose which number to save", "Save Number", JOptionPane.PLAIN_MESSAGE, 
 				null, toSave.toArray(), toSave.get(0));
+		reader.resetFocus();
 		if(selected instanceof Double) return (Double)selected;
 		return 0;
 	}
@@ -321,6 +329,7 @@ public class LimitingReactant extends Function
 		}
 		Object selected = JOptionPane.showInputDialog(panel, "Choose where to use the number", "Choose Number", JOptionPane.PLAIN_MESSAGE, 
 				null, compoundString.toArray(), compoundString.get(0));
+		reader.resetFocus();
 		if(selected instanceof String)
 		{
 			compounds.get(compoundString.indexOf((String)selected)).setAmount(num);

@@ -4,7 +4,7 @@
  * number() returns true - saves most recently calculated value, uses saved as product or reactant amount.
  * 
  * Author: Julia McClellan
- * Version: 12/30/2015
+ * Version: 1/13/2015
  */
 
 package Functions;
@@ -260,6 +260,11 @@ public class PercentYield extends Function
 		}
 	}
 	
+	public void resetFocus()
+	{
+		reader.resetFocus();
+	}
+	
 	public boolean equation()
 	{
 		return true;
@@ -267,11 +272,13 @@ public class PercentYield extends Function
 	
 	public Equation saveEquation()
 	{
+		reader.resetFocus();
 		return reader.saveEquation();
 	}
 	
 	public void useSaved(Equation equation)
 	{
+		reader.resetFocus();
 		reader.useSaved(equation);
 	}
 	
@@ -282,6 +289,7 @@ public class PercentYield extends Function
 	
 	public double saveNumber()
 	{
+		reader.resetFocus();
 		return toSave;
 	}
 	
@@ -290,6 +298,7 @@ public class PercentYield extends Function
 		String[] options = {"Reactant", "Product"};
 		Object selected = JOptionPane.showInputDialog(panel, "Choose where to use the number", "Choose Number", JOptionPane.PLAIN_MESSAGE, 
 				null, options, "Reactant");
+		reader.resetFocus();
 		if(selected.equals("Reactant") && enterR != null) enterR.setText("" + num);
 		else if(selected.equals("Product") && enterP != null) enterP.setText("" + num);
 	}

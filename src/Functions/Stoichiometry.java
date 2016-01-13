@@ -4,7 +4,7 @@
  * number() returns true- saves most recently calculated value and uses saved as known amount.
  * 
  * Author: Julia McClellan
- * Version: 1/9/2016
+ * Version: 1/13/2016
  */
 
 package Functions;
@@ -272,6 +272,11 @@ public class Stoichiometry extends Function
 		}
 	}
 	
+	public void resetFocus()
+	{
+		reader.resetFocus();
+	}
+	
 	public boolean equation()
 	{
 		return true;
@@ -279,11 +284,13 @@ public class Stoichiometry extends Function
 	
 	public Equation saveEquation()
 	{
+		reader.resetFocus();
 		return reader.saveEquation();
 	}
 	
 	public void useSaved(Equation equation)
 	{
+		reader.resetFocus();
 		reader.useSaved(equation);
 	}
 	
@@ -294,11 +301,13 @@ public class Stoichiometry extends Function
 	
 	public double saveNumber()
 	{
+		reader.resetFocus();
 		return toSave;
 	}
 	
 	public void useSavedNumber(double num)
 	{
+		reader.resetFocus();
 		if(enter != null) enter.setText("" + num);
 	}
 }

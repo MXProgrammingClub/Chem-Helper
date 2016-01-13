@@ -4,7 +4,7 @@
  * classes that need them.
  * 
  * Authors: Ted Pyne, Hyun Choi, Julia McClellan
- * Version: 1/8/2016
+ * Version: 1/13/2016
  */
 
 package Functions;
@@ -41,12 +41,12 @@ public abstract class Function {
 		return name;
 	}
 	
-	/*
-	 * If equation() returns true, then the function can save equations and use saved ones. saveEquation and useSaved should be implemented by those functions.
-	 */
+	//If equation() returns true, then the function can save equations and use saved ones. saveEquation and useSaved should be implemented by those functions.
 	public boolean equation(){return false;}
 	public Equation saveEquation(){return null;}
 	public void useSaved(Equation equation){}
+	
+	public void resetFocus(){} //For functions which contain an equation reader
 	
 	//If number() returns true, then there should be JLabels and JTextFields in the function that have been made savable or usable.
 	public boolean number(){return false;}
