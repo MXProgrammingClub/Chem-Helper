@@ -1,8 +1,6 @@
-/**
- * 
+/*
+ * Author: Luke Giacalone
+ * Version: 01/11/2015
  */
-/**
- * @author ted
- *
- */
+
 package Equation;
