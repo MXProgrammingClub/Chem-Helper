@@ -11,9 +11,12 @@ package Functions;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -23,7 +26,6 @@ import Equation.Equation;
 
 public class EquationReader extends Function
 {
-	
 	private JPanel panel, enterPanel, panel1, resultPanel;
 	private JTextField enter;
 	private JLabel instructions, result, examples, balanced;
@@ -104,6 +106,123 @@ public class EquationReader extends Function
 		}
 	}
 	
+	private class EnterField extends JPanel
+	{
+		private int index;
+		private JLabel label;
+		private String current;
+		private Button arrow, sup, sub;
+		
+		public EnterField()
+		{
+			current = "<html>|</html>";
+			index = 6;
+			label = new JLabel(current);
+			arrow = new Button(this, "\u2192", "\u2192", "\u2192");
+			sup = new Button(this, "<sup>", "</sup>", "<html>a<sup>b</sup></html>");
+			sub = new Button(this, "<sub>", "</sub>", "<html>a<sub>b</sub></html>");
+			this.addKeyListener(new Key());
+			JPanel buttons = new JPanel();
+			buttons.add(arrow);
+			buttons.add(sup);
+			buttons.add(sub);
+			Box box = Box.createVerticalBox();
+			box.add(label);
+			box.add(buttons);
+			add(box);
+			setFocusable(true);
+		}
+		
+		private void enter(String enter)
+		{
+			current = current.substring(0, index) + enter + current.substring(index);
+			index += enter.length();
+			label.setText(current);
+		}
+		
+		private class Key implements KeyListener
+		{
+			public void keyPressed(KeyEvent arg0)
+			{
+				if(arg0.getKeyCode() == 8)
+				{
+					int goBack = checkBack();
+					if(goBack == 0) return;
+					else
+					{
+						current = current.substring(0, index - goBack) + current.substring(index);
+						index -= goBack;
+						label.setText(current);
+					}
+				}
+				else if(arg0.getKeyCode() == 39)
+				{
+					//right arrow
+				}
+				else if(arg0.getKeyCode() == 37)
+				{
+					//left arrow
+				}
+			}
+			
+			public void keyTyped(KeyEvent arg0)
+			{
+				enter(arg0.getKeyChar() + "");
+			}
+			
+			public void keyReleased(KeyEvent arg0){} 
+			private int checkAhead()
+			{
+				if(index == 6) return 0;
+				if(current.substring(index + 1, index + 7).equals("\u2192")) return 6;
+				if(current.substring(index + 1, index + 6).equals("<sup>")) return 5;
+				if(current.substring(index + 1, index + 6).equals("<sub>")) return 5;
+				if(current.substring(index + 1, index + 7).equals("</sup>")) return 5;
+				if(current.substring(index + 1, index + 7).equals("</sub>")) return 5;
+				return 1;
+			}
+			
+			private int checkBack()
+			{
+				if(index == 6) return 0;
+				if(current.substring(index - 6, index).equals("\u2192")) return 6;
+				if(current.substring(index - 5, index).equals("<sup>")) return 5;
+				if(current.substring(index - 5, index).equals("<sub>")) return 5;
+				if(current.substring(index - 6, index).equals("</sup>")) return 5;
+				if(current.substring(index - 6, index).equals("</sub>")) return 5;
+				return 1;
+			}
+		}
+		
+		private class Button extends JButton
+		{
+			private String add1, add2;
+			private boolean on;
+			private EnterField field;
+			
+			public Button(EnterField field, String add1, String add2, String display)
+			{
+				super(display);
+				this.add1 = add1;
+				this.add2 = add2;
+				on = false;
+				this.field = field;
+				addActionListener(new ButtonListener());
+			}
+			
+			private class ButtonListener implements ActionListener
+			{
+				public void actionPerformed(ActionEvent arg0)
+				{
+					if(!on) field.enter(add1);
+					else field.enter(add2);
+					on = !on;
+					field.grabFocus();
+				}
+			}
+		}
+	}
+	
 	public Equation getEquation()
 	{
 		return equation;
@@ -125,4 +244,18 @@ public class EquationReader extends Function
 		JLabel label = latex(equation);
 		result.setIcon(label.getIcon());
 	}
+	/*
+	public EquationReader()
+	{
+		super("L");
+		JFrame frame = new JFrame();
+		frame.add(new EnterField());
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+	}
+	
+	public static void main(String[] args)
+	{
+		new EquationReader();
+	}*/
 }
