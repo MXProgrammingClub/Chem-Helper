@@ -1,7 +1,7 @@
 /*
  * The main class for the ChemHelper project
  * 
- * Author: Julia McClellan, Luke Giacalone, Ted Pyne -- MXCSClub
+ * Author: Julia McClellan, Luke Giacalone, Ted Pyne, Hyun Choi -- MXCSClub
  * Version: 12/31/2015
  */
 
