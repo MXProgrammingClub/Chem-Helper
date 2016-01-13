@@ -1,8 +1,13 @@
 /*
  * The main class for the ChemHelper project
  * 
+<<<<<<< Updated upstream
  * Author: Julia McClellan, Luke Giacalone, Ted Pyne, Hyun Choi -- MXCSClub
  * Version: 1/13/2016
+=======
+ * Author: Julia McClellan, Luke Giacalone, Ted Pyne -- MXCSClub
+ * Version: 12/31/2015
+>>>>>>> Stashed changes
  */
 
 package ChemHelper;
@@ -80,7 +85,7 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 
 	private void createMenu()
 	{
-		funcs = new Function[15];
+		funcs = new Function[16];
 		funcs[0] = new PeriodicTable();
 		funcs[1] = new ElectronShell();
 		funcs[2] = new CompoundStoichiometry();
@@ -96,6 +101,7 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 		funcs[12] = new Nuclear();
 		funcs[13] = new Empirical();
 		funcs[14] = new Density();
+		funcs[15] = new About();
 		
 		String[] menuNames = {"General Information", "Stoichiometry", "Gas Laws", "Reactions", "Other"}; //Lists the names of the different menus on the menu bar.
 		int[] menuCutoffs = {0, 2, 6, 9, 13}; //Specifies the indices where a new menu would start from funcs
