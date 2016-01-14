@@ -97,7 +97,7 @@ public class EquationReader extends Function
 			index = 6;
 			label = new JLabel(current);
 			arrow = new JButton("\u2192");
-			EnterField field = this;
+			final EnterField field = this;
 			arrow.addActionListener(new ActionListener()
 					{
 						public void actionPerformed(ActionEvent arg0)
