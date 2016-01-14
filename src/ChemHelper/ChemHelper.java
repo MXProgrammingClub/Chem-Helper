@@ -1,13 +1,8 @@
 /*
  * The main class for the ChemHelper project
  * 
-<<<<<<< Updated upstream
- * Author: Julia McClellan, Luke Giacalone, Ted Pyne, Hyun Choi -- MXCSClub
- * Version: 1/13/2016
-=======
  * Author: Julia McClellan, Luke Giacalone, Ted Pyne -- MXCSClub
  * Version: 12/31/2015
->>>>>>> Stashed changes
  */
 
 package ChemHelper;
