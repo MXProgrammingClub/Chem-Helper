@@ -19,6 +19,9 @@ import javax.swing.JPanel;
 
 import org.scilab.forge.jlatexmath.*;
 
+import evaluator.Evaluator;
+
+import ChemHelper.InvalidInputException;
 import ChemHelper.Ions;
 import ChemHelper.Monatomic;
 import ChemHelper.Polyatomic;
@@ -151,6 +154,21 @@ public abstract class Function {
 	 * because I didn't feel like doing that and might do it later. 
 	 * pre: sigFigs >= 1
 	 */
+	/**
+	 * REFACTORING!
+	 * 
+	 * 
+	 */
+	public double standardForm(String str) throws InvalidInputException{
+		Evaluator eval = new Evaluator();
+		try{
+			eval.parse(str);
+			return eval.evaluate();
+		}
+		catch (Exception e){
+			throw new InvalidInputException(2);
+		}
+	}
 	public static String withSigFigs(double num, int sigFigs)
 	{
 		int count = 0;
@@ -209,4 +227,5 @@ public abstract class Function {
 		}
 		return resultant;
 	}
+	
 }
