@@ -12,6 +12,8 @@ package Functions;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.image.BufferedImage;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import javax.swing.JLabel;
@@ -169,46 +171,25 @@ public abstract class Function {
 			throw new InvalidInputException(2);
 		}
 	}
+	
+	public static void main(String[] args) throws Exception{
+		System.out.println(roundUp("5.59"));
+	}
 	public static String withSigFigs(double num, int sigFigs)
 	{
-		int count = 0;
-		boolean neg = num < 0;
-		num = Math.abs(num);
-		String original = "" + num, numString = "";
-		int index;
-		if(num > 1)
-		{
-			for(; count < original.length() && original.charAt(count) != '.' && count < sigFigs; numString += original.charAt(count), count++);
-			if(count == sigFigs) // Adding extra zeros to the end if necessary.
-			{
-				if((count + 1 < original.length() && original.charAt(count) == '.' && original.charAt(count + 1) >= '5') || 
-						(count < original.length() && original.charAt(count) >= '5'))
-				{
-					numString = roundUp(numString);
-				}
-				for(int i = count; i < original.length() && original.charAt(i) != '.'; i++, numString += '0');
-				if(neg) numString = '-' + numString;
-				return numString;
-			}
-			index = count + 1;
-		}
-		else 
-		{
-			numString = "0";
-			index = 2;
-		}
-		numString += '.';
-		for(; index < original.length() && count < sigFigs;  numString += original.charAt(index), count++, index++);
-		if(count == sigFigs && index < original.length() && original.charAt(index) >= '5') 
-		{
-			numString = roundUp(numString);
-		}
-		for(; count < sigFigs; count++, numString += '0');
-		return numString;
+		String format = "0";
+		if(sigFigs>1) format += ".";
+		for(int i = 1; i < sigFigs; i++) format+="0";
+		
+		if(!(("" + num).length()== format.length())) format+="E0";
+		
+		NumberFormat formatter = new DecimalFormat(format);
+		return formatter.format(num);
 	}
 
 	private static String roundUp(String toRound)
 	{
+		
 		String resultant = toRound.substring(0, toRound.length() - 1) + (char)(toRound.charAt(toRound.length() - 1) + 1);
 		for(int index = resultant.length() - 1; index > 0 && resultant.charAt(index) == ':'; index--)
 		{

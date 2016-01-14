@@ -22,6 +22,7 @@ import functions.UnaryMinus;
 public class Lexer {
 	private static int pointer;
 	public static ArrayList<Func> lex(String function) {
+		function = function.replaceAll("E", "^");
 		if(!validSyntax(function)) return null;
 		function = function.replaceAll("\\s", "");
 		ArrayList<Func> lexed = new ArrayList<Func>();
