@@ -39,6 +39,7 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 	public ChemHelper(){
 		pane = getContentPane();
 		pane.setLayout(new BorderLayout());
+		this.setTitle("ChemHelper");
 		
 		createMenu();
 		pane.add(menu, BorderLayout.NORTH);
