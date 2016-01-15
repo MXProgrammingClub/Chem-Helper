@@ -3,7 +3,7 @@
  * equation() returns true- saves latest balanced equation and can display a saved one.
  * 
  * Author: Julia McClellan, Hyun Choi
- * Version: 1/13/2016
+ * Version: 1/14/2016
  */
 
 package Functions;
@@ -124,7 +124,7 @@ public class EquationReader extends Function
 		
 		public String getText()
 		{
-			return current;
+			return current.substring(0, index) + current.substring(index + 1);
 		}
 		
 		private void enter(String enter)
@@ -140,6 +140,7 @@ public class EquationReader extends Function
 			{
 				if(arg0.getKeyCode() == 8) //backspace
 				{
+					//check so if it deletes <sub> or <sup>, it also deletes </sub> or </sup>, and if deletes closing tag, toggles on/off
 					int goBack = checkBack();
 					if(goBack == 0) return;
 					current = current.substring(0, index - goBack) + current.substring(index);
@@ -148,6 +149,7 @@ public class EquationReader extends Function
 				}
 				else if(arg0.getKeyCode() == 127) //delete
 				{
+					//check so if it deletes <sub> or <sup>, it also deletes </sub> or </sup>, and if deletes closing tag, toggles on/off
 					int goAhead = checkAhead();
 					if(goAhead == 0) return;
 					current = current.substring(0, index + 1) + current.substring(index + 1 + goAhead);
@@ -156,15 +158,35 @@ public class EquationReader extends Function
 				else if(arg0.getKeyCode() == 39) //right arrow
 				{
 					int newIndex = index + checkAhead();
-					current = current.substring(0, index) + current.substring(index + 1, newIndex + 1) + '|' + current.substring(newIndex + 1);
-					index = newIndex;
-					label.setText(current);
+					if(newIndex != index)
+					{
+						current = current.substring(0, index) + current.substring(index + 1, newIndex + 1) + '|' + current.substring(newIndex + 1);
+						index = newIndex;
+						label.setText(current);
+					}
+					else if(sub.isOn()) sub.toggle();
+					else if(sup.isOn()) sup.toggle();
 				}
 				else if(arg0.getKeyCode() == 37) //left arrow
 				{
 					int newIndex = index - checkBack();
-					current = current.substring(0, newIndex ) + '|' + current.substring(newIndex, index) + current.substring(index + 1);
-					index = newIndex;
+					if(newIndex != index)
+					{
+						current = current.substring(0, newIndex ) + '|' + current.substring(newIndex, index) + current.substring(index + 1);
+						index = newIndex;
+						label.setText(current);
+					}
+				}
+				else if(arg0.getKeyCode() == 36) //home
+				{
+					current = "<html>|" + current.substring(6, index) + current.substring(index + 1);
+					index = 6;
+					label.setText(current);
+				}
+				else if(arg0.getKeyCode() == 35) //end
+				{
+					current = current.substring(0, index) + current.substring(index + 1, current.length() - 7) + "|</html>";
+					index = current.length() - 8;
 					label.setText(current);
 				}
 			}
@@ -176,6 +198,12 @@ public class EquationReader extends Function
 				{
 					if(ch == '^' && !sub.isOn()) sup.toggle();
 					else if(ch == '_' && !sup.isOn()) sub.toggle();
+					else if(ch == '>' && current.charAt(index - 1) == '-') 
+					{
+						current = current.substring(0, index - 1) + current.substring(index);
+						index--;
+						enter("\u2192");
+					}
 					else if(ch != '^' && ch != '_') enter(ch + "");
 				}
 			}
@@ -187,8 +215,8 @@ public class EquationReader extends Function
 				if(current.substring(index + 1, index + 7).equals("\u2192")) return 6;
 				if(current.substring(index + 1, index + 6).equals("<sup>")) return 5;
 				if(current.substring(index + 1, index + 6).equals("<sub>")) return 5;
-				if(current.substring(index + 1, index + 7).equals("</sup>")) return 5;
-				if(current.substring(index + 1, index + 7).equals("</sub>")) return 5;
+				if(current.substring(index + 1, index + 7).equals("</sup>")) return 6;
+				if(current.substring(index + 1, index + 7).equals("</sub>")) return 6;
 				return 1;
 			}
 			
@@ -231,6 +259,12 @@ public class EquationReader extends Function
 				if(!other.isOn())
 				{
 					if(!on) field.enter(add1);
+					else if(current.substring(index - 5, index).equals(add1))
+					{
+						current = current.substring(0, index - 5) + current.substring(index);
+						index -= 5;
+						label.setText(current);
+					}
 					else field.enter(add2);
 					on = !on;
 				}

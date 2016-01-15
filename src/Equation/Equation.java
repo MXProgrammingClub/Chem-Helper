@@ -2,7 +2,7 @@
  * Represents a chemical equation. 
  * 
  * Authors: Luke Giacalone, Julia McClellan, Hyun Choi
- * Version: 12/31/2015
+ * Version: 1/14/2016
  */
 
 package Equation;
@@ -44,21 +44,18 @@ public class Equation
 	
 	public static Equation parseEquation(String eq) throws InvalidInputException
 	{
-		String left, right;
-		left = eq.substring(0, eq.indexOf("="));
-		right = eq.substring(eq.indexOf("=") + 1);
+		String left = eq.substring(6, eq.indexOf("\u2192")), right = eq.substring(eq.indexOf("\u2192") + 1, eq.length() - 7);
 		return new Equation(parseSide(left), parseSide(right));
 	}
 	
 	private static ArrayList<Compound> parseSide(String side) throws InvalidInputException
 	{
 		ArrayList<Compound> compounds = new ArrayList<Compound>();
-		while(side.indexOf("+") != -1)
+		String[] cStrings = side.split("+");
+		for(String compound: cStrings)
 		{
-			compounds.add(Compound.parseCompound(side.substring(0, side.indexOf("+"))));
-			side = side.substring(side.indexOf("+") + 1);
+			compounds.add(Compound.parseCompound(compound));
 		}
-		compounds.add(Compound.parseCompound(side));
 		return compounds;
 	}
 
