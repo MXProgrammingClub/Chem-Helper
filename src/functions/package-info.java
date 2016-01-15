@@ -1,8 +1,0 @@
-/**
- * 
- */
-/**
- * @author ted
- *
- */
-package functions;

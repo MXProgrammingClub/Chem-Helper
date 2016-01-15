@@ -2,7 +2,7 @@
  * 
  */
 /**
- * @author Author: Ted
+ * @author ted
  *
  */
 package Functions;
