@@ -21,7 +21,7 @@ import javax.swing.JPanel;
 
 import org.scilab.forge.jlatexmath.*;
 
-import evaluator.Evaluator;
+//import evaluator.Evaluator;
 
 import ChemHelper.InvalidInputException;
 import ChemHelper.Ions;
@@ -161,7 +161,7 @@ public abstract class Function {
 	 * 
 	 * 
 	 */
-	public double standardForm(String str) throws InvalidInputException{
+/*	public double standardForm(String str) throws InvalidInputException{
 		Evaluator eval = new Evaluator();
 		try{
 			eval.parse(str);
@@ -171,7 +171,7 @@ public abstract class Function {
 			throw new InvalidInputException(2);
 		}
 	}
-	
+*/	
 	public static void main(String[] args) throws Exception{
 		System.out.println(roundUp("5.59"));
 	}

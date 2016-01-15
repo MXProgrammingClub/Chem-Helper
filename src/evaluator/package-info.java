@@ -1,8 +1,0 @@
-/**
- * 
- */
-/**
- * @author Ted
- *
- */
-package evaluator;
