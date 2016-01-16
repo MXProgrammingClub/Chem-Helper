@@ -2,7 +2,7 @@
  * Represents a collection of ions of the same type and charge. The two implementations are Polyatomic and Monatomic.
  * 
  * Author: Julia McClellan
- * Version: 1/9/2015
+ * Version: 1/16/2016
  */
 
 package Equation;
@@ -55,77 +55,63 @@ public abstract class Ions
 	
 	public static Ions parseIons(String ions) throws InvalidInputException
 	{
-		if(ions.indexOf('/') == -1)
+		Ions ion;
+		if(ions.charAt(0) == '(')
 		{
-			int symEnd = ions.indexOf("^");
-			boolean isCharge = true, isNum = true;
-			if(symEnd == -1)
-			{
-				symEnd = ions.indexOf(".");
-				isCharge = false;
-			}
-			if(symEnd == -1)
-				symEnd = ions.length();
-		
-			String symbol = ions.substring(0, symEnd);
-			Element e = PeriodicTable.find(symbol);
-		
+	        ArrayList<Monatomic> monatomic = new ArrayList<Monatomic>();
+	        String temp = "";
+
+	        for(int index = 1; ions.charAt(index) != ')'; index++) 
+	        {
+	            if(Character.isUpperCase(ions.charAt(index))) 
+	            {
+	                if(temp.length() > 0) monatomic.add((Monatomic)Ions.parseIons(temp));
+	                temp = "" + ions.charAt(index);
+	            }
+	            else temp += ions.charAt(index);
+	        }
+	        monatomic.add((Monatomic)Ions.parseIons(temp));
+	        ion = new Polyatomic(monatomic);
+	        ions = ions.substring(ions.indexOf(')') + 1);
+		}
+		else
+		{
+			int end = ions.indexOf('<');
+			if(end == -1) end = ions.length();
+			Element e = PeriodicTable.find(ions.substring(0, end));
 			if(e == null) throw new InvalidInputException(0);
-			int chargeEnd = ions.indexOf("."), charge;
-			if(chargeEnd == -1) 
-			{ 
-				chargeEnd = ions.length();
-				isNum = false;
-			}
-			if(!isCharge) charge = 0;
-			else
+			else ion = new Monatomic(e);
+		}
+		
+		int num = 1, charge = 0;
+		if(ions.indexOf("<sub>") != -1)
+		{
+			try
 			{
-				try
-				{
-					charge = Integer.parseInt(ions.substring(symEnd + 1, chargeEnd));
-				}
-				catch(NumberFormatException e1)
-				{
-					throw new InvalidInputException(1);
-				}
+				int end = ions.indexOf("</sub>");
+				if(end == -1) end = ions.length();
+				num = Integer.parseInt(ions.substring(ions.indexOf("<sub>") + 5, end));
 			}
-			
-			int num;
-			if(!isNum) num = 1;
-			else
+			catch(NumberFormatException e)
 			{
-				try
-				{
-					num = Integer.parseInt(ions.substring(chargeEnd + 1));
-				}
-				catch(NumberFormatException e1)
-				{
-					throw new InvalidInputException(1);
-				}
+				throw new InvalidInputException(1);
 			}
-			return new Monatomic(e, num, charge);
 		}
-		ions = ions.substring(1);
-		ArrayList<Monatomic> inside = new ArrayList<Monatomic>();
-		while(ions.indexOf('/') != -1)
+		ion.setNum(num);
+		
+		if(ions.indexOf("<sup>") != -1)
 		{
-			inside.add((Monatomic)Ions.parseIons(ions.substring(0, ions.indexOf('/'))));
-			ions = ions.substring(ions.indexOf('/') + 1);
+			try
+			{
+				charge = Integer.parseInt(ions.substring(ions.indexOf("<sup>") + 5, ions.indexOf("</sup>")));
+			}
+			catch(NumberFormatException e)
+			{
+				throw new InvalidInputException(1);
+			}
 		}
-		inside.add((Monatomic)Ions.parseIons(ions.substring(0, ions.indexOf(')'))));
-		ions = ions.substring(ions.indexOf(')')+ 1);
-		int num = 1, numStart = ions.indexOf('.');
-		if(numStart != -1)
-		{
-			num = Integer.parseInt(ions.substring(numStart + 1));
-			if(numStart == 0) return new Polyatomic(inside, num, 0);
-			ions = ions.substring(0, numStart);
-		}
-		int charge = 0, chargeStart = ions.indexOf('^');
-		if(chargeStart != -1)
-		{
-			charge = Integer.parseInt(ions.substring(chargeStart + 1));
-		}
-		return new Polyatomic(inside, num, charge);
+		ion.setCharge(charge);
+		
+		return ion;
 	}
 }

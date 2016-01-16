@@ -3,7 +3,7 @@
  * equation() returns true- saves latest balanced equation and can display a saved one.
  * 
  * Author: Julia McClellan, Hyun Choi
- * Version: 1/14/2016
+ * Version: 1/16/2016
  */
 
 package Functions;
@@ -64,13 +64,9 @@ public class EquationReader extends Function
 			String input = enter.getText();
 			try
 			{
-				Equation resultant = Equation.parseEquation(input);
-
-				equation = resultant;
-				boolean isBalanced = resultant.balance();
-
-				result.setIcon(latex(resultant).getIcon());
-
+				equation = Equation.parseEquation(input);
+				boolean isBalanced = equation.balance();
+				result.setIcon(latex(equation).getIcon());
 				if(!isBalanced) balanced.setText("This equation could not be balanced");
 			}
 			catch(Throwable e)

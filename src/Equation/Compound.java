@@ -18,7 +18,7 @@ public class Compound
 	private Ions[] ions;
 	private String state;
 	private int num;
-	public static final String[] validStates = {"l", "g", "s", "aq", " "};
+	public static final String[] VALID_STATES = {"l", "g", "s", "aq", " "};
 	
 	public Compound(Ions[] ions) {
 		this.ions = ions;
@@ -30,7 +30,7 @@ public class Compound
 	{
 		this.ions = ions;
 		boolean valid = false;
-		for(String str: validStates)
+		for(String str: VALID_STATES)
 		{
 			if(str.equals(state))
 			{
@@ -54,7 +54,7 @@ public class Compound
 	{
 		this.ions = ions;
 		boolean valid = false;
-		for(String str: validStates)
+		for(String str: VALID_STATES)
 		{
 			if(str.equals(state))
 			{
@@ -84,7 +84,7 @@ public class Compound
 
 	public static String[] getValidstates() 
 	{
-		return validStates;
+		return VALID_STATES;
 	}
 	
 	public Ions[] getIons()
@@ -194,38 +194,51 @@ public class Compound
 	
 	public static Compound parseCompound(String cmp) throws InvalidInputException
 	{
-		int stateIndex = cmp.lastIndexOf("("), num = 0;
-		try
-		{
-			while(true)
-			{
-				int next = Integer.parseInt(cmp.substring(0, 1));
-				num = num * 10 + next;
-				cmp = cmp.substring(1);
-			}
-		}
-		catch(NumberFormatException e)
-		{
-			if(num == 0) num = 1;
-		}
 		String state = "";
-		if(stateIndex != -1)
+		if(cmp.charAt(cmp.length() - 1) == ')')
 		{
-			state = cmp.substring(stateIndex + 1, cmp.length() - 1);
-			if(state.indexOf("/") == -1) cmp = cmp.substring(0, stateIndex);
-			else state = "";
+			state = cmp.substring(cmp.lastIndexOf('(') + 1, cmp.length() - 1);
+			boolean found = false;
+			for(String s: VALID_STATES)
+			{
+				if(s.equals(state))
+				{
+					found = true;
+					cmp = cmp.substring(0, cmp.lastIndexOf("("));
+					break;
+				}
+			}
+			if(!found) state = "";
 		}
 		ArrayList<Ions> ions = new ArrayList<Ions>();
-		while(cmp.length() > 0)
-		{
-			int end = cmp.indexOf("/"), poly = cmp.indexOf('(');
-			if(poly != -1 && poly < end) end = cmp.indexOf('/', cmp.indexOf(')'));
-			if(end == -1) end = cmp.length();
-			ions.add(Ions.parseIons(cmp.substring(0, end)));
-			if(end != cmp.length()) cmp = cmp.substring(end + 1);
-			else cmp = "";
-		}
-		Ions[] array = new Ions[ions.size()];
-		return new Compound(ions.toArray(array), state, num);
+        String temp = "";
+        boolean mid = false;
+        for(int index = 0; index < cmp.length(); index++) 
+        {
+        	char ch = cmp.charAt(index);
+        	if(!mid)
+        	{
+        		if(Character.isUpperCase(ch))
+        		{
+        			if(temp.length() > 0) ions.add(Ions.parseIons(temp));
+        			temp = "" + ch;
+        		}
+        		else if(ch == '(')
+        		{
+        			if(!temp.equals("")) ions.add(Ions.parseIons(temp));
+        			temp = "(";
+        			mid = true;
+        		}
+        		else temp += ch;
+            }
+        	else
+        	{
+        		if(ch == ')') mid = false;
+        		temp += ch;
+        	}
+        }
+        ions.add(Ions.parseIons(temp));
+        Ions[] i = new Ions[ions.size()];
+		return new Compound(ions.toArray(i), state);
 	}
 }

@@ -2,7 +2,7 @@
  * Represents a chemical equation. 
  * 
  * Authors: Luke Giacalone, Julia McClellan, Hyun Choi
- * Version: 1/14/2016
+ * Version: 1/16/2016
  */
 
 package Equation;
@@ -49,10 +49,13 @@ public class Equation
 	private static ArrayList<Compound> parseSide(String side) throws InvalidInputException
 	{
 		ArrayList<Compound> compounds = new ArrayList<Compound>();
-		String[] cStrings = side.split("+");
+		ArrayList<String> cStrings = new ArrayList<String>();
+		int index = 0;
+		for(int end = side.indexOf("+", index); end != -1; cStrings.add(side.substring(index, end)), index = end + 1, end = side.indexOf("+", index));
+		cStrings.add(side.substring(index));
 		for(String compound: cStrings)
 		{
-			compounds.add(Compound.parseCompound(compound));
+			compounds.add(Compound.parseCompound(compound.trim()));
 		}
 		return compounds;
 	}
