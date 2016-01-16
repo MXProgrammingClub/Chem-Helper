@@ -24,11 +24,12 @@ import org.scilab.forge.jlatexmath.*;
 //import evaluator.Evaluator;
 
 import ChemHelper.InvalidInputException;
-import ChemHelper.Ions;
-import ChemHelper.Monatomic;
-import ChemHelper.Polyatomic;
-import ChemHelper.Compound;
 import Equation.Equation;
+import Equation.Compound;
+import Equation.Ions;
+import Equation.Monatomic;
+import Equation.Polyatomic;
+
 
 public abstract class Function {
 	public static final double C = 300000000, h = 6.626*Math.pow(10, -34);

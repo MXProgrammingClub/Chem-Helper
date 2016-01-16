@@ -9,9 +9,7 @@ package Equation;
 
 import java.util.ArrayList;
 
-import ChemHelper.Compound;
 import ChemHelper.InvalidInputException;
-import ChemHelper.Monatomic;
 
 
 public class Equation

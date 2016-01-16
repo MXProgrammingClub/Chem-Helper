@@ -18,15 +18,16 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import ChemHelper.Compound;
+
 import ChemHelper.InvalidInputException;
-import ChemHelper.Ions;
-import ChemHelper.Monatomic;
 import Elements.Carbon;
 import Elements.Element;
 import Elements.Hydrogen;
 import Elements.Oxygen;
 import Equation.Equation;
+import Equation.Compound;
+import Equation.Ions;
+import Equation.Monatomic;
 
 public class Combustion extends Function
 {

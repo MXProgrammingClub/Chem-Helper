@@ -22,7 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import ChemHelper.Compound;
+import Equation.Compound;
 import Equation.Equation;
 
 public class RateLaw extends Function 

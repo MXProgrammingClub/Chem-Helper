@@ -22,7 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
-import ChemHelper.Compound;
+import Equation.Compound;
 import Equation.Equation;
 
 public class LimitingReactant extends Function

@@ -5,10 +5,11 @@
  * Version: 1/9/2015
  */
 
-package ChemHelper;
+package Equation;
 
 import java.util.ArrayList;
 
+import ChemHelper.InvalidInputException;
 import Elements.Element;
 import Functions.PeriodicTable;
 

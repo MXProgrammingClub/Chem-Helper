@@ -21,7 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
-import ChemHelper.Compound;
+import Equation.Compound;
 import ChemHelper.InvalidInputException;
 
 public class Effusion extends Function 

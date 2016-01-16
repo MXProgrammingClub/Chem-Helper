@@ -6,9 +6,11 @@
  * This represents something which Julia has not told me. Clearly I did in fact write this entire class.
  */
 
-package ChemHelper;
+package Equation;
 
 import java.util.ArrayList;
+
+import ChemHelper.InvalidInputException;
 import Elements.Element;
 
 public class Compound 

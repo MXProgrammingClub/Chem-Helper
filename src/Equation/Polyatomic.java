@@ -5,7 +5,7 @@
  * Version: 1/10/2016
  */
 
-package ChemHelper;
+package Equation;
 
 import java.util.ArrayList;
 
