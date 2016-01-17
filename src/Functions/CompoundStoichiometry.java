@@ -9,7 +9,6 @@
 
 package Functions;
 
-import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -21,7 +20,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import Equation.Compound;
 import ChemHelper.InvalidInputException;
@@ -30,15 +28,13 @@ import HelperClasses.EnterField;
 public class CompoundStoichiometry extends Function 
 {
 	private JPanel panel;
-	//private JTextField compound, mass, massUnit, moles;
 	private EnterField compound, mass, moles;
 	private JButton calculate;
 	private JLabel result;
 	private Box steps;
 	private double toSave;
 	
-	//private final static String prefixes = "GMkdcmunp";
-	private static final String[] MASS_UNITS = {"pg", "ng", "μg", "mg", "cg", "dg", "g", "dag", "hg", "kg", "Mg", "Tg", "Gg"};
+	private static final String[] MASS_UNITS = {"pg", "ng", "\u00B5g", "mg", "cg", "dg", "g", "dag", "hg", "kg", "Mg", "Tg", "Gg"};
 	private static final int[] POWERS = {-12, -9, -6, -3, -2, -1, 0, 1, 2, 3, 6, 9, 12};
 	private static final String[] MOLE_UNITS = {"mol"};
 	
@@ -51,6 +47,8 @@ public class CompoundStoichiometry extends Function
 		mass.setUnit(6); //sets default mass unit to grams
 		moles = new EnterField("Moles", MOLE_UNITS);
 		calculate = new JButton("Calculate");
+		calculate.addActionListener(new Calculate());
+		result = new JLabel();
 		
 		JPanel subpanel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
@@ -73,51 +71,15 @@ public class CompoundStoichiometry extends Function
 		c.gridy = 4;
 		subpanel.add(calculate, c);
 		
-		panel = new JPanel();
-		panel.add(subpanel);
-		
-		/*compound = new JTextField(7);
-		JPanel compoundPanel = new JPanel();
-		compoundPanel.add(new JLabel("Compound: "));
-		compoundPanel.add(compound);
-		
-		mass = new JTextField(5);
-		massUnit = new JTextField("g", 2);
-		JPanel massPanel = new JPanel();
-		massPanel.add(new JLabel("Mass: "));
-		massPanel.add(mass);
-		massPanel.add(massUnit);
-		
-		moles = new JTextField(5);
-		JPanel molesPanel = new JPanel();
-		molesPanel.add(new JLabel("Moles: "));
-		molesPanel.add(moles);
-		molesPanel.add(new JLabel("mol"));
-		
-		calculate = new JButton("Calculate");
-		calculate.addActionListener(new Calculate());
-		calculate.setAlignmentX(Component.CENTER_ALIGNMENT);
-		
-		JLabel instruction = new JLabel("<html>Enter known quantities to calculate the remaining."
-				+ "<br>If the compound is left blank, its molar mass will be calculated.</html>");
-		instruction.setAlignmentX(Component.CENTER_ALIGNMENT);
-		result = new JLabel();
-		result.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-		Box box = Box.createVerticalBox();
-		box.add(instruction);
-		box.add(compoundPanel);
-		box.add(massPanel);
-		box.add(molesPanel);
-		box.add(calculate);
-		box.add(result);
+		c.gridy = 5;
+		subpanel.add(result, c);
 		
 		steps = Box.createVerticalBox();
 		
 		panel = new JPanel();
-		panel.add(box);
+		panel.add(subpanel);
 		panel.add(Box.createHorizontalStrut(20));
-		panel.add(steps);*/
+		panel.add(steps);
 		
 		toSave = 0;
 	}
@@ -158,19 +120,9 @@ public class CompoundStoichiometry extends Function
 				String step = "Mass = " + givenMass + " " + unit;
 				if(!unit.equals("g"))
 				{
-					if(unit.length() != 2 || unit.charAt(1) != 'g')
-					{
-						result.setText("That is not a valid unit for mass.");
-						return;
-					}
-					int prefix = indexOf(MASS_UNITS, unit); //MASS_UNITS.indexOf(unit);
-					if(prefix == -1)
-					{
-						result.setText("That is not a valid unit for mass.");
-						return;
-					}
-					step = "<html>" + step + " * (10<sup>" + POWERS[prefix] + "</sup> g" + " / 1 " + unit + ") = ";
-					givenMass *= Math.pow(10, POWERS[prefix]);
+					int index = indexOf(MASS_UNITS, unit);
+					step = "<html>" + step + " * (10<sup>" + POWERS[index] + "</sup> g" + " / 1 " + unit + ") = ";
+					givenMass *= Math.pow(10, POWERS[index]);
 					step += givenMass + " g</html>";
 				}
 				steps.add(new JLabel(step));
@@ -239,19 +191,9 @@ public class CompoundStoichiometry extends Function
 				String unit = MASS_UNITS[mass.getUnit()];
 				if(!unit.equals("g"))
 				{
-					if(unit.length() != 2 || unit.charAt(1) != 'g')
-					{
-						result.setText("That is not a valid unit for mass.");
-						return;
-					}
-					int prefix = indexOf(MASS_UNITS, unit);//prefixes.indexOf(unit.charAt(0));
-					if(prefix == -1)
-					{
-						result.setText("That is not a valid unit for mass.");
-						return;
-					}
-					String step = "<html>" + toSave + " g * (1 " + unit + " / 10<sup>" + POWERS[prefix] + "</sup> " + " g) = ";
-					toSave /= Math.pow(10, POWERS[prefix]);
+					int index  = indexOf(MASS_UNITS, unit);
+					String step = "<html>" + toSave + " g * (1 " + unit + " / 10<sup>" + POWERS[index] + "</sup> " + " g) = ";
+					toSave /= Math.pow(10, POWERS[index]);
 					step += toSave + " " + unit + "</html>";
 					steps.add(new JLabel(step));
 				}
