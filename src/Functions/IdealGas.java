@@ -24,6 +24,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import HelperClasses.EnterField;
+
 public class IdealGas extends Function 
 {
 	public static final double R = .0821, STANDARD_PRESSURE = 1, STANDARD_TEMPERATURE = 273.15;
@@ -88,67 +90,29 @@ public class IdealGas extends Function
 		save = 0;
 	}
 	
-	private class EnterField extends JPanel
+	
+	
+	public boolean number()
 	{
-		private JTextField amount;
-		private JComboBox<String> unit;
-		private String name;
-		
-		public EnterField(String name, String[] units)
+		return true;
+	}
+	
+	public double saveNumber()
+	{
+		return save;
+	}
+	
+	public void useSavedNumber(double num)
+	{
+		String selected = (String)JOptionPane.showInputDialog(panel, "Choose where to use the number", "Choose Number", JOptionPane.PLAIN_MESSAGE, 
+				null, NO_SPACES, "Pressure");
+		for(int index = 0; index < NO_SPACES.length; index++)
 		{
-			GridBagConstraints c = new GridBagConstraints();
-			this.setLayout(new GridBagLayout());
-			
-			this.setSize(300, this.getHeight());
-			this.name = name;
-			amount = new JTextField(5);
-			unit = new JComboBox<String>(units);
-			unit.setSelectedIndex(0);
-			unit.setPreferredSize(new Dimension(75, 28));
-			
-			JLabel label = new JLabel(name);
-			label.setPreferredSize(new Dimension(80, 16));
-			
-			c.gridx = 0;
-			add(label, c);
-			c.gridx = 1;
-			add(amount, c);
-			c.gridx = 2;
-			add(unit, c);
-		}
-		
-		public void setAmount(double newAmount)
-		{
-			amount.setText("" + newAmount);
-		}
-		
-		public double getAmount()
-		{
-			try
+			if(NO_SPACES[index].equals(selected))
 			{
-				double value = Double.parseDouble(amount.getText());
-				return value;
+				values[index].setAmount(num);
+				break;
 			}
-			catch(Throwable e)
-			{
-				if(e.getMessage().equals("empty String")) return UNKNOWN_VALUE;
-				return ERROR_VALUE;
-			}
-		}
-		
-		public void setUnit(int index)
-		{
-			unit.setSelectedIndex(index);
-		}
-		
-		public int getUnit()
-		{
-			return unit.getSelectedIndex();
-		}
-		
-		public String getName()
-		{
-			return name;
 		}
 	}
 	
@@ -270,30 +234,6 @@ public class IdealGas extends Function
 			result.setText(VALUES[blank].trim() + " = " + unknown + " " + unit);
 			save = unknown;
 			steps.setVisible(true);
-		}
-	}
-	
-	public boolean number()
-	{
-		return true;
-	}
-	
-	public double saveNumber()
-	{
-		return save;
-	}
-	
-	public void useSavedNumber(double num)
-	{
-		String selected = (String)JOptionPane.showInputDialog(panel, "Choose where to use the number", "Choose Number", JOptionPane.PLAIN_MESSAGE, 
-				null, NO_SPACES, "Pressure");
-		for(int index = 0; index < NO_SPACES.length; index++)
-		{
-			if(NO_SPACES[index].equals(selected))
-			{
-				values[index].setAmount(num);
-				break;
-			}
 		}
 	}
 	
