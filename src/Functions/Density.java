@@ -8,6 +8,8 @@
 
 package Functions;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -18,61 +20,63 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import HelperClasses.EnterField;
+
 public class Density extends Function 
 {
 	private JPanel panel;
-	private JTextField density, volume, mass, vUnit, mUnit, dUnit;
+	//private JTextField density, volume, mass, vUnit, mUnit, dUnit;
+	private EnterField density, volume, mass;
 	private JButton calculate;
 	private JLabel result;
 	private double toSave;
 	private Box steps;
 	
-	private static final String prefixes = "GMkdcmunp";
-	private static final int[] powers = {9, 6, 3, -1, -2, -3, -6, -9, -12};
+	//private static final String prefixes = "GMkdcmunp";
+	//private static final int[] POWERS = {9, 6, 3, -1, -2, -3, -6, -9, -12};
+	private static final String[] MASS_UNITS = {"pg", "ng", "\u00B5g", "mg", "cg", "dg", "g", "dag", "hg", "kg", "Mg", "Tg", "Gg"};
+	private static final String[] VOLUME_UNITS = {"pL", "nL", "\u00B5L", "mL", "cL", "dL", "L", "daL", "hL", "kL", "ML", "TL", "GL"};
+	private static final int[] POWERS = {-12, -9, -6, -3, -2, -1, 0, 1, 2, 3, 6, 9, 12};
 	
 	public Density()
 	{
 		super("Density Calculator");
 		toSave = 0;
 		
-		density = new JTextField(5);
-		dUnit = new JTextField("kg/L", 4);
-		JPanel densityPanel = new JPanel();
-		densityPanel.add(new JLabel("Density:"));
-		densityPanel.add(density);
-		densityPanel.add(dUnit);
-		
-		volume = new JTextField(5);
-		vUnit = new JTextField("L", 2);
-		JPanel volumePanel = new JPanel();
-		volumePanel.add(new JLabel("Volume:"));
-		volumePanel.add(volume);
-		volumePanel.add(vUnit);
-		
-		mass = new JTextField(5);
-		mUnit = new JTextField("kg", 2);
-		JPanel massPanel = new JPanel();
-		massPanel.add(new JLabel("Mass"));
-		massPanel.add(mass);
-		massPanel.add(mUnit);
-		
+		JPanel input = new JPanel(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		density = new EnterField("Density", MASS_UNITS, VOLUME_UNITS);
+		density.setUnit(9);
+		density.setUnit2(6);
+		volume = new EnterField("Volume", VOLUME_UNITS);
+		volume.setUnit(6);
+		mass = new EnterField("Mass", MASS_UNITS);
+		mass.setUnit(9);
 		calculate = new JButton("Calculate");
 		calculate.addActionListener(new Calculate());
 		
-		result = new JLabel();
+		c.anchor = GridBagConstraints.CENTER;
+		c.gridx = 0;
+		c.gridy = 0;
 		
-		Box box = Box.createVerticalBox();
-		box.add(new JLabel("Enter known information:"));
-		box.add(densityPanel);
-		box.add(volumePanel);
-		box.add(massPanel);
-		box.add(calculate);
-		box.add(result);
+		input.add(new JLabel("Enter known informaion:"), c);
+		
+		c.anchor = GridBagConstraints.WEST;
+		c.gridy = 1;
+		input.add(density, c);
+		c.gridy = 2;
+		input.add(volume, c);
+		c.gridy = 3;
+		input.add(mass, c);
+		
+		c.anchor = GridBagConstraints.CENTER;
+		c.gridy = 4;
+		input.add(calculate, c);
 		
 		steps = Box.createVerticalBox();
 		
 		panel = new JPanel();
-		panel.add(box);
+		panel.add(input);
 		panel.add(steps);
 	}
 	
@@ -330,14 +334,14 @@ public class Density extends Function
 	private double normalizeUnit(double number, char prefix)
 	{
 		int index = prefixes.indexOf(prefix);
-		if(index != -1) return number * Math.pow(10, powers[index]);
+		if(index != -1) return number * Math.pow(10, POWERS[index]);
 		return 0;
 	}
 	
 	private double convertUnit(double number, char prefix)
 	{
 		int index = prefixes.indexOf(prefix);
-		if(index != -1) return number / Math.pow(10, powers[index]);
+		if(index != -1) return number / Math.pow(10, POWERS[index]);
 		return 0;
 	}
 	
