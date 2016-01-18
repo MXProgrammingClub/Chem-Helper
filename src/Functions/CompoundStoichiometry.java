@@ -42,7 +42,7 @@ public class CompoundStoichiometry extends Function
 	{
 		super("Compound Stoichiometry");
 		
-		compound = new EnterField("Compound", null);
+		compound = new EnterField("Compound");
 		mass = new EnterField("Mass", MASS_UNITS);
 		mass.setUnit(6); //sets default mass unit to grams
 		moles = new EnterField("Moles", MOLE_UNITS);

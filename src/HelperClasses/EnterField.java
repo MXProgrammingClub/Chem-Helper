@@ -15,11 +15,11 @@ public class EnterField extends JPanel
 	private static final int UNKNOWN_VALUE = -500, ERROR_VALUE = -501; // Values which none of the entered values could be.
 	
 	private JTextField amount;
-	private JComboBox<String> unit;
+	private JComboBox<String> unit, unit2;
 	private String name;
-	private boolean isString;
+	private boolean isCompoundUnit;
 	
-	public EnterField(String name, String[] units) //if units == null, then no units displayed
+	public EnterField(String name, String[] units, String[] units2) //if units == null, then no units displayed
 	{
 		GridBagConstraints c = new GridBagConstraints();
 		this.setLayout(new GridBagLayout());
@@ -32,25 +32,47 @@ public class EnterField extends JPanel
 			unit.setSelectedIndex(0);
 			unit.setPreferredSize(new Dimension(75, 28));
 		}
+		isCompoundUnit = false;
+		if(units2 != null) {
+			unit2 = new JComboBox<String>(units2);
+			unit2.setSelectedIndex(0);
+			unit2.setPreferredSize(new Dimension(75, 28));
+			isCompoundUnit = true;
+		}
 		
 		JLabel label = new JLabel(name);
 		label.setPreferredSize(new Dimension(80, 16));
 		
 		c.gridx = 0;
+		c.gridy = 0;
 		add(label, c);
 		c.gridx = 1;
 		add(amount, c);
 		c.gridx = 2;
 		
-		isString = false;
-		if(units != null)
+		if(isCompoundUnit) {
+			add(unit, c);
+			c.gridx = 3;
+			add(new JLabel(" / "), c);
+			c.gridx = 4;
+			add(unit2, c);
+		}
+		else if(units != null)
 			add(unit, c);
 		else {
 			JLabel temp = new JLabel("");
 			temp.setPreferredSize(new Dimension(75, 28));
 			add(temp); //same width as unit would be to make a space
-			isString = true;
+			
 		}
+	}
+	
+	public EnterField(String name) {
+		this(name, null, null);
+	}
+	
+	public EnterField(String name, String[] units) {
+		this(name, units, null);
 	}
 	
 	public void setAmount(double newAmount)
@@ -80,12 +102,36 @@ public class EnterField extends JPanel
 	
 	public void setUnit(int index)
 	{
-		unit.setSelectedIndex(index);
+		try {
+			unit.setSelectedIndex(index);
+		}
+		catch(Throwable e) {}
+	}
+	
+	public void setUnit2(int index)
+	{
+		try {
+			unit2.setSelectedIndex(index);
+		}
+		catch(Throwable e) {}
 	}
 	
 	public int getUnit()
 	{
-		return unit.getSelectedIndex();
+		try {
+			return unit.getSelectedIndex();
+		}
+		catch(Throwable e) {}
+		return -1;
+	}
+	
+	public int getUnit2()
+	{
+		try {
+			return unit2.getSelectedIndex();
+		}
+		catch(Throwable e) {}
+		return -1;
 	}
 	
 	public String getName()
