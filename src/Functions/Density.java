@@ -25,15 +25,12 @@ import HelperClasses.EnterField;
 public class Density extends Function 
 {
 	private JPanel panel;
-	//private JTextField density, volume, mass, vUnit, mUnit, dUnit;
 	private EnterField density, volume, mass;
 	private JButton calculate;
 	private JLabel result;
 	private double toSave;
 	private Box steps;
 	
-	//private static final String prefixes = "GMkdcmunp";
-	//private static final int[] POWERS = {9, 6, 3, -1, -2, -3, -6, -9, -12};
 	private static final String[] MASS_UNITS = {"pg", "ng", "\u00B5g", "mg", "cg", "dg", "g", "dag", "hg", "kg", "Mg", "Tg", "Gg"};
 	private static final String[] VOLUME_UNITS = {"pL", "nL", "\u00B5L", "mL", "cL", "dL", "L", "daL", "hL", "kL", "ML", "TL", "GL"};
 	private static final int[] POWERS = {-12, -9, -6, -3, -2, -1, 0, 1, 2, 3, 6, 9, 12};
@@ -54,6 +51,7 @@ public class Density extends Function
 		mass.setUnit(9);
 		calculate = new JButton("Calculate");
 		calculate.addActionListener(new Calculate());
+		result = new JLabel();
 		
 		c.anchor = GridBagConstraints.CENTER;
 		c.gridx = 0;
@@ -73,6 +71,9 @@ public class Density extends Function
 		c.gridy = 4;
 		input.add(calculate, c);
 		
+		c.gridy = 5;
+		input.add(result, c);
+		
 		steps = Box.createVerticalBox();
 		
 		panel = new JPanel();
@@ -89,57 +90,26 @@ public class Density extends Function
 			steps.add(new JLabel("D = M / V"));
 			steps.add(Box.createVerticalStrut(5));
 			double givenMass = 0, givenVolume = 0, givenDensity = 0;
-			String unknown = "", unknownUnit = "";
+			String unknown = "";
 			try
 			{
 				givenMass = Double.parseDouble(mass.getText());
-				String unit = mUnit.getText();
-				if(!unit.equals("g"))
-				{
-					if(unit.length() == 2 && unit.charAt(1) == 'g' && prefixes.indexOf(unit.charAt(0)) != -1) 
-					{
-						givenMass = normalizeUnit(givenMass, unit.charAt(0));
-					}
-					else
-					{
-						result.setText("Unaccptable unit for mass");
-						return;
-					}
-				}
+				int unit = mass.getUnit();
+				if(unit != 6) givenMass = normalizeUnit(givenMass, unit);
 				givenMass /= 1000;
 				steps.add(new JLabel("Mass = " + givenMass + " kg"));
 			}
 			catch(Throwable t)
 			{
-				if(mass.getText().trim().equals(""))
-				{
-					unknown = "Mass";
-					unknownUnit = mUnit.getText();
-					steps.add(new JLabel("Mass = ?"));
-				}
-				else
-				{
-					result.setText("Unacceptable value for mass.");
-					return;
-				}
+				unknown = "Mass";
+				steps.add(new JLabel("Mass = ?"));
 			}
 			
 			try
 			{
 				givenVolume = Double.parseDouble(volume.getText());
-				String unit = vUnit.getText();
-				if(!unit.equals("L"))
-				{
-					if(unit.length() == 2 && unit.charAt(1) == 'L' && prefixes.indexOf(unit.charAt(0)) != -1) 
-					{
-						givenVolume = normalizeUnit(givenVolume, unit.charAt(0));
-					}
-					else
-					{
-						result.setText("Unaccptable unit for volume.");
-						return;
-					}
-				}
+				int unit = volume.getUnit();
+				if(unit != 6) givenVolume = normalizeUnit(givenVolume, unit);
 				steps.add(new JLabel("Volume = " + givenVolume + " L"));
 			}
 			catch(Throwable t)
@@ -152,7 +122,6 @@ public class Density extends Function
 						return;
 					}
 					unknown = "Volume";
-					unknownUnit = vUnit.getText();
 					steps.add(new JLabel("Volume = ?"));
 				}
 				else
@@ -166,47 +135,10 @@ public class Density extends Function
 			{
 				givenDensity = Double.parseDouble(density.getText());
 				steps.add(new JLabel("Density = " + givenDensity + " kg / L"));
-				String unit = dUnit.getText();
-				if(!unit.equals("kg/L"))
-				{
-					String massUnit, volumeUnit;
-					try
-					{
-						massUnit = unit.substring(0, unit.indexOf('/')).trim();
-						volumeUnit = unit.substring(unit.indexOf('/') + 1).trim();
-					}
-					catch(Throwable e)
-					{
-						result.setText("Unaccptable unit for density.");
-						return;
-					}
-					if(!massUnit.equals("g"))
-					{
-						if(massUnit.length() == 2 && massUnit.charAt(1) == 'g' && prefixes.indexOf(massUnit.charAt(0)) != -1) 
-						{
-							givenDensity = normalizeUnit(givenDensity, massUnit.charAt(0));
-							givenDensity /= 1000;
-						}
-						else
-						{
-							result.setText("Unaccptable unit for density.");
-							return;
-						}
-					}
-					else givenDensity /= 1000;
-					if(!volumeUnit.equals("L"))
-					{
-						if(volumeUnit.length() == 2 && volumeUnit.charAt(1) == 'L' && prefixes.indexOf(volumeUnit.charAt(0)) != -1) 
-						{
-							givenDensity = convertUnit(givenDensity, volumeUnit.charAt(0));
-						}
-						else
-						{
-							result.setText("Unaccptable unit for density.");
-							return;
-						}
-					}
-				}
+				int mUnit = density.getUnit(), vUnit = density.getUnit2();
+				givenDensity = normalizeUnit(givenDensity, mUnit);
+				givenDensity /= 1000;
+				givenDensity = convertUnit(givenDensity, vUnit);
 			}
 			catch(Throwable t)
 			{
@@ -218,7 +150,6 @@ public class Density extends Function
 						return;
 					}
 					unknown = "Density";
-					unknownUnit = dUnit.getText();
 					steps.add(new JLabel("Density = ?"));
 				}
 				else
@@ -229,95 +160,61 @@ public class Density extends Function
 			}
 			steps.add(Box.createVerticalStrut(5));
 			
+			String unknownUnit = "";
 			if(unknown.equals("Mass"))
 			{
 				toSave = givenDensity * givenVolume;
 				steps.add(new JLabel("Mass = " + givenDensity + " * " + givenVolume + " = " + toSave + " kg"));
-				if(!unknownUnit.equals("kg"))
+				int unit = mass.getUnit();
+				unknownUnit = MASS_UNITS[unit];
+				if(unit != 10)
 				{
-					if(unknownUnit.length() == 2 && unknownUnit.charAt(1) == 'g' && prefixes.indexOf(unknownUnit.charAt(0)) != -1) 
+					if(unit != 6)
 					{
 						String step = toSave + " kg = ";
 						toSave *= 1000;
-						toSave = convertUnit(toSave, unknownUnit.charAt(0));
-						steps.add(new JLabel(step + toSave + " " + unknownUnit));
-					}
-					else if(unknownUnit.equals("g"))
-					{
-						String step = toSave + " kg = ";
-						toSave *= 1000;
+						toSave = convertUnit(toSave, unit);
 						steps.add(new JLabel(step + toSave + " " + unknownUnit));
 					}
 					else
 					{
-						result.setText("Unaccptable unit for mass");
-						return;
-					}
+						String step = toSave + " kg = ";
+						toSave *= 1000;
+						steps.add(new JLabel(step + toSave + " g"));
+					}	
 				}
 			}
 			else if(unknown.equals("Volume"))
 			{
 				toSave = givenMass / givenDensity;
 				steps.add(new JLabel("Volume = " + givenMass + " / " + givenDensity + " = " + toSave + " L"));
-				if(!unknownUnit.equals("L"))
+				int unit = volume.getUnit();
+				unknownUnit = VOLUME_UNITS[unit];
+				if(unit != 6)
 				{
-					if(unknownUnit.length() == 2 && unknownUnit.charAt(1) == 'L' && prefixes.indexOf(unknownUnit.charAt(0)) != -1) 
-					{
-						String step = toSave + " L = ";
-						toSave = convertUnit(toSave, unknownUnit.charAt(0));
-						steps.add(new JLabel(step + toSave + " " + unknownUnit));
-					}
-					else
-					{
-						result.setText("Unaccptable unit for volume");
-						return;
-					}
+					String step = toSave + " L = ";
+					toSave = convertUnit(toSave, unit);
+					steps.add(new JLabel(step + toSave + " " + unknownUnit));
 				}
 			}
 			else if(unknown.equals("Density"))
 			{
 				toSave = givenMass / givenVolume;
 				steps.add(new JLabel("Density = " + givenMass + " / " + givenVolume + " = " + toSave + " kg/L"));
-				unknownUnit = dUnit.getText();
-				if(!unknownUnit.equals("kg/L"))
+				int mUnit = density.getUnit(), vUnit = density.getUnit2();
+				if(mUnit != 10 || vUnit != 6)
 				{
 					String step = toSave + " kg/L = ";
-					String massUnit, volumeUnit;
-					try
+					if(mUnit != 10)
 					{
-						massUnit = unknownUnit.substring(0, unknownUnit.indexOf('/')).trim();
-						volumeUnit = unknownUnit.substring(unknownUnit.indexOf('/') + 1).trim();
+						toSave *= 1000;
+						toSave = convertUnit(toSave, mUnit);
 					}
-					catch(Throwable e)
+					if(vUnit != 6)
 					{
-						result.setText("Unaccptable unit for density.");
-						return;
+						toSave = normalizeUnit(toSave, vUnit);
 					}
-					if(!massUnit.equals("g"))
-					{
-						if(massUnit.length() == 2 && massUnit.charAt(1) == 'g' && prefixes.indexOf(massUnit.charAt(0)) != -1) 
-						{
-							toSave *= 1000;
-							toSave = convertUnit(toSave, massUnit.charAt(0));
-						}
-						else
-						{
-							result.setText("Unaccptable unit for density.");
-							return;
-						}
-					}
-					if(!volumeUnit.equals("L"))
-					{
-						if(volumeUnit.length() == 2 && volumeUnit.charAt(1) == 'L' && prefixes.indexOf(volumeUnit.charAt(0)) != -1) 
-						{
-							toSave = normalizeUnit(toSave, volumeUnit.charAt(0));
-						}
-						else
-						{
-							result.setText("Unaccptable unit for density.");
-							return;
-						}
-					}
+					unknownUnit = MASS_UNITS[mUnit] + "/" + VOLUME_UNITS[vUnit];
 					steps.add(new JLabel(step + toSave + " " + unknownUnit));
 				}
 			}
@@ -331,16 +228,14 @@ public class Density extends Function
 		}
 	}
 	
-	private double normalizeUnit(double number, char prefix)
+	private double normalizeUnit(double number, int index)
 	{
-		int index = prefixes.indexOf(prefix);
 		if(index != -1) return number * Math.pow(10, POWERS[index]);
 		return 0;
 	}
 	
-	private double convertUnit(double number, char prefix)
+	private double convertUnit(double number, int index)
 	{
-		int index = prefixes.indexOf(prefix);
 		if(index != -1) return number / Math.pow(10, POWERS[index]);
 		return 0;
 	}
@@ -362,9 +257,9 @@ public class Density extends Function
 				null, fields, "Density");
 		if(field instanceof String)
 		{
-			if(field.equals("Density")) density.setText("" + num);
-			else if(field.equals("Volume")) volume.setText("" + num);
-			else mass.setText("" + num);
+			if(field.equals("Density")) density.setAmount(num);
+			else if(field.equals("Volume")) volume.setAmount(num);
+			else mass.setAmount(num);
 		}
 	}
 	
