@@ -2,17 +2,20 @@
  * Text field for entering equations and compounds.
  * 
  * Author: Julia McClellan
- * Version: 1/19/2016
+ * Version: 1/20/2016
  */
 
 package HelperClasses;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import javax.swing.Box;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -30,6 +33,10 @@ public class TextField extends JPanel
 		current = "<html>|</html>";
 		index = 6;
 		label = new JLabel(current);
+		label.setPreferredSize(new Dimension(200, 30));
+		label.setBorder(BorderFactory.createLineBorder(Color.black));
+		label.setOpaque(true);
+		label.setBackground(Color.WHITE);
 		arrow = new JButton("\u2192");
 		final TextField field = this;
 		arrow.addActionListener(new ActionListener()
@@ -49,10 +56,11 @@ public class TextField extends JPanel
 		buttons.add(arrow);
 		buttons.add(sup);
 		buttons.add(sub);
-		Box box = Box.createVerticalBox();
-		box.add(label);
-		box.add(buttons);
-		add(box);
+		setLayout(new GridLayout(1, 2));
+		JPanel panel = new JPanel();
+		panel.add(label);
+		add(panel);
+		add(buttons);
 		setFocusable(true);
 	}
 	

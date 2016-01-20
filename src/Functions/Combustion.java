@@ -3,7 +3,7 @@
  * equation() returns true- can save latest produced equation, but can't use a saved equation.
  * 
  * Author: Julia McClellan
- * Version: 1/6/2016
+ * Version: 1/20/2016
  */
 
 package Functions;
@@ -16,8 +16,6 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-
 
 import ChemHelper.InvalidInputException;
 import Elements.Carbon;
@@ -28,11 +26,12 @@ import Equation.Equation;
 import Equation.Compound;
 import Equation.Ions;
 import Equation.Monatomic;
+import HelperClasses.TextField;
 
 public class Combustion extends Function
 {
 	private JPanel panel;
-	private JTextField compound;
+	private TextField compound;
 	private JButton combust;
 	private JLabel result;
 	private Equation equation;
@@ -42,7 +41,7 @@ public class Combustion extends Function
 		super("Combustion");
 		equation = null;
 		
-		compound = new JTextField(5);
+		compound = new TextField();
 		combust = new JButton("Combust");
 		combust.addActionListener(new Combust());
 		result = new JLabel();
@@ -64,7 +63,8 @@ public class Combustion extends Function
 			try
 			{
 				Element carbon = new Carbon(), hydrogen = new Hydrogen(), oxygen = new Oxygen();
-				Compound c = Compound.parseCompound(compound.getText());
+				String text = compound.getText();
+				Compound c = Compound.parseCompound(text.substring(6, text.length() - 7));
 				Ions[] ions = c.getIons();
 				int[] coefficients = new int[3], indices = {c.indexOf(hydrogen), c.indexOf(carbon), c.indexOf(oxygen)};
 				int num = 0;
@@ -80,6 +80,7 @@ public class Combustion extends Function
 						if(index != 2)
 						{
 							result.setText("The compound must contain both Hydrogen and Carbon.");
+							compound.grabFocus();
 							return;
 						}
 						coefficients[index] = 0;
@@ -88,6 +89,7 @@ public class Combustion extends Function
 				if(num < ions.length)
 				{
 					result.setText("The compound can only contain Hydrogen, Oxygen, and Carbon");
+					compound.grabFocus();
 					return;
 				}
 				
@@ -128,7 +130,13 @@ public class Combustion extends Function
 			{
 				result.setText(e.getMessage());
 			}
+			compound.grabFocus();
 		}
+	}
+	
+	public void resetFocus()
+	{
+		compound.grabFocus();
 	}
 	
 	public JPanel getPanel()

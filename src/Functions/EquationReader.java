@@ -3,7 +3,7 @@
  * equation() returns true- saves latest balanced equation and can display a saved one.
  * 
  * Author: Julia McClellan, Hyun Choi
- * Version: 1/16/2016
+ * Version: 1/19/2016
  */
 
 package Functions;
