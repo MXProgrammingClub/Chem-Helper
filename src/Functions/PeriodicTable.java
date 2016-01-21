@@ -2,7 +2,7 @@
  * Displays the periodic table and information about the currently selected element. Has static methods to search for elements in the table.
  * 
  * Authors: Luke Giacalone, Julia McClellan
- * Version: 11/24/2015
+ * Version: 1/21/2016
  */
 
 package Functions; 
@@ -219,7 +219,14 @@ public class PeriodicTable extends Function
 				c.ipady = 0;
 				add(new JLabel("<html><font size=\"1\">" + element.getName() + "</font></html>"), c);
 				
-				setBorder(new CompoundBorder(new LineBorder(Color.BLACK, 1), new EmptyBorder(3, 3, 3, 3)));
+				if(element.getMetal().equals("Metalloid")) setBorder(new CompoundBorder(new LineBorder(new Color(255, 82, 0)), new EmptyBorder(3, 3, 3, 3)));
+				else if(element.getMetal().equals("Metal")) setBorder(new CompoundBorder(new LineBorder(new Color(20, 90, 9)), 
+						new EmptyBorder(3, 3, 3, 3)));
+				else setBorder(new CompoundBorder(new LineBorder(new Color(29, 7, 80)), new EmptyBorder(3, 3, 3, 3)));
+				
+				if(element.getState().equals("Liquid")) setBackground(new Color(185, 249, 255));
+				else if(element.getState().equals("Solid")) setBackground(new Color(250, 255, 159));
+				else setBackground(new Color(255, 201, 201));
 			}
 		}
 		
