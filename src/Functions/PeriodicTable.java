@@ -213,20 +213,55 @@ public class PeriodicTable extends Function
 				add(new JLabel("" + element.getNum()), c);
 
 				c.gridy = 1;
-				add(new JLabel("<html><h3>" + name + "</h3></html>"), c);
+				JLabel symbol = new JLabel("<html><h3>" + name + "</h3></html>");
+				if(element.getState().equals("Liquid"))
+					symbol.setForeground(Color.BLUE);
+				else if(element.getState().equals("Gas"))
+					symbol.setForeground(Color.RED);
+				add(symbol, c);
 				
 				c.gridy = 2;
 				c.ipady = 0;
 				add(new JLabel("<html><font size=\"1\">" + element.getName() + "</font></html>"), c);
 				
-				if(element.getMetal().equals("Metalloid")) setBorder(new CompoundBorder(new LineBorder(new Color(255, 82, 0)), new EmptyBorder(3, 3, 3, 3)));
+				setBorder(new CompoundBorder(new LineBorder(Color.BLACK, 1), new EmptyBorder(3, 3, 3, 3)));
+				/*if(element.getMetal().equals("Metalloid")) setBorder(new CompoundBorder(new LineBorder(new Color(255, 82, 0)), new EmptyBorder(3, 3, 3, 3)));
 				else if(element.getMetal().equals("Metal")) setBorder(new CompoundBorder(new LineBorder(new Color(20, 90, 9)), 
 						new EmptyBorder(3, 3, 3, 3)));
-				else setBorder(new CompoundBorder(new LineBorder(new Color(29, 7, 80)), new EmptyBorder(3, 3, 3, 3)));
+				else setBorder(new CompoundBorder(new LineBorder(new Color(29, 7, 80)), new EmptyBorder(3, 3, 3, 3)));*/
 				
-				if(element.getState().equals("Liquid")) setBackground(new Color(185, 249, 255));
-				else if(element.getState().equals("Solid")) setBackground(new Color(250, 255, 159));
-				else setBackground(new Color(255, 201, 201));
+				
+				if(element.getGroupName().equals("Transition Metal"))
+					this.setBackground(new Color(253, 252, 220));
+				else if(element.getMetal().equals("Metalloid"))
+					this.setBackground(new Color(147, 217, 245));
+				else if(element.getGroupName().equals("Lanthanide"))
+					this.setBackground(new Color(231, 218, 212));
+				else if(element.getGroupName().equals("Actinide"))
+					this.setBackground(new Color(241, 220, 212));
+				else if(element.getGroup() == 1 && element.getNum() != 1)
+					this.setBackground(new Color(247, 170, 192));
+				else if(element.getGroup() == 2)
+					this.setBackground(new Color(255, 220, 169));
+				else if(element.getGroup() == 17)
+					this.setBackground(new Color(224, 224, 240));
+				else if(element.getGroup() == 18)
+					this.setBackground(new Color(225, 207, 229));
+				else if(element.getMetal().equals("Non-metal"))
+					this.setBackground(new Color(192, 215, 240));
+				else if(element.getMetal().equals("Metal"))
+					this.setBackground(new Color(212, 235, 216));
+				
+				/*if(element.getMetal().equals("Metalloid")) 
+					this.setBackground(new Color(160, 115, 176));
+				else if(element.getMetal().equals("Metal"))
+					this.setBackground(new Color(252, 216, 25));
+				else
+					this.setBackground(new Color(97, 181, 55));*/
+				
+				//if(element.getState().equals("Liquid")) setBackground(new Color(185, 249, 255));
+				//else if(element.getState().equals("Solid")) setBackground(new Color(250, 255, 159));
+				//else setBackground(new Color(255, 201, 201));
 			}
 		}
 		
