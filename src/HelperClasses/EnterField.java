@@ -19,7 +19,7 @@ public class EnterField extends JPanel
 	private String name;
 	private boolean isCompoundUnit;
 	
-	public EnterField(String name, String[] units, String[] units2) //if units == null, then no units displayed
+	public EnterField(String name, String[] units, String[] units2, boolean hasCompoundField)
 	{
 		GridBagConstraints c = new GridBagConstraints();
 		this.setLayout(new GridBagLayout());
@@ -68,11 +68,19 @@ public class EnterField extends JPanel
 	}
 	
 	public EnterField(String name) {
-		this(name, null, null);
+		this(name, null, null, false);
+	}
+	
+	public EnterField(String name, boolean hasCompoundField) {
+		this(name, null, null, hasCompoundField);
 	}
 	
 	public EnterField(String name, String[] units) {
-		this(name, units, null);
+		this(name, units, null, false);
+	}
+	
+	public EnterField(String name, String[] units, String[] units2) {
+		this(name, units, units2, false);
 	}
 	
 	public void setAmount(double newAmount)

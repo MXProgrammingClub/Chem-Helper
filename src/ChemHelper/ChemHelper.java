@@ -82,7 +82,7 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 	private void createMenu()
 	{
 		funcs = new Function[16];
-		funcs[0] = new PeriodicTable();
+		funcs[0] = new PeriodicTable(0);
 		funcs[1] = new ElectronShell();
 		funcs[2] = new CompoundStoichiometry();
 		funcs[3] = new Stoichiometry();
@@ -115,6 +115,16 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 			}
 			menu.add(thisMenu);
 		}
+		
+		JMenu m = menu.getMenu(0);
+		m.remove(0);
+		JMenu subm = new JMenu("Periodic Table");
+		subm.add(new FunctionMenuItem(new PeriodicTable(0)));
+		subm.add(new FunctionMenuItem(new PeriodicTable(1)));
+		subm.add(new FunctionMenuItem(new PeriodicTable(2)));
+		m.add(subm, 0);
+		menu.remove(0);
+		menu.add(m, 0);
 	}
 
 	private class FunctionMenuItem extends JMenuItem

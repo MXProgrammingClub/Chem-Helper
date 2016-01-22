@@ -30,9 +30,9 @@ public class PeriodicTable extends Function
 	private JPanel panel, alPanel, table, bottomPanel, strut;
 	private JLabel info;
 	
-	public PeriodicTable()
+	public PeriodicTable(int type) //0 = blank, 1 = julia, 2 = luke
 	{
-		super("Periodic Table");
+		super((type == 1) ? "Julia's Table" : (type == 2) ? "Luke's Table" : "Periodic Table");
 		panels = new ElementPanel[7][18];
 		alPanels = new ElementPanel[2][14];
 		for(int row = 0; row < panels.length; row++)
@@ -46,7 +46,7 @@ public class PeriodicTable extends Function
 		int laCol = 0;
 		for(Element e: TABLE)
 		{
-			ElementPanel panel = new ElementPanel(e);
+			ElementPanel panel = new ElementPanel(e, type);
 			if(e.getGroup() < 0)
 			{
 				alPanels[(e.getGroup() * -1) - 1][laCol] = panel;
@@ -189,7 +189,7 @@ public class PeriodicTable extends Function
 	{
 		private Element element;
 		
-		public ElementPanel(Element element)
+		public ElementPanel(Element element, int type) //0 = blank, 1 = julia, 2 = luke
 		{
 			//setBackground(Color.white);
 			this.element = element;
@@ -239,33 +239,34 @@ public class PeriodicTable extends Function
 				else setBorder(new CompoundBorder(new LineBorder(new Color(29, 7, 80)), new EmptyBorder(3, 3, 3, 3)));
 				*/
 				
-				if(element.getGroupName().equals("Transition Metal")) setBackground(new Color(153, 230, 105));
-				else if(element.getGroupName().equals("Actinide") || element.getGroupName().equals("Lanthanide")) setBackground(new Color(255, 159, 159));
-				else if(element.getMetal().equals("Metal")) setBackground(new Color(255, 255, 128));
-				else if(element.getMetal().equals("Non-metal")) setBackground(new Color(230, 179, 255));
-				else setBackground(new Color(153, 255, 255));
-				/*
-				if(element.getGroupName().equals("Transition Metal"))
-					this.setBackground(new Color(253, 252, 220));
-				else if(element.getMetal().equals("Metalloid"))
-					this.setBackground(new Color(147, 217, 245));
-				else if(element.getGroupName().equals("Lanthanide"))
-					this.setBackground(new Color(231, 218, 212));
-				else if(element.getGroupName().equals("Actinide"))
-					this.setBackground(new Color(241, 220, 212));
-				else if(element.getGroup() == 1 && element.getNum() != 1)
-					this.setBackground(new Color(247, 170, 192));
-				else if(element.getGroup() == 2)
-					this.setBackground(new Color(255, 220, 169));
-				else if(element.getGroup() == 17)
-					this.setBackground(new Color(224, 224, 240));
-				else if(element.getGroup() == 18)
-					this.setBackground(new Color(225, 207, 229));
-				else if(element.getMetal().equals("Non-metal"))
-					this.setBackground(new Color(192, 215, 240));
-				else if(element.getMetal().equals("Metal"))
-					this.setBackground(new Color(212, 235, 216));
-				*/
+				if(type == 1) {
+					if(element.getGroupName().equals("Transition Metal")) setBackground(new Color(153, 230, 105));
+					else if(element.getGroupName().equals("Actinide") || element.getGroupName().equals("Lanthanide")) setBackground(new Color(255, 159, 159));
+					else if(element.getMetal().equals("Metal")) setBackground(new Color(255, 255, 128));
+					else if(element.getMetal().equals("Non-metal")) setBackground(new Color(230, 179, 255));
+					else setBackground(new Color(153, 255, 255));
+				}
+				else if(type == 2) {
+					if(element.getGroupName().equals("Transition Metal"))
+						this.setBackground(new Color(253, 252, 220));
+					else if(element.getMetal().equals("Metalloid"))
+						this.setBackground(new Color(147, 217, 245));
+					else if(element.getGroupName().equals("Actinide") || element.getGroupName().equals("Lanthanide"))
+						this.setBackground(new Color(241, 220, 212));
+					else if(element.getGroup() == 1 && element.getNum() != 1)
+						this.setBackground(new Color(247, 170, 192));
+					else if(element.getGroup() == 2)
+						this.setBackground(new Color(255, 220, 169));
+					else if(element.getGroup() == 17)
+						this.setBackground(new Color(224, 224, 240));
+					else if(element.getGroup() == 18)
+						this.setBackground(new Color(225, 207, 229));
+					else if(element.getMetal().equals("Non-metal"))
+						this.setBackground(new Color(192, 215, 240));
+					else if(element.getMetal().equals("Metal"))
+						this.setBackground(new Color(212, 235, 216));
+				}
+				
 				/*if(element.getMetal().equals("Metalloid")) 
 					this.setBackground(new Color(160, 115, 176));
 				else if(element.getMetal().equals("Metal"))
@@ -277,6 +278,10 @@ public class PeriodicTable extends Function
 				else if(element.getState().equals("Solid")) setBackground(new Color(250, 255, 159));
 				else setBackground(new Color(255, 201, 201));*/
 			}
+		}
+		
+		public ElementPanel(Element element) {
+			this(element, 0);
 		}
 		
 		public Element getElement()
