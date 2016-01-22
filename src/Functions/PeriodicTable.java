@@ -63,6 +63,7 @@ public class PeriodicTable extends Function
 		}
 		
 		panel = new JPanel();
+		//panel.setBackground(Color.white);
 		panel.setLayout(new GridLayout(7, 18));
 		alPanel = new JPanel();
 		alPanel.setLayout(new GridLayout(2, 14));
@@ -84,12 +85,16 @@ public class PeriodicTable extends Function
 		}
 		info = new JLabel("Click an element to find out about it.");
 		info.setPreferredSize(new Dimension(245, 125));
+		info.setForeground(Color.black);
 		strut = new JPanel();
 		strut.setPreferredSize(new Dimension(15, 125));
+		//strut.setBackground(Color.white);
+		
 		bottomPanel = new JPanel();
 		bottomPanel.add(alPanel);
 		bottomPanel.add(strut);
 		bottomPanel.add(info);
+		//bottomPanel.setBackground(Color.white);
 		
 		Box box = Box.createVerticalBox();
 		box.add(panel);
@@ -99,6 +104,7 @@ public class PeriodicTable extends Function
 		table = new JPanel();
 		table.add(box);
 		table.setSize(900, 590);
+		//table.setBackground(Color.white);
 	}
 	
 	public JPanel getPanel()
@@ -185,6 +191,7 @@ public class PeriodicTable extends Function
 		
 		public ElementPanel(Element element)
 		{
+			//setBackground(Color.white);
 			this.element = element;
 			if(element != null)
 			{
@@ -210,7 +217,7 @@ public class PeriodicTable extends Function
 				GridBagConstraints c = new GridBagConstraints();
 				c.ipady = -5;
 				c.gridy = 0;
-				add(new JLabel("" + element.getNum()), c);
+				add(new JLabel("<html><font color=\"black\">" + element.getNum()), c);
 
 				c.gridy = 1;
 				JLabel symbol = new JLabel("<html><h3>" + name + "</h3></html>");
@@ -218,19 +225,26 @@ public class PeriodicTable extends Function
 					symbol.setForeground(Color.BLUE);
 				else if(element.getState().equals("Gas"))
 					symbol.setForeground(Color.RED);
+				else symbol.setForeground(Color.black);
 				add(symbol, c);
 				
 				c.gridy = 2;
 				c.ipady = 0;
-				add(new JLabel("<html><font size=\"1\">" + element.getName() + "</font></html>"), c);
+				add(new JLabel("<html><font size=\"1\" color =\"black\">" + element.getName() + "</font></html>"), c);
 				
 				setBorder(new CompoundBorder(new LineBorder(Color.BLACK, 1), new EmptyBorder(3, 3, 3, 3)));
 				/*if(element.getMetal().equals("Metalloid")) setBorder(new CompoundBorder(new LineBorder(new Color(255, 82, 0)), new EmptyBorder(3, 3, 3, 3)));
 				else if(element.getMetal().equals("Metal")) setBorder(new CompoundBorder(new LineBorder(new Color(20, 90, 9)), 
 						new EmptyBorder(3, 3, 3, 3)));
-				else setBorder(new CompoundBorder(new LineBorder(new Color(29, 7, 80)), new EmptyBorder(3, 3, 3, 3)));*/
+				else setBorder(new CompoundBorder(new LineBorder(new Color(29, 7, 80)), new EmptyBorder(3, 3, 3, 3)));
+				*/
 				
-				
+				if(element.getGroupName().equals("Transition Metal")) setBackground(new Color(153, 230, 105));
+				else if(element.getGroupName().equals("Actinide") || element.getGroupName().equals("Lanthanide")) setBackground(new Color(255, 159, 159));
+				else if(element.getMetal().equals("Metal")) setBackground(new Color(255, 255, 128));
+				else if(element.getMetal().equals("Non-metal")) setBackground(new Color(230, 179, 255));
+				else setBackground(new Color(153, 255, 255));
+				/*
 				if(element.getGroupName().equals("Transition Metal"))
 					this.setBackground(new Color(253, 252, 220));
 				else if(element.getMetal().equals("Metalloid"))
@@ -251,17 +265,17 @@ public class PeriodicTable extends Function
 					this.setBackground(new Color(192, 215, 240));
 				else if(element.getMetal().equals("Metal"))
 					this.setBackground(new Color(212, 235, 216));
-				
+				*/
 				/*if(element.getMetal().equals("Metalloid")) 
 					this.setBackground(new Color(160, 115, 176));
 				else if(element.getMetal().equals("Metal"))
 					this.setBackground(new Color(252, 216, 25));
 				else
-					this.setBackground(new Color(97, 181, 55));*/
-				
-				//if(element.getState().equals("Liquid")) setBackground(new Color(185, 249, 255));
-				//else if(element.getState().equals("Solid")) setBackground(new Color(250, 255, 159));
-				//else setBackground(new Color(255, 201, 201));
+					this.setBackground(new Color(97, 181, 55));
+				*/
+				/*if(element.getState().equals("Liquid")) setBackground(new Color(185, 249, 255));
+				else if(element.getState().equals("Solid")) setBackground(new Color(250, 255, 159));
+				else setBackground(new Color(255, 201, 201));*/
 			}
 		}
 		
