@@ -2,7 +2,7 @@
  * Displays the periodic table and information about the currently selected element. Has static methods to search for elements in the table.
  * 
  * Authors: Luke Giacalone, Julia McClellan
- * Version: 1/21/2016
+ * Version: 1/22/2016
  */
 
 package Functions; 
@@ -240,11 +240,11 @@ public class PeriodicTable extends Function
 				*/
 				
 				if(type == 1) {
-					if(element.getGroupName().equals("Transition Metal")) setBackground(new Color(153, 230, 105));
-					else if(element.getGroupName().equals("Actinide") || element.getGroupName().equals("Lanthanide")) setBackground(new Color(255, 159, 159));
-					else if(element.getMetal().equals("Metal")) setBackground(new Color(255, 255, 128));
-					else if(element.getMetal().equals("Non-metal")) setBackground(new Color(230, 179, 255));
-					else setBackground(new Color(153, 255, 255));
+					if(element.getGroupName().equals("Transition Metal")) setBackground(new Color(200, 255, 168));
+					else if(element.getGroupName().equals("Actinide") || element.getGroupName().equals("Lanthanide")) setBackground(new Color(255, 183, 168));
+					else if(element.getMetal().equals("Metal")) setBackground(new Color(255, 255, 185));
+					else if(element.getMetal().equals("Non-metal")) setBackground(new Color(238, 203, 255));
+					else setBackground(new Color(207, 243, 243));
 				}
 				else if(type == 2) {
 					if(element.getGroupName().equals("Transition Metal"))
