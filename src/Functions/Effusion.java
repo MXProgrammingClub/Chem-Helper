@@ -4,7 +4,7 @@
  * number() returns true- saves latest calculated value and can used saved for a molar mass or ratio.
  * 
  * Author: Julia McClellan
- * Version: 1/2/2016
+ * Version: 1/24/2016
  */
 
 package Functions;
@@ -22,13 +22,14 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import Equation.Compound;
+import HelperClasses.TextField;
 import ChemHelper.InvalidInputException;
 
 public class Effusion extends Function 
 {
 	private JPanel panel, c1Panel, c2Panel, ratePanel;
 	private JLabel instruction, result, c1Label, c2Label, rateLabel;
-	private JTextField comp1, comp2, ratio;
+	private TextField comp1, comp2, ratio;
 	private JRadioButton formula1, formula2, mass1, mass2;
 	private JButton calculate;
 	private Box box, steps;
@@ -41,7 +42,7 @@ public class Effusion extends Function
 		instruction = new JLabel("Enter what you know.");
 		
 		c1Label = new JLabel("Compound 1: ");
-		comp1 = new JTextField(5);
+		comp1 = new TextField();
 		formula1 = new JRadioButton("Formula", true);
 		mass1 = new JRadioButton("Molar mass");
 		ButtonGroup g1 = new ButtonGroup();
@@ -54,7 +55,7 @@ public class Effusion extends Function
 		c1Panel.add(mass1);
 
 		c2Label = new JLabel("Compound 2: ");
-		comp2 = new JTextField(5);
+		comp2 = new TextField();
 		formula2 = new JRadioButton("Formula", true);
 		mass2 = new JRadioButton("Molar mass");
 		ButtonGroup g2 = new ButtonGroup();
@@ -67,7 +68,7 @@ public class Effusion extends Function
 		c2Panel.add(mass2);
 		
 		rateLabel = new JLabel("Ratio of rates: ");
-		ratio = new JTextField(5);
+		ratio = new TextField();
 		ratePanel = new JPanel();
 		ratePanel.add(rateLabel);
 		ratePanel.add(ratio);

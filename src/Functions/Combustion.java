@@ -3,7 +3,7 @@
  * equation() returns true- can save latest produced equation, but can't use a saved equation.
  * 
  * Author: Julia McClellan
- * Version: 1/20/2016
+ * Version: 1/24/2016
  */
 
 package Functions;
@@ -63,8 +63,7 @@ public class Combustion extends Function
 			try
 			{
 				Element carbon = new Carbon(), hydrogen = new Hydrogen(), oxygen = new Oxygen();
-				String text = compound.getText();
-				Compound c = Compound.parseCompound(text.substring(6, text.length() - 7));
+				Compound c = Compound.parseCompound(compound.getText());
 				Ions[] ions = c.getIons();
 				int[] coefficients = new int[3], indices = {c.indexOf(hydrogen), c.indexOf(carbon), c.indexOf(oxygen)};
 				int num = 0;
@@ -114,6 +113,14 @@ public class Combustion extends Function
 				
 				//Balancing oxygens
 				int oxygens = right.get(0).getNum() + right.get(1).getNum() * 2 - coefficients[2] * left.get(1).getNum();
+				
+				if(oxygens <= 0)
+				{
+					result.setText("Too much oxygen in compound.");
+					compound.grabFocus();
+					return;
+				}
+				
 				if(oxygens % 2 != 0)
 				{
 					left.get(0).setNum(oxygens);

@@ -2,7 +2,7 @@
  * Text field for entering equations and compounds.
  * 
  * Author: Julia McClellan
- * Version: 1/23/2016
+ * Version: 1/24/2016
  */
 
 package HelperClasses;
@@ -77,7 +77,15 @@ public class TextField extends JPanel
 	
 	public String getText()
 	{
-		return current.substring(0, index) + current.substring(index + 1);
+		String noLine = current.substring(0, index) + current.substring(index + 1);
+		return noLine.substring(6, noLine.length() - 7);
+	}
+	
+	public void setText(String update)
+	{
+		current = "<html>" + update + "|</html>";
+		index = 6 + update.length();
+		label.setText(current);
 	}
 	
 	private void enter(String enter)

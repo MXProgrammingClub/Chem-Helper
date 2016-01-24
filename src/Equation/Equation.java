@@ -2,7 +2,7 @@
  * Represents a chemical equation. 
  * 
  * Authors: Luke Giacalone, Julia McClellan, Hyun Choi
- * Version: 1/16/2016
+ * Version: 1/24/2016
  */
 
 package Equation;
@@ -42,7 +42,7 @@ public class Equation
 	
 	public static Equation parseEquation(String eq) throws InvalidInputException
 	{
-		String left = eq.substring(6, eq.indexOf("\u2192")), right = eq.substring(eq.indexOf("\u2192") + 1, eq.length() - 7);
+		String left = eq.substring(0, eq.indexOf("\u2192")), right = eq.substring(eq.indexOf("\u2192") + 1);
 		return new Equation(parseSide(left), parseSide(right));
 	}
 	
