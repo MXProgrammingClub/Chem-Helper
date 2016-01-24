@@ -2,7 +2,7 @@
  * Text field for entering equations and compounds.
  * 
  * Author: Julia McClellan
- * Version: 1/20/2016
+ * Version: 1/23/2016
  */
 
 package HelperClasses;
@@ -14,6 +14,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -62,6 +64,15 @@ public class TextField extends JPanel
 		add(panel);
 		add(buttons);
 		setFocusable(true);
+		addMouseListener(new MouseListener()
+				{
+					public void mouseClicked(MouseEvent arg0)
+					{
+						grabFocus();
+					}
+					public void mouseEntered(MouseEvent arg0){} public void mouseExited(MouseEvent arg0) {}
+					public void mousePressed(MouseEvent arg0){} public void mouseReleased(MouseEvent arg0) {}
+				});
 	}
 	
 	public String getText()

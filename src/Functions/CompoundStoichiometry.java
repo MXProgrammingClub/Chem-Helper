@@ -4,7 +4,7 @@
  * number() returns true- saves last calculated value and can use saved in moles or mass.
  * 
  * Authors: Julia McClellan and Luke Giacalone
- * Version: 1/17/2016
+ * Version: 1/23/2016
  */
 
 package Functions;
@@ -42,7 +42,7 @@ public class CompoundStoichiometry extends Function
 	{
 		super("Compound Stoichiometry");
 		
-		compound = new EnterField("Compound");
+		compound = new EnterField("Compound", true);
 		mass = new EnterField("Mass", MASS_UNITS);
 		mass.setUnit(6); //sets default mass unit to grams
 		moles = new EnterField("Moles", MOLE_UNITS);

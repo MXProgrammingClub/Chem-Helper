@@ -1,5 +1,13 @@
+/*
+ * A field to enter information with some sort of text field and some number of combo boxes for units.
+ * 
+ * Authors: Luke Giacalone and Julia McClellan
+ * Version: 1/23/2016
+ */
+
 package HelperClasses;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -14,10 +22,10 @@ public class EnterField extends JPanel
 	
 	private static final int UNKNOWN_VALUE = -500, ERROR_VALUE = -501; // Values which none of the entered values could be.
 	
-	private JTextField amount;
+	private Component amount;
 	private JComboBox<String> unit, unit2;
 	private String name;
-	private boolean isCompoundUnit;
+	private boolean isCompoundUnit, hasCompoundField;
 	
 	public EnterField(String name, String[] units, String[] units2, boolean hasCompoundField)
 	{
@@ -26,7 +34,9 @@ public class EnterField extends JPanel
 		
 		this.setSize(300, this.getHeight());
 		this.name = name;
-		amount = new JTextField(5);
+		this.hasCompoundField = hasCompoundField;
+		if(!hasCompoundField) amount = new JTextField(5);
+		else amount = new TextField();
 		if(units != null) {
 			unit = new JComboBox<String>(units);
 			unit.setSelectedIndex(0);
@@ -85,7 +95,7 @@ public class EnterField extends JPanel
 	
 	public void setAmount(double newAmount)
 	{
-		amount.setText("" + newAmount);
+		if(!hasCompoundField) ((JTextField)amount).setText("" + newAmount);
 	}
 	
 	//returns the double amount of the box
@@ -93,7 +103,9 @@ public class EnterField extends JPanel
 	{
 		try
 		{
-			double value = Double.parseDouble(amount.getText());
+			double value;
+			if(!hasCompoundField) value = Double.parseDouble(((JTextField)amount).getText());
+			else value = Double.parseDouble(((TextField)amount).getText());
 			return value;
 		}
 		catch(Throwable e)
@@ -105,7 +117,8 @@ public class EnterField extends JPanel
 	
 	//returns the string amount of the box
 	public String getText() {
-		return amount.getText();
+		if(!hasCompoundField) return ((JTextField)amount).getText();
+		return ((TextField)amount).getText();
 	}
 	
 	public void setUnit(int index)
