@@ -2,19 +2,25 @@
  * The main class for the ChemHelper project
  * 
  * Author: Julia McClellan, Luke Giacalone, Ted Pyne -- MXCSClub
- * Version: 12/31/2015
+ * Version: 01/25/2016
  */
 
 package ChemHelper;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -37,6 +43,7 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 	LinkedList<Double> savedNumbers;
 	
 	public ChemHelper(){
+		LoadingDialog ld = new LoadingDialog();
 		pane = getContentPane();
 		pane.setLayout(new BorderLayout());
 		this.setTitle("ChemHelper");
@@ -77,6 +84,7 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 		this.setPreferredSize(this.getSize());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
+		ld.dispose();
 	}
 
 	private void createMenu()
@@ -195,6 +203,40 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 				if(selected instanceof Double) lastFunc.useSavedNumber((Double)selected);
 			}
 		}
+	}
+	
+	//a jframe that acts as a joptionpane to show that the prgram is loading and closes when the program is finished loading
+	private class LoadingDialog extends JFrame {
+		
+		private JButton cancel;
+		
+		public LoadingDialog() {
+			super("ChemHelper");
+			Box box = Box.createVerticalBox();
+			box.setAlignmentY(CENTER_ALIGNMENT);
+			box.add(Box.createVerticalStrut(10));
+			JLabel label = new JLabel("Loading ChemHelper...");
+			label.setAlignmentX(Box.CENTER_ALIGNMENT);
+			box.add(label);
+			box.add(Box.createVerticalStrut(10));
+			cancel = new JButton("Cancel");
+			cancel.setAlignmentX(Box.CENTER_ALIGNMENT);
+			box.add(cancel);
+			this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+			this.add(box);
+			this.setPreferredSize(new Dimension(300, 100));
+			this.pack();
+			this.setLocationRelativeTo(null);
+			this.setVisible(true);
+			
+			//if cancel is hit, the program ends
+			cancel.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					System.exit(0);
+				}
+			});
+		}
+		
 	}
 	
 	public static void main(String[] args){
