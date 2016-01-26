@@ -3,7 +3,7 @@
  * equation() returns true- can save latest produced equation, but can't use a saved equation.
  * 
  * Author: Julia McClellan
- * Version: 1/24/2016
+ * Version: 1/25/2016
  */
 
 package Functions;
@@ -41,7 +41,7 @@ public class Combustion extends Function
 		super("Combustion");
 		equation = null;
 		
-		compound = new TextField();
+		compound = new TextField(TextField.COMPOUND, false);
 		combust = new JButton("Combust");
 		combust.addActionListener(new Combust());
 		result = new JLabel();

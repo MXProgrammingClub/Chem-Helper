@@ -2,7 +2,7 @@
  * A field to enter information with some sort of text field and some number of combo boxes for units.
  * 
  * Authors: Luke Giacalone and Julia McClellan
- * Version: 1/23/2016
+ * Version: 1/25/2016
  */
 
 package HelperClasses;
@@ -36,7 +36,7 @@ public class EnterField extends JPanel
 		this.name = name;
 		this.hasCompoundField = hasCompoundField;
 		if(!hasCompoundField) amount = new JTextField(5);
-		else amount = new TextField();
+		else amount = new TextField(TextField.COMPOUND, false);
 		if(units != null) {
 			unit = new JComboBox<String>(units);
 			unit.setSelectedIndex(0);

@@ -2,7 +2,7 @@
  * Text field for entering equations and compounds.
  * 
  * Author: Julia McClellan
- * Version: 1/24/2016
+ * Version: 1/25/2016
  */
 
 package HelperClasses;
@@ -12,6 +12,8 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -24,45 +26,54 @@ import javax.swing.JPanel;
 
 public class TextField extends JPanel
 {
-	private int index;
+	public static final int EQUATION = 200, COMPOUND = 75;
+	
+	private int index;//, last;
 	private JLabel label;
 	private String current;
 	private Button sup, sub;
 	private JButton arrow;
 	
-	public TextField()
+	public TextField(int length, boolean hasButtons)
 	{
-		current = "<html>|</html>";
+		setLayout(new GridLayout(1, 2));
+		current = "<html></html>";
 		index = 6;
 		label = new JLabel(current);
-		label.setPreferredSize(new Dimension(200, 30));
+		label.setPreferredSize(new Dimension(length, 26));
 		label.setBorder(BorderFactory.createLineBorder(Color.black));
 		label.setOpaque(true);
 		label.setBackground(Color.WHITE);
-		arrow = new JButton("\u2192");
-		final TextField field = this;
-		arrow.addActionListener(new ActionListener()
-				{
-					public void actionPerformed(ActionEvent arg0)
-					{
-						enter("\u2192");
-						field.grabFocus();
-					}
-				});
+		
+		JPanel panel = new JPanel();
+		panel.add(label);
+		add(panel);
+				
 		sup = new Button(this, "<sup>", "</sup>", "<html>a<sup>b</sup></html>");
 		sub = new Button(this, "<sub>", "</sub>", "<html>a<sub>b</sub></html>");
 		sup.addOther(sub);
 		sub.addOther(sup);
+		
+		if(hasButtons)
+		{
+			arrow = new JButton("\u2192");
+			final TextField field = this;
+			arrow.addActionListener(new ActionListener()
+					{
+						public void actionPerformed(ActionEvent arg0)
+						{
+							enter("\u2192");
+							field.grabFocus();
+						}
+					});
+			JPanel buttons = new JPanel();
+			buttons.add(arrow);
+			buttons.add(sup);
+			buttons.add(sub);
+			add(buttons);
+		}
+		
 		this.addKeyListener(new Key());
-		JPanel buttons = new JPanel();
-		buttons.add(arrow);
-		buttons.add(sup);
-		buttons.add(sub);
-		setLayout(new GridLayout(1, 2));
-		JPanel panel = new JPanel();
-		panel.add(label);
-		add(panel);
-		add(buttons);
 		setFocusable(true);
 		addMouseListener(new MouseListener()
 				{
@@ -73,11 +84,36 @@ public class TextField extends JPanel
 					public void mouseEntered(MouseEvent arg0){} public void mouseExited(MouseEvent arg0) {}
 					public void mousePressed(MouseEvent arg0){} public void mouseReleased(MouseEvent arg0) {}
 				});
+		
+		addFocusListener(new FocusListener()
+				{
+					public void focusGained(FocusEvent arg0) 
+					{
+						int newIndex = current.length() - 7;
+						current = current.substring(0, newIndex) + '|' + current.substring(newIndex);
+						index = newIndex;
+						label.setText(current);
+					}
+
+					public void focusLost(FocusEvent arg0)
+					{
+						//last = index;
+						current = current.substring(0, index) + current.substring(index + 1);
+						//index = -1;
+						label.setText(current);
+					}
+				});
+	}
+	
+	public TextField()
+	{
+		this(EQUATION, true);
 	}
 	
 	public String getText()
 	{
-		String noLine = current.substring(0, index) + current.substring(index + 1);
+		String noLine = current;
+		if(hasFocus()) noLine = current.substring(0, index) + current.substring(index + 1);
 		return noLine.substring(6, noLine.length() - 7);
 	}
 	
@@ -90,7 +126,8 @@ public class TextField extends JPanel
 	
 	private void enter(String enter)
 	{
-		current = current.substring(0, index) + enter + current.substring(index);
+		if(index != -1)	current = current.substring(0, index) + enter + current.substring(index);
+		//else current = current.substring(0, last) + enter + current.substring(last);
 		index += enter.length();
 		label.setText(current);
 	}
