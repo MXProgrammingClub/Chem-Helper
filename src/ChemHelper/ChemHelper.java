@@ -46,7 +46,8 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 		this.setTitle("ChemHelper");
 		
 		createMenu();
-		pane.add(menu, BorderLayout.NORTH);
+		this.setJMenuBar(menu);
+		//pane.add(menu, BorderLayout.NORTH);
 		pane.add(funcs[0].getPanel(), BorderLayout.WEST); //sets periodic table to show by default
 		last = funcs[0].getPanel();
 		lastFunc = funcs[0];
@@ -236,7 +237,9 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 		
 	}
 	
-	public static void main(String[] args){
+	public static void main(String[] args) {
+		if(System.getProperty("os.name").equals("Mac OS X"))
+			System.setProperty("apple.laf.useScreenMenuBar", "true");
 		new ChemHelper();
 	}
 }
