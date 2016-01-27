@@ -4,7 +4,7 @@
  * number() returns true- saves most recently calculated value and uses saved as known amount.
  * 
  * Author: Julia McClellan
- * Version: 1/13/2016
+ * Version: 1/26/2016
  */
 
 package Functions;
@@ -26,6 +26,7 @@ import javax.swing.JTextField;
 
 import Equation.Compound;
 import Equation.Equation;
+import HelperClasses.TextField;
 
 public class Stoichiometry extends Function 
 {
@@ -309,5 +310,15 @@ public class Stoichiometry extends Function
 	{
 		reader.resetFocus();
 		if(enter != null) enter.setText("" + num);
+	}
+	
+	public boolean help()
+	{
+		return true;
+	}
+	
+	public String getHelp()
+	{
+		return "<html>" + TextField.getHelp() + "</html>";
 	}
 }

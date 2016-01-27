@@ -4,7 +4,7 @@
  * number() returns true- can save any of calculated leftovers and use saved for any of the reactants.
  * 
  * Author: Julia McClellan
- * Version: 1/13/2016
+ * Version: 1/26/2016
  */
 
 package Functions;
@@ -24,6 +24,7 @@ import javax.swing.JTextField;
 
 import Equation.Compound;
 import Equation.Equation;
+import HelperClasses.TextField;
 
 public class LimitingReactant extends Function
 {
@@ -334,6 +335,16 @@ public class LimitingReactant extends Function
 		{
 			compounds.get(compoundString.indexOf((String)selected)).setAmount(num);
 		}
+	}
+	
+	public boolean help()
+	{
+		return true;
+	}
+	
+	public String getHelp()
+	{
+		return "<html>" + TextField.getHelp() + "</html>";
 	}
 	
 	public JPanel getPanel()

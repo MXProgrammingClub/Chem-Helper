@@ -2,7 +2,7 @@
  * The main class for the ChemHelper project
  * 
  * Author: Julia McClellan, Luke Giacalone, Ted Pyne -- MXCSClub
- * Version: 01/25/2016
+ * Version: 01/26/2016
  */
 
 package ChemHelper;
@@ -34,7 +34,7 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 	JPanel last, buttons, eqButtons, numButtons;
 	JMenuBar menu;
 	Function[] funcs;
-	JButton saveEq, useEq, saveNum, useNum;
+	JButton saveEq, useEq, saveNum, useNum, help;
 	Equation equation;
 	Function lastFunc;
 	LinkedList<Double> savedNumbers;
@@ -71,9 +71,20 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 		numButtons.setVisible(false);
 		savedNumbers = new LinkedList<Double>();
 		
+		help = new JButton("Help");
+		help.setVisible(false);
+		help.addActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent arg0)
+				{
+					JOptionPane.showMessageDialog(pane, lastFunc.getHelp(), "Help", JOptionPane.QUESTION_MESSAGE);
+				}
+			});
+		
 		buttons = new JPanel();
 		buttons.add(eqButtons);
 		buttons.add(numButtons);
+		buttons.add(help);
 		pane.add(buttons, BorderLayout.SOUTH);
 		buttons.setVisible(false);
 		equation = null;
@@ -157,10 +168,9 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 				lastFunc = ((FunctionMenuItem)arg0.getSource()).getFunction();
 				JPanel func = lastFunc.getPanel();
 				pane.add(func, BorderLayout.WEST);
-				if(lastFunc.equation()) eqButtons.setVisible(true);
-				else eqButtons.setVisible(false);
-				if(lastFunc.number()) numButtons.setVisible(true);
-				else numButtons.setVisible(false);
+				eqButtons.setVisible(lastFunc.equation());
+				numButtons.setVisible(lastFunc.number());
+				help.setVisible(lastFunc.help());
 				buttons.setVisible(true);
 				pane.repaint();
 				pack();

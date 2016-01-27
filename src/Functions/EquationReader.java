@@ -106,4 +106,14 @@ public class EquationReader extends Function
 		JLabel label = latex(equation);
 		result.setIcon(label.getIcon());
 	}
+	
+	public boolean help()
+	{
+		return true;
+	}
+	
+	public String getHelp()
+	{
+		return "<html>" + TextField.getHelp() + "</html>";
+	}
 }

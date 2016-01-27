@@ -4,7 +4,7 @@
  * number() returns true - saves most recently calculated value, uses saved as product or reactant amount.
  * 
  * Author: Julia McClellan
- * Version: 1/13/2015
+ * Version: 1/26/2015
  */
 
 package Functions;
@@ -26,6 +26,7 @@ import javax.swing.JTextField;
 
 import Equation.Compound;
 import Equation.Equation;
+import HelperClasses.TextField;
 
 public class PercentYield extends Function 
 {
@@ -301,6 +302,16 @@ public class PercentYield extends Function
 		reader.resetFocus();
 		if(selected.equals("Reactant") && enterR != null) enterR.setText("" + num);
 		else if(selected.equals("Product") && enterP != null) enterP.setText("" + num);
+	}
+	
+	public boolean help()
+	{
+		return true;
+	}
+	
+	public String getHelp()
+	{
+		return "<html>" + TextField.getHelp() + "</html>";
 	}
 	
 	public JPanel getPanel()

@@ -4,7 +4,7 @@
  * classes that need them.
  * 
  * Authors: Ted Pyne, Hyun Choi, Julia McClellan
- * Version: 1/13/2016
+ * Version: 1/26/2016
  */
 
 package Functions;
@@ -58,6 +58,10 @@ public abstract class Function {
 	public boolean number(){return false;}
 	public double saveNumber(){return 0;}
 	public void useSavedNumber(double num){}
+	
+	//If help() returns true, than getHelp() should return information to be put in a popup message.
+	public boolean help(){return false;}
+	public String getHelp(){return null;}
 	
 	public static JPanel wrapInFlow(Component comp){			//Wrap a component in a FlowLayout
 		JPanel panel = new JPanel();

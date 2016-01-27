@@ -3,7 +3,7 @@
  * equation() returns true- can save latest produced equation, but can't use a saved equation.
  * 
  * Author: Julia McClellan
- * Version: 1/25/2016
+ * Version: 1/26/2016
  */
 
 package Functions;
@@ -159,5 +159,15 @@ public class Combustion extends Function
 	public Equation saveEquation()
 	{
 		return equation;
+	}
+	
+	public boolean help()
+	{
+		return true;
+	}
+	
+	public String getHelp()
+	{
+		return "<html>" + TextField.getHelp() + "</html>";
 	}
 }

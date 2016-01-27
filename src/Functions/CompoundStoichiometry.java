@@ -4,7 +4,7 @@
  * number() returns true- saves last calculated value and can use saved in moles or mass.
  * 
  * Authors: Julia McClellan and Luke Giacalone
- * Version: 1/23/2016
+ * Version: 1/26/2016
  */
 
 package Functions;
@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 import Equation.Compound;
 import ChemHelper.InvalidInputException;
 import HelperClasses.EnterField;
+import HelperClasses.TextField;
 
 public class CompoundStoichiometry extends Function 
 {
@@ -239,6 +240,16 @@ public class CompoundStoichiometry extends Function
 			if(str.equals(arr[i]))
 				index = i;
 		return index;
+	}
+	
+	public boolean help()
+	{
+		return true;
+	}
+	
+	public String getHelp()
+	{
+		return "<html>" + TextField.getHelp() + "</html>";
 	}
 	
 	public JPanel getPanel()

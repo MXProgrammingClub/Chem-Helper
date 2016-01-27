@@ -314,4 +314,10 @@ public class TextField extends JPanel
 			}
 		}
 	}
+	
+	public static String getHelp()
+	{
+		return "<b>Help with textfields:</b><br>To add superscripts, type \"^\", and to add subscripts, type \"_\".<br>To exit, type the same character or" 
+				+ " press the right arrow.<br>To add an arrow, enter \"->\".<br>Use the arrow keys to move the cursor.";
+	}
 }
