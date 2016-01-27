@@ -26,7 +26,7 @@ import javax.swing.JPanel;
 
 public class TextField extends JPanel
 {
-	public static final int EQUATION = 200, COMPOUND = 75;
+	public static final int EQUATION = 200, COMPOUND = 68;
 	
 	private int index;//, last;
 	private JLabel label;

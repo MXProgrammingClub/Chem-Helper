@@ -73,7 +73,6 @@ public class EnterField extends JPanel
 			JLabel temp = new JLabel("");
 			temp.setPreferredSize(new Dimension(75, 28));
 			add(temp); //same width as unit would be to make a space
-			
 		}
 	}
 	
@@ -101,6 +100,8 @@ public class EnterField extends JPanel
 	//returns the double amount of the box
 	public double getAmount()
 	{
+		System.out.println("LUKE");
+		System.out.println(amount.getSize());
 		try
 		{
 			double value;
