@@ -100,8 +100,6 @@ public class EnterField extends JPanel
 	//returns the double amount of the box
 	public double getAmount()
 	{
-		System.out.println("LUKE");
-		System.out.println(amount.getSize());
 		try
 		{
 			double value;
