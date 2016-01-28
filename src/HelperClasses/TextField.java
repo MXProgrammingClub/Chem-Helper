@@ -24,6 +24,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 public class TextField extends JPanel
 {
@@ -42,7 +43,9 @@ public class TextField extends JPanel
 		index = 6;
 		label = new JLabel(current);
 		label.setPreferredSize(new Dimension(length, 26));
-		label.setBorder(BorderFactory.createLineBorder(Color.black));
+		JTextField temp = new JTextField();
+		label.setBorder(temp.getBorder());
+		//label.setBorder(BorderFactory.createLineBorder(Color.black));
 		label.setOpaque(true);
 		label.setBackground(Color.WHITE);
 		
