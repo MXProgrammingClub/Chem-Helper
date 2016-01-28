@@ -2,7 +2,7 @@
  * Text field for entering equations and compounds.
  * 
  * Author: Julia McClellan
- * Version: 1/25/2016
+ * Version: 1/27/2016
  */
 
 package HelperClasses;
@@ -22,17 +22,18 @@ import java.awt.event.MouseListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class TextField extends JPanel
 {
 	public static final int EQUATION = 200, COMPOUND = 68;
 	
-	private int index;//, last;
+	private int index;
 	private JLabel label;
 	private String current;
 	private Button sup, sub;
-	private JButton arrow;
+	private JButton help;
 	
 	public TextField(int length, boolean hasButtons)
 	{
@@ -49,28 +50,24 @@ public class TextField extends JPanel
 		panel.add(label);
 		add(panel);
 				
-		sup = new Button(this, "<sup>", "</sup>", "<html>a<sup>b</sup></html>");
-		sub = new Button(this, "<sub>", "</sub>", "<html>a<sub>b</sub></html>");
+		sup = new Button(this, "<sup>", "</sup>");
+		sub = new Button(this, "<sub>", "</sub>");
 		sup.addOther(sub);
 		sub.addOther(sup);
 		
 		if(hasButtons)
 		{
-			arrow = new JButton("\u2192");
-			final TextField field = this;
-			arrow.addActionListener(new ActionListener()
+			help = new JButton("Help");
+			help.addActionListener(new ActionListener()
 					{
 						public void actionPerformed(ActionEvent arg0)
 						{
-							enter("\u2192");
-							field.grabFocus();
+							JOptionPane.showMessageDialog(label, "<html>" + getHelp() + "</html>", "Help", JOptionPane.QUESTION_MESSAGE);
 						}
 					});
-			JPanel buttons = new JPanel();
-			buttons.add(arrow);
-			buttons.add(sup);
-			buttons.add(sub);
-			add(buttons);
+			JPanel panel2 = new JPanel();
+			panel2.add(help);
+			add(panel2);
 		}
 		
 		this.addKeyListener(new Key());
@@ -257,21 +254,19 @@ public class TextField extends JPanel
 		}
 	}
 	
-	private class Button extends JButton
+	private class Button
 	{
 		private String add1, add2;
 		private boolean on;
 		private TextField field;
 		private Button other;
 		
-		public Button(TextField field, String add1, String add2, String display)
+		public Button(TextField field, String add1, String add2)
 		{
-			super(display);
 			this.add1 = add1;
 			this.add2 = add2;
 			on = false;
 			this.field = field;
-			addActionListener(new ButtonListener());
 		}
 		
 		public void addOther(Button other)
@@ -304,14 +299,6 @@ public class TextField extends JPanel
 		public boolean isOn()
 		{
 			return on;
-		}
-		
-		private class ButtonListener implements ActionListener
-		{
-			public void actionPerformed(ActionEvent arg0)
-			{
-				toggle();
-			}
 		}
 	}
 	

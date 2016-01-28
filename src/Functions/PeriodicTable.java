@@ -2,7 +2,7 @@
  * Displays the periodic table and information about the currently selected element. Has static methods to search for elements in the table.
  * 
  * Authors: Luke Giacalone, Julia McClellan
- * Version: 1/22/2016
+ * Version: 1/27/2016
  */
 
 package Functions; 
@@ -221,11 +221,14 @@ public class PeriodicTable extends Function
 
 				c.gridy = 1;
 				JLabel symbol = new JLabel("<html><h3>" + name + "</h3></html>");
-				if(element.getState().equals("Liquid"))
-					symbol.setForeground(Color.BLUE);
-				else if(element.getState().equals("Gas"))
-					symbol.setForeground(Color.RED);
-				else symbol.setForeground(Color.black);
+				symbol.setForeground(Color.black);
+				if(type != 0)
+				{
+					if(element.getState().equals("Liquid"))
+						symbol.setForeground(Color.BLUE);
+					else if(element.getState().equals("Gas"))
+						symbol.setForeground(Color.RED);
+				}
 				add(symbol, c);
 				
 				c.gridy = 2;

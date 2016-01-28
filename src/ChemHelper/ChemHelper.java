@@ -2,7 +2,7 @@
  * The main class for the ChemHelper project
  * 
  * Author: Julia McClellan, Luke Giacalone, Ted Pyne -- MXCSClub
- * Version: 01/26/2016
+ * Version: 01/27/2016
  */
 
 package ChemHelper;
@@ -232,7 +232,7 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 			box.add(cancel);
 			this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 			this.add(box);
-			this.setPreferredSize(new Dimension(300, 100));
+			this.setPreferredSize(new Dimension(300, 110));
 			this.pack();
 			this.setLocationRelativeTo(null);
 			this.setVisible(true);
