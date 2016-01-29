@@ -12,7 +12,9 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import java.util.LinkedList;
+import java.util.prefs.Preferences;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -27,8 +29,6 @@ import javax.swing.JPanel;
 import Equation.Equation;
 import Functions.*;
 
-
-
 public class ChemHelper extends JFrame{		//Primary GUI class
 	Container pane;
 	JPanel last, buttons, eqButtons, numButtons;
@@ -39,8 +39,13 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 	Function lastFunc;
 	LinkedList<Double> savedNumbers;
 	
-	public ChemHelper(){
+	private static Preferences preferences; {
+		preferences = Preferences.userNodeForPackage(ChemHelper.class);
+	}
+	
+	public ChemHelper() {
 		LoadingDialog ld = new LoadingDialog();
+		
 		pane = getContentPane();
 		pane.setLayout(new BorderLayout());
 		this.setTitle("ChemHelper");
@@ -98,7 +103,7 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 
 	private void createMenu()
 	{
-		funcs = new Function[16];
+		funcs = new Function[17];
 		funcs[0] = new PeriodicTable(0);
 		funcs[1] = new ElectronShell();
 		funcs[2] = new CompoundStoichiometry();
@@ -115,9 +120,10 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 		funcs[13] = new Empirical();
 		funcs[14] = new Density();
 		funcs[15] = new About();
+		funcs[16] = new Prefs();
 		
-		String[] menuNames = {"General Information", "Stoichiometry", "Gas Laws", "Reactions", "Other"}; //Lists the names of the different menus on the menu bar.
-		int[] menuCutoffs = {0, 2, 6, 9, 13}; //Specifies the indices where a new menu would start from funcs
+		String[] menuNames = {"General Information", "Stoichiometry", "Gas Laws", "Reactions", "Other", "Help"}; //Lists the names of the different menus on the menu bar.
+		int[] menuCutoffs = {0, 2, 6, 9, 13, 15}; //Specifies the indices where a new menu would start from funcs
 		
 		menu = new JMenuBar();
 		for(int menuNum = 0; menuNum < menuCutoffs.length; menuNum++)
@@ -138,6 +144,8 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 		JMenu subm = new JMenu("Periodic Table");
 		subm.add(new FunctionMenuItem(new PeriodicTable(0)));
 		subm.add(new FunctionMenuItem(new PeriodicTable(1)));
+		if(preferences.getBoolean("allowLukesTable", false))
+			subm.add(new FunctionMenuItem(new PeriodicTable(2)));
 		m.add(subm, 0);
 		menu.remove(0);
 		menu.add(m, 0);
@@ -244,6 +252,14 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 			});
 		}
 		
+	}
+	
+	public static void changePreference(String key, boolean value) {
+		preferences.putBoolean(key, value);
+	}
+	
+	public static boolean getPreference(String key) {
+		return preferences.getBoolean(key, false);
 	}
 	
 	public static void main(String[] args) {
