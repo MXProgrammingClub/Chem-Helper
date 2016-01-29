@@ -2,7 +2,7 @@
  * The main class for the ChemHelper project
  * 
  * Author: Julia McClellan, Luke Giacalone, Ted Pyne -- MXCSClub
- * Version: 01/28/2016
+ * Version: 01/27/2016
  */
 
 package ChemHelper;
@@ -138,6 +138,7 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 		JMenu subm = new JMenu("Periodic Table");
 		subm.add(new FunctionMenuItem(new PeriodicTable(0)));
 		subm.add(new FunctionMenuItem(new PeriodicTable(1)));
+		subm.add(new FunctionMenuItem(new PeriodicTable(2)));
 		m.add(subm, 0);
 		menu.remove(0);
 		menu.add(m, 0);

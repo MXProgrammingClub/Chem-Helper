@@ -2,7 +2,7 @@
  * Displays the periodic table and information about the currently selected element. Has static methods to search for elements in the table.
  * 
  * Authors: Luke Giacalone, Julia McClellan
- * Version: 1/28/2016
+ * Version: 1/27/2016
  */
 
 package Functions; 
@@ -30,9 +30,9 @@ public class PeriodicTable extends Function
 	private JPanel panel, alPanel, table, bottomPanel, strut;
 	private JLabel info;
 	
-	public PeriodicTable(int type) //0 = blank, 1 = colors
+	public PeriodicTable(int type) //0 = blank, 1 = julia, 2 = luke
 	{
-		super((type == 1) ? "Color Coded" : "Blank");
+		super((type == 1) ? "Julia's Table" : (type == 2) ? "Luke's Table" : "Periodic Table");
 		panels = new ElementPanel[7][18];
 		alPanels = new ElementPanel[2][14];
 		for(int row = 0; row < panels.length; row++)
@@ -63,6 +63,7 @@ public class PeriodicTable extends Function
 		}
 		
 		panel = new JPanel();
+		//panel.setBackground(Color.white);
 		panel.setLayout(new GridLayout(7, 18));
 		alPanel = new JPanel();
 		alPanel.setLayout(new GridLayout(2, 14));
@@ -87,11 +88,13 @@ public class PeriodicTable extends Function
 		info.setForeground(Color.black);
 		strut = new JPanel();
 		strut.setPreferredSize(new Dimension(15, 125));
+		//strut.setBackground(Color.white);
 		
 		bottomPanel = new JPanel();
 		bottomPanel.add(alPanel);
 		bottomPanel.add(strut);
 		bottomPanel.add(info);
+		//bottomPanel.setBackground(Color.white);
 		
 		Box box = Box.createVerticalBox();
 		box.add(panel);
@@ -101,6 +104,7 @@ public class PeriodicTable extends Function
 		table = new JPanel();
 		table.add(box);
 		table.setSize(900, 590);
+		//table.setBackground(Color.white);
 	}
 	
 	public JPanel getPanel()
@@ -187,6 +191,7 @@ public class PeriodicTable extends Function
 		
 		public ElementPanel(Element element, int type) //0 = blank, 1 = julia, 2 = luke
 		{
+			//setBackground(Color.white);
 			this.element = element;
 			if(element != null)
 			{
@@ -231,14 +236,50 @@ public class PeriodicTable extends Function
 				add(new JLabel("<html><font size=\"1\" color =\"black\">" + element.getName() + "</font></html>"), c);
 				
 				setBorder(new CompoundBorder(new LineBorder(Color.BLACK, 1), new EmptyBorder(3, 3, 3, 3)));
+				/*if(element.getMetal().equals("Metalloid")) setBorder(new CompoundBorder(new LineBorder(new Color(255, 82, 0)), new EmptyBorder(3, 3, 3, 3)));
+				else if(element.getMetal().equals("Metal")) setBorder(new CompoundBorder(new LineBorder(new Color(20, 90, 9)), 
+						new EmptyBorder(3, 3, 3, 3)));
+				else setBorder(new CompoundBorder(new LineBorder(new Color(29, 7, 80)), new EmptyBorder(3, 3, 3, 3)));
+				*/
 				
 				if(type == 1) {
-					if(element.getGroupName().equals("Transition Metal")) setBackground(new Color(223, 255, 204));
-					else if(element.getGroupName().equals("Actinide") || element.getGroupName().equals("Lanthanide")) setBackground(new Color(255, 202, 191));
+					if(element.getGroupName().equals("Transition Metal")) setBackground(new Color(200, 255, 168));
+					else if(element.getGroupName().equals("Actinide") || element.getGroupName().equals("Lanthanide")) setBackground(new Color(255, 183, 168));
 					else if(element.getMetal().equals("Metal")) setBackground(new Color(255, 255, 185));
 					else if(element.getMetal().equals("Non-metal")) setBackground(new Color(238, 203, 255));
 					else setBackground(new Color(207, 243, 243));
 				}
+				else if(type == 2) {
+					if(element.getGroupName().equals("Transition Metal"))
+						this.setBackground(new Color(253, 252, 220));
+					else if(element.getMetal().equals("Metalloid"))
+						this.setBackground(new Color(147, 217, 245));
+					else if(element.getGroupName().equals("Actinide") || element.getGroupName().equals("Lanthanide"))
+						this.setBackground(new Color(241, 220, 212));
+					else if(element.getGroup() == 1 && element.getNum() != 1)
+						this.setBackground(new Color(247, 170, 192));
+					else if(element.getGroup() == 2)
+						this.setBackground(new Color(255, 220, 169));
+					else if(element.getGroup() == 17)
+						this.setBackground(new Color(224, 224, 240));
+					else if(element.getGroup() == 18)
+						this.setBackground(new Color(225, 207, 229));
+					else if(element.getMetal().equals("Non-metal"))
+						this.setBackground(new Color(192, 215, 240));
+					else if(element.getMetal().equals("Metal"))
+						this.setBackground(new Color(212, 235, 216));
+				}
+				
+				/*if(element.getMetal().equals("Metalloid")) 
+					this.setBackground(new Color(160, 115, 176));
+				else if(element.getMetal().equals("Metal"))
+					this.setBackground(new Color(252, 216, 25));
+				else
+					this.setBackground(new Color(97, 181, 55));
+				*/
+				/*if(element.getState().equals("Liquid")) setBackground(new Color(185, 249, 255));
+				else if(element.getState().equals("Solid")) setBackground(new Color(250, 255, 159));
+				else setBackground(new Color(255, 201, 201));*/
 			}
 		}
 		
