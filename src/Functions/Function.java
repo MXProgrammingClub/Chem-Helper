@@ -21,9 +21,6 @@ import javax.swing.JPanel;
 
 import org.scilab.forge.jlatexmath.*;
 
-//import evaluator.Evaluator;
-
-import ChemHelper.InvalidInputException;
 import Equation.Equation;
 import Equation.Compound;
 import Equation.Ions;

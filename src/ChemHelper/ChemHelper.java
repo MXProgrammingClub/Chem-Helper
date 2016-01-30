@@ -52,7 +52,6 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 		
 		createMenu();
 		this.setJMenuBar(menu);
-		//pane.add(menu, BorderLayout.NORTH);
 		pane.add(funcs[0].getPanel(), BorderLayout.WEST); //sets periodic table to show by default
 		last = funcs[0].getPanel();
 		lastFunc = funcs[0];

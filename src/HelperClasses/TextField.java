@@ -19,7 +19,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -45,7 +44,6 @@ public class TextField extends JPanel
 		label.setPreferredSize(new Dimension(length, 26));
 		JTextField temp = new JTextField();
 		label.setBorder(temp.getBorder());
-		//label.setBorder(BorderFactory.createLineBorder(Color.black));
 		label.setOpaque(true);
 		label.setBackground(Color.WHITE);
 		
