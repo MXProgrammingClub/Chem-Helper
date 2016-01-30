@@ -14,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import java.util.LinkedList;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import javax.swing.Box;
@@ -103,7 +104,7 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 	private void createMenu()
 	{
 		funcs = new Function[17];
-		funcs[0] = new PeriodicTable(0);
+		funcs[0] = new PeriodicTable(ChemHelper.getIntPreference("Table Style"), ChemHelper.getBooleanPreference("State Colors"));
 		funcs[1] = new ElectronShell();
 		funcs[2] = new CompoundStoichiometry();
 		funcs[3] = new Stoichiometry();
@@ -119,7 +120,7 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 		funcs[13] = new Empirical();
 		funcs[14] = new Density();
 		funcs[15] = new About();
-		funcs[16] = new Prefs();
+		funcs[16] = new Prefs(this);
 		
 		String[] menuNames = {"General Information", "Stoichiometry", "Gas Laws", "Reactions", "Other", "Help"}; //Lists the names of the different menus on the menu bar.
 		int[] menuCutoffs = {0, 2, 6, 9, 13, 15}; //Specifies the indices where a new menu would start from funcs
@@ -137,17 +138,6 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 			}
 			menu.add(thisMenu);
 		}
-		
-		JMenu m = menu.getMenu(0);
-		m.remove(0);
-		JMenu subm = new JMenu("Periodic Table");
-		subm.add(new FunctionMenuItem(new PeriodicTable(0)));
-		subm.add(new FunctionMenuItem(new PeriodicTable(1)));
-		if(preferences.getBoolean("allowLukesTable", false))
-			subm.add(new FunctionMenuItem(new PeriodicTable(2)));
-		m.add(subm, 0);
-		menu.remove(0);
-		menu.add(m, 0);
 	}
 
 	private class FunctionMenuItem extends JMenuItem
@@ -253,12 +243,26 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 		
 	}
 	
+	public void refreshTable() {
+		funcs[0] = new PeriodicTable(ChemHelper.getIntPreference("Table Style"), ChemHelper.getBooleanPreference("State Colors"));
+		menu.getMenu(0).remove(0);
+		menu.getMenu(0).add(new FunctionMenuItem(funcs[0]), 0);
+	}
+	
 	public static void changePreference(String key, boolean value) {
 		preferences.putBoolean(key, value);
 	}
 	
-	public static boolean getPreference(String key) {
+	public static void changePreference(String key, int value) {
+		preferences.putInt(key, value);
+	}
+	
+	public static boolean getBooleanPreference(String key) {
 		return preferences.getBoolean(key, false);
+	}
+	
+	public static int getIntPreference(String key) {
+		return preferences.getInt(key, 0);
 	}
 	
 	public static void main(String[] args) {

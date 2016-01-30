@@ -30,9 +30,9 @@ public class PeriodicTable extends Function
 	private JPanel panel, alPanel, table, bottomPanel, strut;
 	private JLabel info;
 	
-	public PeriodicTable(int type) //0 = blank, 1 = colors
+	public PeriodicTable(int type, boolean stateColors) //0 = blank, 1 = colors, 2 = lukes
 	{
-		super((type == 1) ? "Color Coded" : (type == 2) ? "Luke's Table" : "Blank");
+		super(/*(type == 1) ? "Color Coded" : (type == 2) ? "Luke's Table" : "Blank"*/"Periodic Table");
 		panels = new ElementPanel[7][18];
 		alPanels = new ElementPanel[2][14];
 		for(int row = 0; row < panels.length; row++)
@@ -46,7 +46,7 @@ public class PeriodicTable extends Function
 		int laCol = 0;
 		for(Element e: TABLE)
 		{
-			ElementPanel panel = new ElementPanel(e, type);
+			ElementPanel panel = new ElementPanel(e, type, stateColors);
 			if(e.getGroup() < 0)
 			{
 				alPanels[(e.getGroup() * -1) - 1][laCol] = panel;
@@ -185,7 +185,7 @@ public class PeriodicTable extends Function
 	{
 		private Element element;
 		
-		public ElementPanel(Element element, int type) //0 = blank, 1 = julia, 2 = luke
+		public ElementPanel(Element element, int type, boolean stateColors) //0 = blank, 1 = julia, 2 = luke
 		{
 			this.element = element;
 			if(element != null)
@@ -217,10 +217,12 @@ public class PeriodicTable extends Function
 				c.gridy = 1;
 				JLabel symbol = new JLabel("<html><h3>" + name + "</h3></html>");
 				symbol.setForeground(Color.black);
-				if(element.getState().equals("Liquid"))
-					symbol.setForeground(Color.BLUE);
-				else if(element.getState().equals("Gas"))
-					symbol.setForeground(Color.RED);
+				if(stateColors) {
+					if(element.getState().equals("Liquid"))
+						symbol.setForeground(Color.BLUE);
+					else if(element.getState().equals("Gas"))
+						symbol.setForeground(Color.RED);
+				}
 				add(symbol, c);
 				
 				c.gridy = 2;
@@ -261,7 +263,7 @@ public class PeriodicTable extends Function
 		}
 		
 		public ElementPanel(Element element) {
-			this(element, 0);
+			this(element, 0, false);
 		}
 		
 		public Element getElement()
