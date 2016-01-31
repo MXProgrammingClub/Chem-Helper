@@ -3,17 +3,19 @@
  * equation() returns true- saves latest balanced equation and can display a saved one.
  * 
  * Author: Julia McClellan, Hyun Choi
- * Version: 1/19/2016
+ * Version: 1/30/2016
  */
 
 package Functions;
 
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import ChemHelper.InvalidInputException;
@@ -25,7 +27,7 @@ public class EquationReader extends Function
 	private JPanel panel;
 	private TextField enter;
 	private JLabel instructions, result, balanced;
-	private JButton button;
+	private JButton button, help;
 	private Equation equation;
 	
 	public EquationReader()
@@ -34,15 +36,29 @@ public class EquationReader extends Function
 		
 		instructions = new JLabel("Type your equation below:");
 		enter = new TextField();
-		button = new JButton("Balance");
-		button.addActionListener(new BListener());
 		result = new JLabel();
 		balanced = new JLabel();
 		
-		Box box = Box.createVerticalBox();
+		button = new JButton("Balance");
+		button.addActionListener(new BListener());
+		help = new JButton("Help");
+		help = new JButton("Help");
+		help.addActionListener(new ActionListener()
+				{
+					public void actionPerformed(ActionEvent arg0)
+					{
+						JOptionPane.showMessageDialog(panel, "<html>" + TextField.getHelp() + "</html>", "Help", JOptionPane.QUESTION_MESSAGE);
+					}
+				});
+		JPanel buttons = new JPanel();
+		buttons.add(help);
+		buttons.add(button);
+
+		JPanel box = new JPanel();
+		box.setLayout(new GridLayout(5, 1));
 		box.add(instructions);
 		box.add(enter);
-		box.add(button);
+		box.add(buttons);
 		box.add(result);
 		box.add(balanced);
 		
@@ -60,6 +76,8 @@ public class EquationReader extends Function
 	{
 		public void actionPerformed(ActionEvent arg0) 
 		{
+			result.setIcon(null);
+			balanced.setText("");
 			String input = enter.getText();
 			try
 			{

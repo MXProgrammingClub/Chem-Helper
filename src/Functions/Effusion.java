@@ -4,7 +4,7 @@
  * number() returns true- saves latest calculated value and can used saved for a molar mass or ratio.
  * 
  * Author: Julia McClellan
- * Version: 1/26/2016
+ * Version: 1/30/2016
  */
 
 package Functions;
@@ -41,7 +41,7 @@ public class Effusion extends Function
 		instruction = new JLabel("Enter what you know.");
 		
 		c1Label = new JLabel("Compound 1: ");
-		comp1 = new TextField(TextField.COMPOUND, false);
+		comp1 = new TextField(TextField.COMPOUND);
 		formula1 = new JRadioButton("Formula", true);
 		mass1 = new JRadioButton("Molar mass");
 		ButtonGroup g1 = new ButtonGroup();
@@ -54,7 +54,7 @@ public class Effusion extends Function
 		c1Panel.add(mass1);
 
 		c2Label = new JLabel("Compound 2: ");
-		comp2 = new TextField(TextField.COMPOUND, false);
+		comp2 = new TextField(TextField.COMPOUND);
 		formula2 = new JRadioButton("Formula", true);
 		mass2 = new JRadioButton("Molar mass");
 		ButtonGroup g2 = new ButtonGroup();
@@ -67,7 +67,7 @@ public class Effusion extends Function
 		c2Panel.add(mass2);
 		
 		rateLabel = new JLabel("Ratio of rates: ");
-		ratio = new TextField(TextField.COMPOUND, false);
+		ratio = new TextField(TextField.COMPOUND);
 		ratePanel = new JPanel();
 		ratePanel.add(rateLabel);
 		ratePanel.add(ratio);

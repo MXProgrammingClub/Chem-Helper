@@ -2,16 +2,13 @@
  * Text field for entering equations and compounds.
  * 
  * Author: Julia McClellan
- * Version: 1/27/2016
+ * Version: 1/30/2016
  */
 
 package HelperClasses;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
@@ -19,9 +16,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -33,11 +28,9 @@ public class TextField extends JPanel
 	private JLabel label;
 	private String current;
 	private Button sup, sub;
-	private JButton help;
 	
-	public TextField(int length, boolean hasButtons)
+	public TextField(int length)
 	{
-		setLayout(new GridLayout(1, 2));
 		current = "<html></html>";
 		index = 6;
 		label = new JLabel(current);
@@ -55,21 +48,6 @@ public class TextField extends JPanel
 		sub = new Button(this, "<sub>", "</sub>");
 		sup.addOther(sub);
 		sub.addOther(sup);
-		
-		if(hasButtons)
-		{
-			help = new JButton("Help");
-			help.addActionListener(new ActionListener()
-					{
-						public void actionPerformed(ActionEvent arg0)
-						{
-							JOptionPane.showMessageDialog(label, "<html>" + getHelp() + "</html>", "Help", JOptionPane.QUESTION_MESSAGE);
-						}
-					});
-			JPanel panel2 = new JPanel();
-			panel2.add(help);
-			add(panel2);
-		}
 		
 		this.addKeyListener(new Key());
 		setFocusable(true);
@@ -105,7 +83,7 @@ public class TextField extends JPanel
 	
 	public TextField()
 	{
-		this(EQUATION, true);
+		this(EQUATION);
 	}
 	
 	public String getText()
