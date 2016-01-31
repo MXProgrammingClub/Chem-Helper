@@ -3,8 +3,8 @@
  * and from C or F to K.
  * number() returns true- saves the latest calculated value, can use saved for P, V, n, or T.
  * 
- * Author: Julia McClellan
- * Edited 01/02/2016 Luke Giacalone--Added a gridbaglayout to the enterfield class to make it look better
+ * Author: Julia McClellan and Luke Giacalone
+ * Version: 01/31/2016
  */
 
 package Functions;
@@ -24,7 +24,10 @@ import HelperClasses.EnterField;
 public class IdealGas extends Function 
 {
 	public static final double R = .0821, STANDARD_PRESSURE = 1, STANDARD_TEMPERATURE = 273.15;
-	public static final String[][] UNITS = {{"atm", "torr", "kPa"}, {"L"}, {"mol"}, {"K", "\u2103", "\u2109"}};
+	private static final String[][] UNITS = {{"atm", "torr", "kPa"}, 
+			{"pL", "nL", "\u00B5L", "mL", "cL", "dL", "L", "daL", "hL", "kL", "ML", "TL", "GL"}, 
+			{"mol"}, {"K", "\u2103", "\u2109"}};
+	private static final int[] VOLUME_POWERS = {-12, -9, -6, -3, -2, -1, 0, 1, 2, 3, 6, 9, 12};
 	
 	private static final int UNKNOWN_VALUE = -500, ERROR_VALUE = -501; // Values which none of the entered values could be.
 	private static final String[] VALUES = {"Pressure", "Volume", "Moles", "Temperature"};
@@ -50,6 +53,8 @@ public class IdealGas extends Function
 			valueBox.add(field);
 		}
 		
+		values[1].setUnit(6);//sets default volume to L
+		
 		stp = new JCheckBox("STP");
 		stp.addActionListener(new ActionListener()
 				{
@@ -59,6 +64,7 @@ public class IdealGas extends Function
 						{
 							values[0].setAmount(STANDARD_PRESSURE);
 							values[0].setUnit(0);
+							values[1].setUnit(6);
 							values[3].setAmount(STANDARD_TEMPERATURE);
 							values[3].setUnit(0);
 						}
@@ -142,7 +148,7 @@ public class IdealGas extends Function
 						return;
 					}
 				}
-				else if(values[index].getUnit() != 0)
+				else if((index == 1 && values[index].getUnit() != 6) || values[index].getUnit() != 0)
 				{
 					String step = values[index].getName().trim() + " = " + quantities[index] + " ";
 					if(index == 0)
@@ -157,6 +163,11 @@ public class IdealGas extends Function
 							quantities[index] = kPaToatm(quantities[index]);
 							step += "kPa * " + "(0.00986923 atm / 1 kPa) = " + quantities[index] + " atm";
 						}
+					}
+					else if(index == 1) {
+						quantities[index] = volumeToLiters(quantities[index], values[index].getUnit());
+						step += values[index].getUnitName() + " * " + "(10^" + VOLUME_POWERS[values[index].getUnit()]
+								+ " L / "  + values[index].getUnitName() + ") " + "  = " + quantities[index] + " L";
 					}
 					else if(index == 3)
 					{
@@ -232,44 +243,40 @@ public class IdealGas extends Function
 		}
 	}
 	
-	public static double fahrenheitToKelvin(double fahrenheit)
-	{
+	public static double fahrenheitToKelvin(double fahrenheit) {
 		return (fahrenheit + 459.67) * 5 / 9;
 	}
 	
-	public static double kelvinToFahrenheit(double kelvin)
-	{
+	public static double kelvinToFahrenheit(double kelvin) {
 		return (kelvin  * 9 / 5) - 459.67;
 	}
 	
-	public static double celsiusToKelvin(double celsius)
-	{
+	public static double celsiusToKelvin(double celsius) {
 		return celsius + 273.15;
 	}
 	
-	public static double kelvinToCelsius(double kelvin)
-	{
+	public static double kelvinToCelsius(double kelvin) {
 		return kelvin - 273.15;
 	}
 	
-	public static double torrToatm(double torr)
-	{
+	public static double torrToatm(double torr) {
 		return torr * 0.00131579;
 	}
 	
-	public static double atmTotorr(double atm)
-	{
+	public static double atmTotorr(double atm) {
 		return atm / 0.00131579;
 	}
 	
-	public static double kPaToatm(double kPa)
-	{
+	public static double kPaToatm(double kPa) {
 		return kPa * 0.00986923;
 	}
 	
-	public static double atmTokPa(double atm)
-	{
+	public static double atmTokPa(double atm) {
 		return atm / 0.00986923;
+	}
+	
+	public static double volumeToLiters(double volume, int unitIndex) {
+		return volume * Math.pow(10, VOLUME_POWERS[unitIndex]);
 	}
 	
 	public JPanel getPanel()
