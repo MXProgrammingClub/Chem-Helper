@@ -98,8 +98,10 @@ public class EnterField extends JPanel
 	}
 	
 	//returns the double amount of the box
-	public double getAmount() {
-		try {
+	public double getAmount() 
+	{
+		try 
+		{
 			double value;
 			if(!hasCompoundField) value = Double.parseDouble(((JTextField)amount).getText());
 			else value = Double.parseDouble(((TextField)amount).getText());
@@ -113,10 +115,8 @@ public class EnterField extends JPanel
 	
 	//returns the string amount of the box
 	public String getText() {
-		if(!hasCompoundField)
-			return ((JTextField)amount).getText();
-		else
-			return ((TextField)amount).getText();
+		if(!hasCompoundField) return ((JTextField)amount).getText();
+		else return ((TextField)amount).getText();
 	}
 	
 	public void setText(String text) {
@@ -126,21 +126,24 @@ public class EnterField extends JPanel
 			((TextField)amount).setText(text);
 	}
 	
-	public void setUnit(int index) {
+	public void setUnit(int index)
+	{
 		try {
 			unit.setSelectedIndex(index);
 		}
 		catch(Throwable e) {}
 	}
 	
-	public void setUnit2(int index) {
+	public void setUnit2(int index) 
+	{
 		try {
 			unit2.setSelectedIndex(index);
 		}
 		catch(Throwable e) {}
 	}
 	
-	public int getUnit() {
+	public int getUnit() 
+	{
 		try {
 			return unit.getSelectedIndex();
 		}
@@ -152,7 +155,8 @@ public class EnterField extends JPanel
 			return unit.getSelectedItem().toString();
 	}
 	
-	public int getUnit2() {
+	public int getUnit2() 
+	{
 		try {
 			return unit2.getSelectedIndex();
 		}
@@ -160,8 +164,8 @@ public class EnterField extends JPanel
 		return -1;
 	}
 	
-	public String getName() {
+	public String getName() 
+	{
 		return name;
 	}
 }
-

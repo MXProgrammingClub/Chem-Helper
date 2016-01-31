@@ -166,8 +166,9 @@ public class IdealGas extends Function
 					}
 					else if(index == 1) {
 						quantities[index] = volumeToLiters(quantities[index], values[index].getUnit());
-						step += values[index].getUnitName() + " * " + "(10^" + VOLUME_POWERS[values[index].getUnit()]
-								+ " L / "  + values[index].getUnitName() + ") " + "  = " + quantities[index] + " L";
+						step += values[index].getUnitName();
+						if(VOLUME_POWERS[values[index].getUnit()] != 0) step += " * " + "(10^" + VOLUME_POWERS[values[index].getUnit()]
+								+ " L / "  + values[index].getUnitName() + ") " + " = " + quantities[index] + " L";
 					}
 					else if(index == 3)
 					{
@@ -243,35 +244,43 @@ public class IdealGas extends Function
 		}
 	}
 	
-	public static double fahrenheitToKelvin(double fahrenheit) {
+	public static double fahrenheitToKelvin(double fahrenheit)
+	{
 		return (fahrenheit + 459.67) * 5 / 9;
 	}
 	
-	public static double kelvinToFahrenheit(double kelvin) {
+	public static double kelvinToFahrenheit(double kelvin)
+	{
 		return (kelvin  * 9 / 5) - 459.67;
 	}
 	
-	public static double celsiusToKelvin(double celsius) {
+	public static double celsiusToKelvin(double celsius)
+	{
 		return celsius + 273.15;
 	}
 	
-	public static double kelvinToCelsius(double kelvin) {
+	public static double kelvinToCelsius(double kelvin)
+	{
 		return kelvin - 273.15;
 	}
 	
-	public static double torrToatm(double torr) {
+	public static double torrToatm(double torr)
+	{
 		return torr * 0.00131579;
 	}
 	
-	public static double atmTotorr(double atm) {
+	public static double atmTotorr(double atm)
+	{
 		return atm / 0.00131579;
 	}
 	
-	public static double kPaToatm(double kPa) {
+	public static double kPaToatm(double kPa)
+	{
 		return kPa * 0.00986923;
 	}
 	
-	public static double atmTokPa(double atm) {
+	public static double atmTokPa(double atm)
+	{
 		return atm / 0.00986923;
 	}
 	

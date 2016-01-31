@@ -8,16 +8,12 @@
 
 package Functions;
 
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -27,7 +23,8 @@ import javax.swing.JPanel;
 
 import HelperClasses.EnterField;
 
-public class ContainerChanges extends Function {
+public class ContainerChanges extends Function
+{
 	private static final int UNKNOWN_VALUE = -501, ERROR_VALUE = -502;
 	private static final String[] VALUES = {"Pressure", "Volume", "Moles", "Temperature"};
 	private static final String[][] UNITS = {{"atm", "torr", "kPa"}, 
@@ -35,13 +32,14 @@ public class ContainerChanges extends Function {
 			{"mol"}, {"K", "\u2103", "\u2109"}};
 	
 	private JPanel panel;
-	//private JCheckBox pressure, volume, moles, temperature;
 	private ArrayList<DoubleEnterField> information;
 	private JButton calculate;
 	private JLabel result;
 	private double toSave;
+	private CheckBox[] boxes;
 	
-	public ContainerChanges() {
+	public ContainerChanges()
+	{
 		super("Change of Container");
 		
 		JPanel subpanel = new JPanel(new GridBagLayout());
@@ -53,10 +51,14 @@ public class ContainerChanges extends Function {
 		//box with Checkboxes
 		c.gridy = 0;
 		Box options = Box.createHorizontalBox();
-		options.add(new CheckBox(0));
-		options.add(new CheckBox(1));
-		options.add(new CheckBox(2));
-		options.add(new CheckBox(3));
+		boxes = new CheckBox[4];
+		for(int i = 0; i < 4; i++)
+		{
+			CheckBox box = new CheckBox(i);
+			options.add(box);
+			boxes[i] = box;
+		}
+		
 		subpanel.add(options, c);
 		
 		//adds things to information and adds to subpanel and makes them not visible
@@ -74,6 +76,11 @@ public class ContainerChanges extends Function {
 		c.gridy = 5;
 		c.anchor = GridBagConstraints.CENTER;
 		subpanel.add(calculate, c);
+		
+		result = new JLabel("");
+		c.gridy = 6;
+		c.anchor = GridBagConstraints.WEST;
+		subpanel.add(result, c);
 		
 		panel = new JPanel();
 		panel.add(subpanel);
@@ -110,6 +117,10 @@ public class ContainerChanges extends Function {
 			this.add(box);
 		}
 		
+		public void setSelected(boolean selected)
+		{
+			check.setSelected(true);
+		}
 	}
 	
 	//a class that uses two EnterFields to make: beforeValue -> afterValue
@@ -144,8 +155,10 @@ public class ContainerChanges extends Function {
 			this.add(after, c);
 		}
 		
-		public double getBeforeValue() {
-			try {
+		public double getBeforeValue()
+		{
+			try
+			{
 				double value = Double.parseDouble(before.getText());
 				if(name.equals(VALUES[0])) {
 					if(before.getUnit() == 1) value = IdealGas.torrToatm(value);
@@ -161,51 +174,63 @@ public class ContainerChanges extends Function {
 				if(!isLeft) value = 1 / value;
 				return value;
 			}
-			catch(Throwable e) {
+			catch(Throwable e)
+			{
 				return ERROR_VALUE;
 			}
 		}
 		
-		public void setBeforeValue(double value) {
+		public void setBeforeValue(double value)
+		{
 			before.setText("" + value);
 		}
 		
-		public void setAfterValue(double value) {
+		public void setAfterValue(double value)
+		{
 			after.setText("" + value);
 		}
 		
-		public double getAfterValue() {
-			try {
+		public double getAfterValue() 
+		{
+			try 
+			{
 				double value = Double.parseDouble(after.getText());
-				if(name.equals(VALUES[0])) {
+				if(name.equals(VALUES[0])) 
+				{
 					if(after.getUnit() == 1) value = IdealGas.torrToatm(value);
 					else if(after.getUnit() == 2) value = IdealGas.kPaToatm(value);
 				}
-				else if(name.equals(VALUES[1])) { //volume
+				else if(name.equals(VALUES[1])) //volume
+				{ 
 					value = IdealGas.volumeToLiters(value, after.getUnit());
 				}
-				else if(name.equals(VALUES[3])) {
+				else if(name.equals(VALUES[3])) 
+				{
 					if(after.getUnit() == 1) value = IdealGas.celsiusToKelvin(value);
 					else if(after.getUnit() == 2) value = IdealGas.fahrenheitToKelvin(value);
 				}
 				if(!isLeft) value = 1 / value;
 				return value;
 			}
-			catch(Throwable e) {
+			catch(Throwable e) 
+			{
 				if(e.getMessage().equals("empty String")) return UNKNOWN_VALUE;
  				return ERROR_VALUE;
 			}
 		}
 		
-		public String getDesiredUnit() {
+		public String getDesiredUnit()
+		{
 			return (String) after.getUnitName();
 		}
 		
-		public String getName() {
+		public String getName()
+		{
 			return name;
 		}
 		
-		public boolean isLeft() {
+		public boolean isLeft()
+		{
 			return isLeft;
 		}
 	}
@@ -219,29 +244,32 @@ public class ContainerChanges extends Function {
 			
 			for(DoubleEnterField field: information)
 			{
-				double thisBefore = field.getBeforeValue();
-				if(thisBefore != ERROR_VALUE) before *= thisBefore;
-				else
+				if(field.isVisible())
 				{
-					result.setText("There was a problem with your input.");
-					return;
-				}
-				double thisAfter = field.getAfterValue();
-				if(thisAfter == ERROR_VALUE)
-				{
-					result.setText("There was a problem with your input.");
-					return;
-				}
-				else if(thisAfter == UNKNOWN_VALUE)
-				{
-					if(unknown == null) unknown = field;
+					double thisBefore = field.getBeforeValue();
+					if(thisBefore != ERROR_VALUE) before *= thisBefore;
 					else
 					{
-						result.setText("Only one value can be left blank.");
+						result.setText("There was a problem with your input.");
 						return;
 					}
+					double thisAfter = field.getAfterValue();
+					if(thisAfter == ERROR_VALUE)
+					{
+						result.setText("There was a problem with your input.");
+						return;
+					}
+					else if(thisAfter == UNKNOWN_VALUE)
+					{
+						if(unknown == null) unknown = field;
+						else
+						{
+							result.setText("Only one value can be left blank.");
+							return;
+						}
+					}
+					else after *= thisAfter;
 				}
-				else after *= thisAfter;
 			}
 			if(unknown != null)
 			{
@@ -290,8 +318,14 @@ public class ContainerChanges extends Function {
 			if(selected instanceof String)
 			{
 				int index = options.indexOf(selected);
-				if(index % 2 == 0) information.get(index / 2).setBeforeValue(num); 
-				else information.get(index / 2).setAfterValue(num); 
+				DoubleEnterField field = information.get(index / 2);
+				if(index % 2 == 0) field.setBeforeValue(num);
+				else field.setAfterValue(num);
+				if(!field.isVisible())
+				{
+					boxes[index].setSelected(true);
+					field.setVisible(true);
+				}
 			}
 		}
 	}
