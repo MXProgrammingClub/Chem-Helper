@@ -2,13 +2,15 @@
  * For if aspects of a container (P, V, n, T) change and one resultant value is unknown.
  * number() returns true- saves latest calculated value, uses saved for any field.
  * 
- * Author: Julia McClellan
- * Version: 12/30/2015
+ * Author: Julia McClellan and Luke Giacalone
+ * Version: 1/31/2016
  */
 
 package Functions;
 
 import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -18,198 +20,192 @@ import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
-public class ContainerChanges extends Function
-{
+import HelperClasses.EnterField;
+
+public class ContainerChanges extends Function {
 	private static final int UNKNOWN_VALUE = -501, ERROR_VALUE = -502;
-	private static final String[] values = {"Pressure", "Volume", "Moles", "Temperature"};
+	private static final String[] VALUES = {"Pressure", "Volume", "Moles", "Temperature"};
+	private static final String[][] UNITS = {{"atm", "torr", "kPa"}, 
+			{"pL", "nL", "\u00B5L", "mL", "cL", "dL", "L", "daL", "hL", "kL", "ML", "TL", "GL"}, 
+			{"mol"}, {"K", "\u2103", "\u2109"}};
 	
-	private JPanel panel, options;
-	private Box valueBox;
-	private ArrayList<EnterField> information;
-	private JButton calculate, reset;
+	private JPanel panel;
+	//private JCheckBox pressure, volume, moles, temperature;
+	private ArrayList<DoubleEnterField> information;
+	private JButton calculate;
 	private JLabel result;
 	private double toSave;
 	
-	public ContainerChanges()
-	{
+	public ContainerChanges() {
 		super("Change of Container");
 		
-		options = new JPanel();
-		for(int index = 0; index < values.length; index++) new ClickLabel(index);
+		JPanel subpanel = new JPanel(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
 		
-		valueBox = Box.createVerticalBox();
-		information = new ArrayList<EnterField>();
+		c.anchor = GridBagConstraints.WEST;
+		c.gridx = 0;
+		
+		//box with Checkboxes
+		c.gridy = 0;
+		Box options = Box.createHorizontalBox();
+		options.add(new CheckBox(0));
+		options.add(new CheckBox(1));
+		options.add(new CheckBox(2));
+		options.add(new CheckBox(3));
+		subpanel.add(options, c);
+		
+		//adds things to information and adds to subpanel and makes them not visible
+		information = new ArrayList<DoubleEnterField>();
+		for(int i = 0; i < 4; i++) {
+			DoubleEnterField temp = new DoubleEnterField(VALUES[i], i < 2, UNITS[i]);
+			information.add(temp);
+			temp.setVisible(false);
+			c.gridy++;
+			subpanel.add(temp, c);
+		}
 		
 		calculate = new JButton("Calculate");
 		calculate.addActionListener(new Calculate());
-		calculate.setVisible(false);
-		
-		result = new JLabel();
-		reset = new JButton("Reset");
-		reset.addActionListener(new ActionListener()
-				{
-					public void actionPerformed(ActionEvent arg0)
-					{
-						panel.setVisible(false);
-						options.removeAll();
-						information.removeAll(information);
-						for(int index = 0; index < values.length; index++) new ClickLabel(index);
-						valueBox.removeAll();
-						calculate.setVisible(false);
-						result.setText("");
-						panel.setVisible(true);
-					}
-				});
-		
-		Box box = Box.createVerticalBox();
-		box.add(options);
-		box.add(valueBox);
-		box.add(calculate);
-		box.add(result);
-		box.add(Box.createVerticalStrut(10));
-		box.add(reset);
+		c.gridy = 5;
+		c.anchor = GridBagConstraints.CENTER;
+		subpanel.add(calculate, c);
 		
 		panel = new JPanel();
-		panel.add(box);
+		panel.add(subpanel);
 		
 		toSave = 0;
 	}
 	
-	private class ClickLabel
-	{
-		private EnterField field;
+	private class CheckBox extends JPanel {
+		
 		private JLabel label;
+		private JCheckBox check;
 		
-		public ClickLabel(int index)
-		{
-			label = new JLabel(values[index]);
-			label.setBorder(BorderFactory.createLineBorder(Color.black));
-			label.addMouseListener(new ClickListener());
-			options.add(label);
-			field = new EnterField(values[index], index < 2, IdealGas.UNITS[index]);
+		public CheckBox(int index) {
+			Box box = Box.createHorizontalBox();
+			
+			check = new JCheckBox();
+			check.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if(VALUES[0].equals(label.getText()))
+						information.get(0).setVisible(!information.get(0).isVisible());
+					else if(VALUES[1].equals(label.getText()))
+						information.get(1).setVisible(!information.get(1).isVisible());
+					else if(VALUES[2].equals(label.getText()))
+						information.get(2).setVisible(!information.get(2).isVisible());
+					if(VALUES[3].equals(label.getText()))
+						information.get(3).setVisible(!information.get(3).isVisible());
+				}
+			});
+			
+			label = new JLabel(VALUES[index]);
+			
+			box.add(check);
+			box.add(label);
+			this.add(box);
 		}
 		
-		private class ClickListener implements MouseListener
-		{
-			public void mouseClicked(MouseEvent arg0) 
-			{
-				panel.setVisible(false);
-				options.remove(label);
-				information.add(field);
-				valueBox.add(field);
-				if(information.size() == 2) calculate.setVisible(true);
-				panel.setVisible(true);
-			}
-			public void mouseEntered(MouseEvent arg0) {} public void mouseExited(MouseEvent arg0) {}
-			public void mousePressed(MouseEvent arg0) {} public void mouseReleased(MouseEvent arg0) {}
-		}
 	}
 	
-	private class EnterField extends JPanel
-	{
-		private JTextField before, after;
-		private JComboBox<String> beforeUnit, afterUnit;
-		private boolean isLeft;
-		private String name;
+	//a class that uses two EnterFields to make: beforeValue -> afterValue
+	private class DoubleEnterField extends JPanel {
 		
-		public EnterField(String name, boolean isLeft, String[] units)
-		{
+		private String name;
+		private boolean isLeft;
+		private EnterField before;
+		private EnterField after;
+		
+		public DoubleEnterField(String name, boolean isLeft, String[] units) {
 			this.name = name;
 			this.isLeft = isLeft;
-			before = new JTextField(5);
-			after = new JTextField(5);
-			beforeUnit = new JComboBox<String>(units);
-			afterUnit = new JComboBox<String>(units);
+			this.setLayout(new GridBagLayout());
+			GridBagConstraints c = new GridBagConstraints();
 			
-			Box box = Box.createHorizontalBox();
-			box.add(new JLabel(name));
-			box.add(Box.createHorizontalStrut(5));
-			box.add(before);
-			box.add(beforeUnit);
-			box.add(new JLabel("\u2192"));
-			box.add(after);
-			box.add(afterUnit);
+			c.gridx = 0;
+			c.gridy = 0;
+			before = new EnterField(name, units);
+			if(name.equals(VALUES[1])) //setting volume to L
+				before.setUnit(6);
+			this.add(before, c);
 			
-			add(box);
+			c.gridx = 1;
+			this.add(new JLabel("\u2192"), c);
+			
+			c.gridx = 2;
+			after = new EnterField(null, units);
+			if(name.equals(VALUES[1])) //setting volume to L
+				after.setUnit(6);
+			after.remove(0); //removing the empty space where label is
+			this.add(after, c);
 		}
 		
-		public double getBeforeValue()
-		{
-			try
-			{
+		public double getBeforeValue() {
+			try {
 				double value = Double.parseDouble(before.getText());
-				if(name.equals(values[0]))
-				{
-					if(beforeUnit.getSelectedIndex() == 1) value = IdealGas.torrToatm(value);
-					else if(beforeUnit.getSelectedIndex() == 2) value = IdealGas.kPaToatm(value);
+				if(name.equals(VALUES[0])) {
+					if(before.getUnit() == 1) value = IdealGas.torrToatm(value);
+					else if(before.getUnit() == 2) value = IdealGas.kPaToatm(value);
 				}
-				else if(name.equals(values[3]))
-				{
-					if(beforeUnit.getSelectedIndex() == 1) value = IdealGas.celsiusToKelvin(value);
-					else if(beforeUnit.getSelectedIndex() == 2) value = IdealGas.fahrenheitToKelvin(value);
+				else if(name.equals(VALUES[1])) { //volume
+					value = IdealGas.volumeToLiters(value, before.getUnit());
+				}
+				else if(name.equals(VALUES[3])) {
+					if(before.getUnit() == 1) value = IdealGas.celsiusToKelvin(value);
+					else if(before.getUnit() == 2) value = IdealGas.fahrenheitToKelvin(value);
 				}
 				if(!isLeft) value = 1 / value;
 				return value;
 			}
-			catch(Throwable e)
-			{
+			catch(Throwable e) {
 				return ERROR_VALUE;
 			}
 		}
 		
-		public void setBeforeValue(double value)
-		{
+		public void setBeforeValue(double value) {
 			before.setText("" + value);
 		}
 		
-		public void setAfterValue(double value)
-		{
+		public void setAfterValue(double value) {
 			after.setText("" + value);
 		}
 		
-		public double getAfterValue()
-		{
-			try
-			{
+		public double getAfterValue() {
+			try {
 				double value = Double.parseDouble(after.getText());
-				if(name.equals(values[0]))
-				{
-					if(afterUnit.getSelectedIndex() == 1) value = IdealGas.torrToatm(value);
-					else if(afterUnit.getSelectedIndex() == 2) value = IdealGas.kPaToatm(value);
+				if(name.equals(VALUES[0])) {
+					if(after.getUnit() == 1) value = IdealGas.torrToatm(value);
+					else if(after.getUnit() == 2) value = IdealGas.kPaToatm(value);
 				}
-				else if(name.equals(values[3]))
-				{
-					if(afterUnit.getSelectedIndex() == 1) value = IdealGas.celsiusToKelvin(value);
-					else if(afterUnit.getSelectedIndex() == 2) value = IdealGas.fahrenheitToKelvin(value);
+				else if(name.equals(VALUES[1])) { //volume
+					value = IdealGas.volumeToLiters(value, after.getUnit());
+				}
+				else if(name.equals(VALUES[3])) {
+					if(after.getUnit() == 1) value = IdealGas.celsiusToKelvin(value);
+					else if(after.getUnit() == 2) value = IdealGas.fahrenheitToKelvin(value);
 				}
 				if(!isLeft) value = 1 / value;
 				return value;
 			}
-			catch(Throwable e)
-			{
+			catch(Throwable e) {
 				if(e.getMessage().equals("empty String")) return UNKNOWN_VALUE;
  				return ERROR_VALUE;
 			}
 		}
 		
-		public String getDesiredUnit()
-		{
-			return (String)afterUnit.getSelectedItem();
+		public String getDesiredUnit() {
+			return (String) after.getUnitName();
 		}
 		
-		public String getName()
-		{
+		public String getName() {
 			return name;
 		}
 		
-		public boolean isLeft()
-		{
+		public boolean isLeft() {
 			return isLeft;
 		}
 	}
@@ -219,9 +215,9 @@ public class ContainerChanges extends Function
 		public void actionPerformed(ActionEvent arg0)
 		{
 			double before = 1, after = 1;
-			EnterField unknown = null;
+			DoubleEnterField unknown = null;
 			
-			for(EnterField field: information)
+			for(DoubleEnterField field: information)
 			{
 				double thisBefore = field.getBeforeValue();
 				if(thisBefore != ERROR_VALUE) before *= thisBefore;
@@ -252,15 +248,15 @@ public class ContainerChanges extends Function
 				double resultant;
 				if(unknown.isLeft()) resultant = before / after;
 				else resultant = after / before;
-				if(unknown.getName().equals(values[0]))
+				if(unknown.getName().equals(VALUES[0]))
 				{
-					if(unknown.getDesiredUnit().equals(IdealGas.UNITS[0][1])) resultant = IdealGas.atmTotorr(resultant);
-					else if(unknown.getDesiredUnit().equals(IdealGas.UNITS[0][2])) resultant = IdealGas.atmTokPa(resultant);
+					if(unknown.getDesiredUnit().equals(UNITS[0][1])) resultant = IdealGas.atmTotorr(resultant);
+					else if(unknown.getDesiredUnit().equals(UNITS[0][2])) resultant = IdealGas.atmTokPa(resultant);
 				}
-				else if(unknown.getName().equals(values[3]))
+				else if(unknown.getName().equals(VALUES[3]))
 				{
-					if(unknown.getDesiredUnit().equals(IdealGas.UNITS[3][1])) resultant = IdealGas.kelvinToCelsius(resultant);
-					else if(unknown.getDesiredUnit().equals(IdealGas.UNITS[3][2])) resultant = IdealGas.kelvinToFahrenheit(resultant);
+					if(unknown.getDesiredUnit().equals(UNITS[3][1])) resultant = IdealGas.kelvinToCelsius(resultant);
+					else if(unknown.getDesiredUnit().equals(UNITS[3][2])) resultant = IdealGas.kelvinToFahrenheit(resultant);
 				}
 				toSave = resultant;
 				result.setText(unknown.getName() + " = " + resultant + " " + unknown.getDesiredUnit());
@@ -284,7 +280,7 @@ public class ContainerChanges extends Function
 		if(information.size() != 0)
 		{
 			ArrayList<String> options = new ArrayList<String>();
-			for(EnterField field: information)
+			for(DoubleEnterField field: information)
 			{
 				options.add(field.getName() + " - before");
 				options.add(field.getName() + " - after");

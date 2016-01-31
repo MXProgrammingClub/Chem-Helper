@@ -1,8 +1,8 @@
 /*
  * The main class for the ChemHelper project
  * 
- * Author: Julia McClellan, Luke Giacalone, Ted Pyne -- MXCSClub
- * Version: 01/28/2016
+ * Author: Julia McClellan, Luke Giacalone, and Ted Pyne -- MXCSClub
+ * Version: 01/31/2016
  */
 
 package ChemHelper;
@@ -14,7 +14,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import java.util.LinkedList;
-import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import javax.swing.Box;

@@ -2,7 +2,7 @@
  * A field to enter information with some sort of text field and some number of combo boxes for units.
  * 
  * Authors: Luke Giacalone and Julia McClellan
- * Version: 1/30/2016
+ * Version: 1/31/2016
  */
 
 package HelperClasses;
@@ -98,17 +98,14 @@ public class EnterField extends JPanel
 	}
 	
 	//returns the double amount of the box
-	public double getAmount()
-	{
-		try
-		{
+	public double getAmount() {
+		try {
 			double value;
 			if(!hasCompoundField) value = Double.parseDouble(((JTextField)amount).getText());
 			else value = Double.parseDouble(((TextField)amount).getText());
 			return value;
 		}
-		catch(Throwable e)
-		{
+		catch(Throwable e) {
 			if(e.getMessage().equals("empty String")) return UNKNOWN_VALUE;
 			return ERROR_VALUE;
 		}
@@ -116,28 +113,34 @@ public class EnterField extends JPanel
 	
 	//returns the string amount of the box
 	public String getText() {
-		if(!hasCompoundField) return ((JTextField)amount).getText();
-		return ((TextField)amount).getText();
+		if(!hasCompoundField)
+			return ((JTextField)amount).getText();
+		else
+			return ((TextField)amount).getText();
 	}
 	
-	public void setUnit(int index)
-	{
+	public void setText(String text) {
+		if(!hasCompoundField) 
+			((JTextField)amount).setText(text);
+		else
+			((TextField)amount).setText(text);
+	}
+	
+	public void setUnit(int index) {
 		try {
 			unit.setSelectedIndex(index);
 		}
 		catch(Throwable e) {}
 	}
 	
-	public void setUnit2(int index)
-	{
+	public void setUnit2(int index) {
 		try {
 			unit2.setSelectedIndex(index);
 		}
 		catch(Throwable e) {}
 	}
 	
-	public int getUnit()
-	{
+	public int getUnit() {
 		try {
 			return unit.getSelectedIndex();
 		}
@@ -145,8 +148,11 @@ public class EnterField extends JPanel
 		return -1;
 	}
 	
-	public int getUnit2()
-	{
+	public String getUnitName() {
+			return unit.getSelectedItem().toString();
+	}
+	
+	public int getUnit2() {
 		try {
 			return unit2.getSelectedIndex();
 		}
@@ -154,8 +160,7 @@ public class EnterField extends JPanel
 		return -1;
 	}
 	
-	public String getName()
-	{
+	public String getName() {
 		return name;
 	}
 }
