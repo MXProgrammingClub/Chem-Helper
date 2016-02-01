@@ -200,8 +200,7 @@ public class ContainerChanges extends Function
 					if(after.getUnit() == 1) value = IdealGas.torrToatm(value);
 					else if(after.getUnit() == 2) value = IdealGas.kPaToatm(value);
 				}
-				else if(name.equals(VALUES[1])) //volume
-				{ 
+				else if(name.equals(VALUES[1])) { //volume
 					value = IdealGas.volumeToLiters(value, after.getUnit());
 				}
 				else if(name.equals(VALUES[3])) 
