@@ -102,7 +102,7 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 
 	private void createMenu()
 	{
-		funcs = new Function[17];
+		funcs = new Function[18];
 		funcs[0] = new PeriodicTable(ChemHelper.getIntPreference("Table Style"), ChemHelper.getBooleanPreference("State Colors"));
 		funcs[1] = new ElectronShell();
 		funcs[2] = new CompoundStoichiometry();
@@ -118,11 +118,12 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 		funcs[12] = new Nuclear();
 		funcs[13] = new Empirical();
 		funcs[14] = new Density();
-		funcs[15] = new About();
-		funcs[16] = new Prefs(this);
+		funcs[15] = new StateChangeTemp();
+		funcs[16] = new About();
+		funcs[17] = new Prefs(this);
 		
 		String[] menuNames = {"General Information", "Stoichiometry", "Gas Laws", "Reactions", "Other", "Help"}; //Lists the names of the different menus on the menu bar.
-		int[] menuCutoffs = {0, 2, 6, 9, 13, 15}; //Specifies the indices where a new menu would start from funcs
+		int[] menuCutoffs = {0, 2, 6, 9, 13, 16}; //Specifies the indices where a new menu would start from funcs
 		
 		menu = new JMenuBar();
 		for(int menuNum = 0; menuNum < menuCutoffs.length; menuNum++)
