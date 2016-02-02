@@ -2,7 +2,7 @@
  * Represents a monatomic ion.
  * 
  * Author: Julia McClellan
- * Version: 1/10/2016
+ * Version: 2/2/2016
  */
 
 package Equation;
@@ -52,7 +52,9 @@ public class Monatomic extends Ions
 	
 	public String withoutCharge()
 	{
-		return element.getSymbol() + "<sub>" + getNum() + "</sub>";
+		String sym = element.getSymbol();
+		if(getNum() != 1) sym += "<sub>" + getNum() + "</sub>";
+		return sym;
 	}
 
 	public double getMolarMass()
