@@ -17,6 +17,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
@@ -28,22 +29,16 @@ public class StateChangeTemp extends Function {
 	private static final String[] MOLE_UNITS = {"mol"};
 	private static final String[] MASS_UNITS = {"pg", "ng", "\u00B5g", "mg", "cg", "dg", "g", "dag", "hg", "kg", "Mg", "Tg", "Gg"};
 	private static final int[] MASS_POWERS = {-12, -9, -6, -3, -2, -1, 0, 1, 2, 3, 6, 9, 12};
+	private static final int UNKNOWN_VALUE = -500, ERROR_VALUE = -501;
 	
-	private JPanel panel, boilingPanel, freezingPanel;
-	private JRadioButton boilingButton, freezingButton, togetherI, seperatedI;
-	private EnterField deltaTb, i_b, molIon_b, molSolute_b, kb, mb, deltaTf, i_f, molIon_f, molSolute_f, kf, mf;
+	private JPanel panel, inputPanel;
+	private JRadioButton togetherI, seperatedI;
+	private EnterField deltaT, i, iIon, iSolute, k, m;
 	private JButton calculate;
+	private JLabel result;
 	
 	public StateChangeTemp() {
-		super("State Change Temperature");
-		
-		Box buttonBox = Box.createHorizontalBox();
-		boilingButton = new JRadioButton("Boiling Point Elevation");
-		freezingButton = new JRadioButton("Freezing Point Depression");
-		boilingButton.setSelected(true);
-		freezingButton.setSelected(false);
-		buttonBox.add(boilingButton);
-		buttonBox.add(freezingButton);
+		super("State Change Temperature");;
 		
 		Box iBox = Box.createHorizontalBox();
 		togetherI = new JRadioButton("<html><i>i</i> as One Value</html>");
@@ -53,110 +48,60 @@ public class StateChangeTemp extends Function {
 		iBox.add(togetherI);
 		iBox.add(seperatedI);
 		
-		boilingPanel = new JPanel(new GridBagLayout());
+		inputPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.anchor = GridBagConstraints.WEST;
-		deltaTb = new EnterField("\u0394t", TEMPERATURE_UNITS);
-		i_b = new EnterField("<html><i>i</i></html>");
-		molIon_b = new EnterField("Ions", MOLE_UNITS);
-		molSolute_b = new EnterField("Solute", MOLE_UNITS);
-		kb = new EnterField("<html>k<sub>b</sub></html>");
-		mb = new EnterField("molality", MOLE_UNITS, MASS_UNITS);
+		deltaT = new EnterField("\u0394t", TEMPERATURE_UNITS);
+		i = new EnterField("<html><i>i</i></html>");
+		iIon = new EnterField("Ions", MOLE_UNITS);
+		iSolute = new EnterField("Solute", MOLE_UNITS);
+		k = new EnterField("k");
+		m = new EnterField("molality", MOLE_UNITS, MASS_UNITS);
 		c.gridx = 0;
 		c.gridy = 0;
-		boilingPanel.add(deltaTb, c);
+		inputPanel.add(deltaT, c);
 		c.gridy = 1;
-		boilingPanel.add(i_b, c);
+		inputPanel.add(i, c);
 		c.gridy = 2;
-		boilingPanel.add(molIon_b, c);
+		inputPanel.add(iIon, c);
 		c.gridy = 3;
-		boilingPanel.add(molSolute_b, c);
+		inputPanel.add(iSolute, c);
 		c.gridy = 4;
-		boilingPanel.add(kb, c);
+		inputPanel.add(k, c);
 		c.gridy = 5;
-		boilingPanel.add(mb, c);
-		boilingPanel.setVisible(true);
-		i_b.setVisible(true);
-		molIon_b.setVisible(false);
-		molSolute_b.setVisible(false);
-		mb.setUnit2(6);
-		
-		freezingPanel = new JPanel(new GridBagLayout());
-		deltaTf = new EnterField("\u0394t", TEMPERATURE_UNITS);
-		i_f = new EnterField("<html><i>i</i></html>");
-		molIon_f = new EnterField("Ions", MOLE_UNITS);
-		molSolute_f = new EnterField("Solute", MOLE_UNITS);
-		kf = new EnterField("<html>k<sub>f</sub></html>");
-		mf = new EnterField("molality", MOLE_UNITS, MASS_UNITS);
-		c.gridx = 0;
-		c.gridy = 0;
-		freezingPanel.add(deltaTf, c);
-		c.gridy = 1;
-		freezingPanel.add(i_f, c);
-		c.gridy = 2;
-		freezingPanel.add(molIon_f, c);
-		c.gridy = 3;
-		freezingPanel.add(molSolute_f, c);
-		c.gridy = 4;
-		freezingPanel.add(kf, c);
-		c.gridy = 5;
-		freezingPanel.add(mf, c);
-		freezingPanel.setVisible(false);
-		i_f.setVisible(true);
-		molIon_f.setVisible(false);
-		molSolute_f.setVisible(false);
-		mf.setUnit2(6);
+		inputPanel.add(m, c);
+		inputPanel.setVisible(true);
+		i.setVisible(true);
+		iIon.setVisible(false);
+		iSolute.setVisible(false);
+		m.setUnit2(6);
 		
 		calculate = new JButton("Calculate");
 		calculate.addActionListener(new Calculate());
 		
+		result = new JLabel("");
+		
 		JPanel subpanel = new JPanel(new GridBagLayout());
 		c.gridx = 0;
 		c.gridy = 0;
-		subpanel.add(buttonBox, c);
-		c.gridy = 1;
 		subpanel.add(iBox, c);
+		c.gridy = 1;
+		subpanel.add(inputPanel, c);
 		c.gridy = 2;
-		subpanel.add(boilingPanel, c);
-		subpanel.add(freezingPanel, c);
-		c.gridy = 3;
 		subpanel.add(calculate, c);
+		c.gridy = 3;
+		subpanel.add(result, c);
 		
 		panel = new JPanel();
 		panel.add(subpanel);
 		
-		boilingButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if(freezingButton.isSelected()) {
-					freezingButton.setSelected(false);
-					freezingPanel.setVisible(false);
-					boilingPanel.setVisible(true);
-				}
-				else
-					boilingButton.setSelected(true);
-			}
-		});
-		freezingButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if(boilingButton.isSelected()) {
-					boilingButton.setSelected(false);
-					boilingPanel.setVisible(false);
-					freezingPanel.setVisible(true);
-				}
-				else
-					freezingButton.setSelected(true);
-			}
-		});
 		togetherI.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(seperatedI.isSelected()) {
 					seperatedI.setSelected(false);
-					i_b.setVisible(true);
-					molIon_b.setVisible(false);
-					molSolute_b.setVisible(false);
-					i_f.setVisible(true);
-					molIon_f.setVisible(false);
-					molSolute_f.setVisible(false);
+					i.setVisible(true);
+					iIon.setVisible(false);
+					iSolute.setVisible(false);
 				}
 				else
 					togetherI.setSelected(true);
@@ -166,12 +111,9 @@ public class StateChangeTemp extends Function {
 			public void actionPerformed(ActionEvent e) {
 				if(togetherI.isSelected()) {
 					togetherI.setSelected(false);
-					i_b.setVisible(false);
-					molIon_b.setVisible(true);
-					molSolute_b.setVisible(true);
-					i_f.setVisible(false);
-					molIon_f.setVisible(true);
-					molSolute_f.setVisible(true);
+					i.setVisible(false);
+					iIon.setVisible(true);
+					iSolute.setVisible(true);
 				}
 				else
 					seperatedI.setSelected(true);
@@ -181,8 +123,77 @@ public class StateChangeTemp extends Function {
 	
 	private class Calculate implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
+			double[] values = new double[4];
+			values[0] = toKelvin(deltaT.getAmount(), deltaT.getUnit());
+			if(togetherI.isSelected())
+				values[1] = i.getAmount();
+			else
+				if(iIon.getAmount() == UNKNOWN_VALUE || iSolute.getAmount() == UNKNOWN_VALUE)
+					values[1] = UNKNOWN_VALUE;
+				else
+					values[1] = iIon.getAmount() / iSolute.getAmount();
+			values[2] = k.getAmount();
+			values[3] = toMolPerGram(m.getAmount(), m.getUnit2());
 			
+			int blank = -1;
+			
+			for(int index = 0; index < values.length; index++) {
+				if(values[index] == ERROR_VALUE) {
+					result.setText("An entered value was not a number.");
+					return;
+				}
+				else if(values[index] == UNKNOWN_VALUE)
+				{
+					if(blank == -1)
+						blank = index;
+					else {
+						result.setText("Only one value can be left blank.");
+						return;
+					}
+				}
+			}
+			
+			if(blank == -1)
+				result.setText("Leave one value blank");
+			else if(blank == 0)
+				result.setText("\u0394t = " + toOriginalTemp(values[1] * values[2] * values[3], deltaT.getUnit()) 
+								+ " " + deltaT.getUnitName());
+			else if(blank == 1)
+				result.setText("<html><i>i</i></html> = " + values[0] / values[2] / values[3]);
+			else if(blank == 2)
+				result.setText("k = " + values[0] / values[1] / values[3]);
+			else if (blank == 3)
+				result.setText("m = " + toOriginalMass(values[0] / values[1] / values[2], m.getUnit2()) 
+								+ " mol/" + MASS_UNITS[m.getUnit2()]);
 		}
+	}
+	
+	//returns the kelvin amount of a temperature
+	private double toKelvin(double amount, int unit) {
+		if(amount == UNKNOWN_VALUE) return amount;
+		else if(amount == ERROR_VALUE) return amount;
+		else if(unit == 0) return amount; //if kelvin
+		else if(unit == 1) return amount + 273.15; //if celcius
+		else return (amount + 459.67) * (5 / 9); //if fahrenheit
+	}
+	
+	//returns the molality in mol/g
+	private double toMolPerGram(double amount, int unit2) {
+		if(amount == UNKNOWN_VALUE) return amount;
+		else if(amount == ERROR_VALUE) return amount;
+		else if(unit2 == 6) return amount;
+		else return amount / Math.pow(10, MASS_POWERS[unit2]);
+	}
+	
+	private double toOriginalTemp(double amount, int unit) {
+		if(unit == 0) return amount; //if kelvin
+		else if(unit == 1) return amount - 273.15;//if celcius
+		else return (amount * 9 / 5) - 459.67; //if fahrenheit
+	}
+	
+	private double toOriginalMass(double amount, int unit2) {
+		if(unit2 == 6) return amount;
+		else return amount * Math.pow(10, MASS_POWERS[unit2]);
 	}
 	
 	public JPanel getPanel() {
