@@ -4,7 +4,7 @@
  * number() returns true- saves the latest calculated value, can use saved for P, V, n, or T.
  * 
  * Author: Julia McClellan and Luke Giacalone
- * Version: 01/31/2016
+ * Version: 2/3/2016
  */
 
 package Functions;
@@ -24,7 +24,7 @@ import HelperClasses.EnterField;
 public class IdealGas extends Function 
 {
 	public static final double R = .0821, STANDARD_PRESSURE = 1, STANDARD_TEMPERATURE = 273.15;
-	private static final String[][] UNITS = {{"atm", "torr", "kPa"}, 
+	public static final String[][] UNITS = {{"atm", "torr", "kPa"}, 
 			{"pL", "nL", "\u00B5L", "mL", "cL", "dL", "L", "daL", "hL", "kL", "ML", "TL", "GL"}, 
 			{"mol"}, {"K", "\u2103", "\u2109"}};
 	private static final int[] VOLUME_POWERS = {-12, -9, -6, -3, -2, -1, 0, 1, 2, 3, 6, 9, 12};

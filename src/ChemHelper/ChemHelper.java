@@ -2,7 +2,7 @@
  * The main class for the ChemHelper project
  * 
  * Author: Julia McClellan, Luke Giacalone, and Ted Pyne -- MXCSClub
- * Version: 01/31/2016
+ * Version: 2/3/2016
  */
 
 package ChemHelper;
@@ -102,7 +102,7 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 
 	private void createMenu()
 	{
-		funcs = new Function[18];
+		funcs = new Function[19];
 		funcs[0] = new PeriodicTable(ChemHelper.getIntPreference("Table Style"), ChemHelper.getBooleanPreference("State Colors"));
 		funcs[1] = new ElectronShell();
 		funcs[2] = new CompoundStoichiometry();
@@ -116,14 +116,16 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 		funcs[10] = new RateLaw();
 		funcs[11] = new Combustion();
 		funcs[12] = new Nuclear();
-		funcs[13] = new Empirical();
-		funcs[14] = new Density();
-		funcs[15] = new StateChangeTemp();
-		funcs[16] = new About();
-		funcs[17] = new Prefs(this);
+		funcs[13] = new GibbsEnergy();
+		funcs[14] = new Empirical();
+		funcs[15] = new Density();
+		funcs[16] = new StateChangeTemp();
+		funcs[17] = new About();
+		funcs[18] = new Prefs(this);
 		
-		String[] menuNames = {"General Information", "Stoichiometry", "Gas Laws", "Reactions", "Other", "Help"}; //Lists the names of the different menus on the menu bar.
-		int[] menuCutoffs = {0, 2, 6, 9, 13, 16}; //Specifies the indices where a new menu would start from funcs
+		String[] menuNames = {"General Information", "Stoichiometry", "Gas Laws", "Reactions", "Reaction Energy", "Other", "Help"};
+			//Lists the names of the different menus on the menu bar.
+		int[] menuCutoffs = {0, 2, 6, 9, 13, 14, 17}; //Specifies the indices where a new menu would start from funcs
 		
 		menu = new JMenuBar();
 		for(int menuNum = 0; menuNum < menuCutoffs.length; menuNum++)
