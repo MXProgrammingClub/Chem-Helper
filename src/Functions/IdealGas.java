@@ -4,7 +4,7 @@
  * number() returns true- saves the latest calculated value, can use saved for P, V, n, or T.
  * 
  * Author: Julia McClellan and Luke Giacalone
- * Version: 2/3/2016
+ * Version: 2/5/2016
  */
 
 package Functions;
@@ -24,14 +24,10 @@ import HelperClasses.Units;
 
 public class IdealGas extends Function 
 {
-	public static final double R = .0821, STANDARD_PRESSURE = 1, STANDARD_TEMPERATURE = 273.15;
-	public static final String[][] UNITS = {{"atm", "torr", "kPa"}, 
-			{"pL", "nL", "\u00B5L", "mL", "cL", "dL", "L", "daL", "hL", "kL", "ML", "TL", "GL"}, 
-			{"mol"}, {"K", "\u2103", "\u2109"}};
-	
 	private static final int UNKNOWN_VALUE = -500, ERROR_VALUE = -501; // Values which none of the entered values could be.
 	private static final String[] VALUES = {"Pressure", "Volume", "Moles", "Temperature"};
-	private static final String[] NO_SPACES = {"Pressure", "Volume", "Moles", "Temperature"};
+	public static final String[][] UNITS = Units.getUnits(VALUES);
+	
 	private JPanel panel;
 	private JButton calculate;
 	private JCheckBox stp;
@@ -62,10 +58,10 @@ public class IdealGas extends Function
 					{
 						if(stp.isSelected())
 						{
-							values[0].setAmount(STANDARD_PRESSURE);
+							values[0].setAmount(Units.STANDARD_PRESSURE);
 							values[0].setUnit(0);
 							values[1].setUnit(6);
-							values[3].setAmount(STANDARD_TEMPERATURE);
+							values[3].setAmount(Units.STANDARD_TEMPERATURE);
 							values[3].setUnit(0);
 						}
 					}
@@ -106,10 +102,10 @@ public class IdealGas extends Function
 	public void useSavedNumber(double num)
 	{
 		String selected = (String)JOptionPane.showInputDialog(panel, "Choose where to use the number", "Choose Number", JOptionPane.PLAIN_MESSAGE, 
-				null, NO_SPACES, "Pressure");
-		for(int index = 0; index < NO_SPACES.length; index++)
+				null, VALUES, "Pressure");
+		for(int index = 0; index < VALUES.length; index++)
 		{
-			if(NO_SPACES[index].equals(selected))
+			if(VALUES[index].equals(selected))
 			{
 				values[index].setAmount(num);
 				break;
@@ -189,15 +185,15 @@ public class IdealGas extends Function
 				}
 				else steps.add(new JLabel(values[index].getName().trim() + " = " + quantities[index] + " " + UNITS[index][values[index].getUnit()]));
 			}
-			steps.add(new JLabel("R = " + R + " (atm * L) / (mol * K)"));
+			steps.add(new JLabel("R = " + Units.R + " (atm * L) / (mol * K)"));
 			steps.add(Box.createVerticalStrut(5));
 			double unknown;
 			int unitNum = values[blank].getUnit();
 			String unit = UNITS[blank][unitNum];
 			if(blank == 0)
 			{
-				unknown = R * quantities[2] * quantities[3] / quantities[1];
-				steps.add(new JLabel("? = (" + R + " * " + quantities[2] + " * " + quantities[3] + ") / (" + quantities[1] + ") = " + unknown + " atm"));
+				unknown = Units.R * quantities[2] * quantities[3] / quantities[1];
+				steps.add(new JLabel("? = (" + Units.R + " * " + quantities[2] + " * " + quantities[3] + ") / (" + quantities[1] + ") = " + unknown + " atm"));
 				if(unitNum == 1)
 				{
 					String step = unknown + " atm * (1 torr / 0.00131579 atm) = ";
@@ -213,18 +209,18 @@ public class IdealGas extends Function
 			}
 			else if(blank == 1)
 			{
-				unknown = R * quantities[2] * quantities[3] / quantities[0];
-				steps.add(new JLabel("? = (" + R + " * " + quantities[2] + " * " + quantities[3] + ") / (" + quantities[0] + ") = " + unknown + " L"));
+				unknown = Units.R * quantities[2] * quantities[3] / quantities[0];
+				steps.add(new JLabel("? = (" + Units.R + " * " + quantities[2] + " * " + quantities[3] + ") / (" + quantities[0] + ") = " + unknown + " L"));
 			}
 			else if(blank == 2)
 			{
-				unknown = quantities[0] * quantities[1] / (R * quantities[3]);
-				steps.add(new JLabel("? = (" + quantities[0] + " * " + quantities[1] + ") / (" + R + " * " + quantities[3] + ") = " + unknown + " mol"));
+				unknown = quantities[0] * quantities[1] / (Units.R * quantities[3]);
+				steps.add(new JLabel("? = (" + quantities[0] + " * " + quantities[1] + ") / (" + Units.R + " * " + quantities[3] + ") = " + unknown + " mol"));
 			}
 			else
 			{
-				unknown = quantities[0] * quantities[1] / (R * quantities[2]);
-				steps.add(new JLabel("? = (" + quantities[0] + " * " + quantities[1] + ") / (" + R + " * " + quantities[2] + ") = " + unknown + " K"));
+				unknown = quantities[0] * quantities[1] / (Units.R * quantities[2]);
+				steps.add(new JLabel("? = (" + quantities[0] + " * " + quantities[1] + ") / (" + Units.R + " * " + quantities[2] + ") = " + unknown + " K"));
 				if(unitNum == 1)
 				{
 					String step = unknown + " K - 273.15 = ";

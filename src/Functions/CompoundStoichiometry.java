@@ -4,7 +4,7 @@
  * number() returns true- saves last calculated value and can use saved in moles or mass.
  * 
  * Authors: Julia McClellan and Luke Giacalone
- * Version: 1/26/2016
+ * Version: 2/5/2016
  */
 
 package Functions;
@@ -25,6 +25,7 @@ import Equation.Compound;
 import ChemHelper.InvalidInputException;
 import HelperClasses.EnterField;
 import HelperClasses.TextField;
+import HelperClasses.Units;
 
 public class CompoundStoichiometry extends Function 
 {
@@ -35,9 +36,8 @@ public class CompoundStoichiometry extends Function
 	private Box steps;
 	private double toSave;
 	
-	private static final String[] MASS_UNITS = {"pg", "ng", "\u00B5g", "mg", "cg", "dg", "g", "dag", "hg", "kg", "Mg", "Tg", "Gg"};
-	private static final int[] POWERS = {-12, -9, -6, -3, -2, -1, 0, 1, 2, 3, 6, 9, 12};
-	private static final String[] MOLE_UNITS = {"mol"};
+	private static final String[] MASS_UNITS = Units.getUnits("Mass");
+	private static final String[] MOLE_UNITS = Units.getUnits("Amount");
 	
 	public CompoundStoichiometry()
 	{
@@ -122,8 +122,8 @@ public class CompoundStoichiometry extends Function
 				if(!unit.equals("g"))
 				{
 					int index = indexOf(MASS_UNITS, unit);
-					step = "<html>" + step + " * (10<sup>" + POWERS[index] + "</sup> g" + " / 1 " + unit + ") = ";
-					givenMass *= Math.pow(10, POWERS[index]);
+					step = "<html>" + step + " * (10<sup>" + Units.POWERS[index] + "</sup> g" + " / 1 " + unit + ") = ";
+					givenMass *= Math.pow(10, Units.POWERS[index]);
 					step += givenMass + " g</html>";
 				}
 				steps.add(new JLabel(step));
@@ -193,8 +193,8 @@ public class CompoundStoichiometry extends Function
 				if(!unit.equals("g"))
 				{
 					int index  = indexOf(MASS_UNITS, unit);
-					String step = "<html>" + toSave + " g * (1 " + unit + " / 10<sup>" + POWERS[index] + "</sup> " + " g) = ";
-					toSave /= Math.pow(10, POWERS[index]);
+					String step = "<html>" + toSave + " g * (1 " + unit + " / 10<sup>" + Units.POWERS[index] + "</sup> " + " g) = ";
+					toSave /= Math.pow(10, Units.POWERS[index]);
 					step += toSave + " " + unit + "</html>";
 					steps.add(new JLabel(step));
 				}

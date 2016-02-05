@@ -3,7 +3,7 @@
  * number() returns true- saves latest calculated value, uses saved for any field.
  * 
  * Author: Julia McClellan and Luke Giacalone
- * Version: 1/31/2016
+ * Version: 2/5/2016
  */
 
 package Functions;
@@ -28,9 +28,7 @@ public class ContainerChanges extends Function
 {
 	private static final int UNKNOWN_VALUE = -501, ERROR_VALUE = -502;
 	private static final String[] VALUES = {"Pressure", "Volume", "Moles", "Temperature"};
-	private static final String[][] UNITS = {{"atm", "torr", "kPa"}, 
-			{"pL", "nL", "\u00B5L", "mL", "cL", "dL", "L", "daL", "hL", "kL", "ML", "TL", "GL"}, 
-			{"mol"}, {"K", "\u2103", "\u2109"}};
+	private static final String[][] UNITS = Units.getUnits(VALUES);
 	
 	private JPanel panel;
 	private ArrayList<DoubleEnterField> information;
@@ -166,7 +164,7 @@ public class ContainerChanges extends Function
 					else if(before.getUnit() == 2) value = Units.kPaToatm(value);
 				}
 				else if(name.equals(VALUES[1])) { //volume
-					value = Units.volumeToLiters(value, before.getUnit());
+					value = Units.toBaseUnit(value, before.getUnit());
 				}
 				else if(name.equals(VALUES[3])) {
 					if(before.getUnit() == 1) value = Units.celsiusToKelvin(value);
@@ -202,7 +200,7 @@ public class ContainerChanges extends Function
 					else if(after.getUnit() == 2) value = Units.kPaToatm(value);
 				}
 				else if(name.equals(VALUES[1])) { //volume
-					value = Units.volumeToLiters(value, after.getUnit());
+					value = Units.toBaseUnit(value, after.getUnit());
 				}
 				else if(name.equals(VALUES[3])) 
 				{
@@ -222,6 +220,11 @@ public class ContainerChanges extends Function
 		public String getDesiredUnit()
 		{
 			return (String) after.getUnitName();
+		}
+		
+		public int getIntUnit()
+		{
+			return after.getUnit();
 		}
 		
 		public String getName()
@@ -276,18 +279,23 @@ public class ContainerChanges extends Function
 				double resultant;
 				if(unknown.isLeft()) resultant = before / after;
 				else resultant = after / before;
+				String unit = unknown.getDesiredUnit();
 				if(unknown.getName().equals(VALUES[0]))
 				{
-					if(unknown.getDesiredUnit().equals(UNITS[0][1])) resultant = Units.atmTotorr(resultant);
-					else if(unknown.getDesiredUnit().equals(UNITS[0][2])) resultant = Units.atmTokPa(resultant);
+					if(unit.equals(UNITS[0][1])) resultant = Units.atmTotorr(resultant);
+					else if(unit.equals(UNITS[0][2])) resultant = Units.atmTokPa(resultant);
+				}
+				else if(unknown.getName().equals(VALUES[1]))
+				{
+					if(!unit.equals(UNITS[1][6])) resultant = Units.fromBaseUnit(resultant, unknown.getIntUnit());
 				}
 				else if(unknown.getName().equals(VALUES[3]))
 				{
-					if(unknown.getDesiredUnit().equals(UNITS[3][1])) resultant = Units.kelvinToCelsius(resultant);
-					else if(unknown.getDesiredUnit().equals(UNITS[3][2])) resultant = Units.kelvinToFahrenheit(resultant);
+					if(unit.equals(UNITS[3][1])) resultant = Units.kelvinToCelsius(resultant);
+					else if(unit.equals(UNITS[3][2])) resultant = Units.kelvinToFahrenheit(resultant);
 				}
 				toSave = resultant;
-				result.setText(unknown.getName() + " = " + resultant + " " + unknown.getDesiredUnit());
+				result.setText(unknown.getName() + " = " + resultant + " " + unit);
 			}
 			else result.setText("Leave a value blank.");
 		}

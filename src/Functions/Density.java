@@ -3,7 +3,7 @@
  * number() returns true- saves last calculated value and can use saved for density, mass, or volume.
  * 
  * Author: Julia McClellan
- * Version: 1/4/2016
+ * Version: 2/5/2016
  */
 
 package Functions;
@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import HelperClasses.EnterField;
+import HelperClasses.Units;
 
 public class Density extends Function 
 {
@@ -30,9 +31,8 @@ public class Density extends Function
 	private double toSave;
 	private Box steps;
 	
-	private static final String[] MASS_UNITS = {"pg", "ng", "\u00B5g", "mg", "cg", "dg", "g", "dag", "hg", "kg", "Mg", "Tg", "Gg"};
-	private static final String[] VOLUME_UNITS = {"pL", "nL", "\u00B5L", "mL", "cL", "dL", "L", "daL", "hL", "kL", "ML", "TL", "GL"};
-	private static final int[] POWERS = {-12, -9, -6, -3, -2, -1, 0, 1, 2, 3, 6, 9, 12};
+	private static final String[] MASS_UNITS = Units.getUnits("Mass");
+	private static final String[] VOLUME_UNITS = Units.getUnits("Volume");
 	
 	public Density()
 	{
@@ -229,13 +229,13 @@ public class Density extends Function
 	
 	private double normalizeUnit(double number, int index)
 	{
-		if(index != -1) return number * Math.pow(10, POWERS[index]);
+		if(index != -1) return number * Math.pow(10, Units.POWERS[index]);
 		return 0;
 	}
 	
 	private double convertUnit(double number, int index)
 	{
-		if(index != -1) return number / Math.pow(10, POWERS[index]);
+		if(index != -1) return number / Math.pow(10, Units.POWERS[index]);
 		return 0;
 	}
 	

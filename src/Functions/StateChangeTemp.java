@@ -4,8 +4,8 @@
  * This function calculates the change in temperature in a state change based on the number of particles in solution
  * (boiling point elevation and freezing point depression)
  * 
- * Author: Luke Giacalone
- * Version: 02/02/2016
+ * Author: Luke Giacalone and Julia McClellan
+ * Version: 02/5/2016
  */
 
 package Functions;
@@ -18,17 +18,18 @@ import java.awt.event.ActionListener;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import HelperClasses.EnterField;
+import HelperClasses.Units;
 
 public class StateChangeTemp extends Function {
 	
-	private static final String[] TEMPERATURE_UNITS = {"K", "\u2103", "\u2109"};
-	private static final String[] MOLE_UNITS = {"mol"};
-	private static final String[] MASS_UNITS = {"pg", "ng", "\u00B5g", "mg", "cg", "dg", "g", "dag", "hg", "kg", "Mg", "Tg", "Gg"};
-	private static final int[] MASS_POWERS = {-12, -9, -6, -3, -2, -1, 0, 1, 2, 3, 6, 9, 12};
+	private static final String[] TEMPERATURE_UNITS = Units.getUnits("Temperature");
+	private static final String[] MOLE_UNITS = Units.getUnits("Amount");
+	private static final String[] MASS_UNITS = Units.getUnits("Mass");
 	private static final int UNKNOWN_VALUE = -500, ERROR_VALUE = -501;
 	
 	private JPanel panel, inputPanel;
@@ -36,6 +37,7 @@ public class StateChangeTemp extends Function {
 	private EnterField deltaT, i, iIon, iSolute, k, m;
 	private JButton calculate;
 	private JLabel result;
+	private double number;
 	
 	public StateChangeTemp() {
 		super("State Change Temperature");;
@@ -159,12 +161,20 @@ public class StateChangeTemp extends Function {
 				result.setText("\u0394t = " + toOriginalTemp(values[1] * values[2] * values[3], deltaT.getUnit()) 
 								+ " " + deltaT.getUnitName());
 			else if(blank == 1)
-				result.setText("<html><i>i</i></html> = " + values[0] / values[2] / values[3]);
+			{
+				number = values[0] / values[2] / values[3];
+				result.setText("<html><i>i</i></html> = " + number);
+			}
 			else if(blank == 2)
-				result.setText("k = " + values[0] / values[1] / values[3]);
+			{
+				number = values[0] / values[1] / values[3];
+				result.setText("k = " + number);
+			}
 			else if (blank == 3)
-				result.setText("m = " + toOriginalMass(values[0] / values[1] / values[2], m.getUnit2()) 
-								+ " mol/" + MASS_UNITS[m.getUnit2()]);
+			{
+				number = toOriginalMass(values[0] / values[1] / values[2], m.getUnit2());
+				result.setText("m = " + number + " mol/" + MASS_UNITS[m.getUnit2()]);
+			}
 		}
 	}
 	
@@ -173,8 +183,8 @@ public class StateChangeTemp extends Function {
 		if(amount == UNKNOWN_VALUE) return amount;
 		else if(amount == ERROR_VALUE) return amount;
 		else if(unit == 0) return amount; //if kelvin
-		else if(unit == 1) return amount + 273.15; //if celcius
-		else return (amount + 459.67) * (5 / 9); //if fahrenheit
+		else if(unit == 1) return Units.celsiusToKelvin(amount); //if celcius
+		else return Units.fahrenheitToKelvin(amount); //if fahrenheit
 	}
 	
 	//returns the molality in mol/g
@@ -182,22 +192,44 @@ public class StateChangeTemp extends Function {
 		if(amount == UNKNOWN_VALUE) return amount;
 		else if(amount == ERROR_VALUE) return amount;
 		else if(unit2 == 6) return amount;
-		else return amount / Math.pow(10, MASS_POWERS[unit2]);
+		else return Units.fromBaseUnit(amount, unit2);
 	}
 	
 	private double toOriginalTemp(double amount, int unit) {
 		if(unit == 0) return amount; //if kelvin
-		else if(unit == 1) return amount - 273.15;//if celcius
-		else return (amount * 9 / 5) - 459.67; //if fahrenheit
+		else if(unit == 1) return Units.kelvinToCelsius(amount);//if celcius
+		else return Units.kelvinToFahrenheit(amount); //if fahrenheit
 	}
 	
 	private double toOriginalMass(double amount, int unit2) {
 		if(unit2 == 6) return amount;
-		else return amount * Math.pow(10, MASS_POWERS[unit2]);
+		else return Units.toBaseUnit(amount, unit2);
 	}
 	
 	public JPanel getPanel() {
 		return panel;
 	}
 	
+	public boolean number()
+	{
+		return true;
+	}
+	
+	public double saveNumber()
+	{
+		return number;
+	}
+	
+	public void useSavedNumber(double num)
+	{
+		String[] options = {"\u0394t", "<html><i>i</i></html>", "Ions", "Solute", "k", "Molality"};
+		String result = (String) JOptionPane.showInputDialog(panel, "Choose where to use the number", "Choose number", JOptionPane.PLAIN_MESSAGE, null, 
+				options, "\u0394t");
+		if(result.equals(options[0])) deltaT.setAmount(num);
+		else if(result.equals(options[1])) i.setAmount(num);
+		else if(result.equals(options[2])) iIon.setAmount(num);
+		else if(result.equals(options[3])) iSolute.setAmount(num);
+		else if(result.equals(options[4])) k.setAmount(num);
+		else m.setAmount(num);
+	}
 }

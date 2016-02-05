@@ -29,7 +29,6 @@ import Equation.Polyatomic;
 
 
 public abstract class Function {
-	public static final double C = 300000000, h = 6.626*Math.pow(10, -34);
 	private String name;
 	
 	public Function(String name)
