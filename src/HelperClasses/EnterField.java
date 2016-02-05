@@ -35,18 +35,18 @@ public class EnterField extends JPanel
 		this.setSize(300, this.getHeight());
 		this.name = name;
 		this.hasCompoundField = hasCompoundField;
-		if(!hasCompoundField) amount = new JTextField(5);
+		if(!hasCompoundField) amount = new JTextField(6);
 		else amount = new TextField(TextField.COMPOUND);
 		if(units != null) {
 			unit = new JComboBox<String>(units);
 			unit.setSelectedIndex(0);
-			unit.setPreferredSize(new Dimension(75, 28));
+			unit.setPreferredSize(new Dimension(76, 28));
 		}
 		isCompoundUnit = false;
 		if(units2 != null) {
 			unit2 = new JComboBox<String>(units2);
 			unit2.setSelectedIndex(0);
-			unit2.setPreferredSize(new Dimension(75, 28));
+			unit2.setPreferredSize(new Dimension(76, 28));
 			isCompoundUnit = true;
 		}
 		
@@ -162,6 +162,10 @@ public class EnterField extends JPanel
 		}
 		catch(Throwable e) {}
 		return -1;
+	}
+	
+	public boolean isEmpty() {
+		return getText().isEmpty();
 	}
 	
 	public String getName() 

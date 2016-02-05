@@ -1,8 +1,4 @@
 /**
- * 
- */
-/**
- * @author ted
- *
+ * @author Julia McClellan
  */
 package Elements;

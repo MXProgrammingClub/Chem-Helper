@@ -29,7 +29,7 @@ import javax.swing.JPanel;
 import Equation.Equation;
 import Functions.*;
 
-public class ChemHelper extends JFrame{		//Primary GUI class
+public class ChemHelper extends JFrame {		//Primary GUI class
 	Container pane;
 	JPanel last, buttons, eqButtons, numButtons;
 	JMenuBar menu;
@@ -102,7 +102,7 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 
 	private void createMenu()
 	{
-		funcs = new Function[19];
+		funcs = new Function[20];
 		funcs[0] = new PeriodicTable(ChemHelper.getIntPreference("Table Style"), ChemHelper.getBooleanPreference("State Colors"));
 		funcs[1] = new ElectronShell();
 		funcs[2] = new CompoundStoichiometry();
@@ -120,12 +120,13 @@ public class ChemHelper extends JFrame{		//Primary GUI class
 		funcs[14] = new Empirical();
 		funcs[15] = new Density();
 		funcs[16] = new StateChangeTemp();
-		funcs[17] = new About();
-		funcs[18] = new Prefs(this);
+		funcs[17] = new Waves();
+		funcs[18] = new About();
+		funcs[19] = new Prefs(this);
 		
-		String[] menuNames = {"General Information", "Stoichiometry", "Gas Laws", "Reactions", "Reaction Energy", "Other", "Help"};
+		String[] menuNames = {"General", "Stoichiometry", "Gas Laws", "Reactions", "Reaction Energy", "Other", "Help"};
 			//Lists the names of the different menus on the menu bar.
-		int[] menuCutoffs = {0, 2, 6, 9, 13, 14, 17}; //Specifies the indices where a new menu would start from funcs
+		int[] menuCutoffs = {0, 2, 6, 9, 13, 14, 18}; //Specifies the indices where a new menu would start from funcs
 		
 		menu = new JMenuBar();
 		for(int menuNum = 0; menuNum < menuCutoffs.length; menuNum++)
