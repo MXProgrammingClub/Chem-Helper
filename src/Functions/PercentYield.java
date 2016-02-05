@@ -4,7 +4,7 @@
  * number() returns true - saves most recently calculated value, uses saved as product or reactant amount.
  * 
  * Author: Julia McClellan
- * Version: 1/26/2015
+ * Version: 2/5/2015
  */
 
 package Functions;
@@ -30,16 +30,16 @@ import HelperClasses.TextField;
 
 public class PercentYield extends Function 
 {
-	private JPanel panel, equationPanel, stoicPanel, displayEquation, reactantPanel, productPanel, resultPanel, stepsPanel;
+	private JPanel panel, stoicPanel, displayEquation, reactantPanel, productPanel, resultPanel, stepsPanel;
 	private EquationReader reader;
-	private JButton acceptEquation, calculate, reset;
+	private JButton calculate, reset;
 	private Equation equation;
 	private JLabel errorMessage, instructions;
 	private boolean onReactant, done;
 	private JTextField enterR, enterP;
 	private JRadioButton mole1, gram1, mole2, gram2;
 	private Compound reactant, product;
-	private Box box1, box2;
+	private Box box2;
 	private double toSave;
 	
 	public PercentYield()
@@ -53,16 +53,7 @@ public class PercentYield extends Function
 	
 	private void setPanel()
 	{
-		reader = new EquationReader();
-		acceptEquation = new JButton("Use equation");
-		acceptEquation.addActionListener(new AcceptEquation());
-		errorMessage = new JLabel();
-		box1 = Box.createVerticalBox();
-		box1.add(reader.getPanel());
-		equationPanel = new JPanel();
-		equationPanel.add(acceptEquation);
-		equationPanel.add(errorMessage);
-		box1.add(equationPanel);
+		reader = new EquationReader(this);
 		
 		displayEquation = new JPanel();
 		instructions = new JLabel("Click on the reactant you know the quantity of.");
@@ -77,6 +68,7 @@ public class PercentYield extends Function
 		reset.setVisible(false);
 		stepsPanel = new JPanel();
 		stepsPanel.setVisible(false);
+		errorMessage = new JLabel();
 		
 		box2 = Box.createVerticalBox();
 		box2.add(instructions);
@@ -84,35 +76,18 @@ public class PercentYield extends Function
 		box2.add(reactantPanel);
 		box2.add(productPanel);
 		box2.add(resultPanel);
+		box2.add(errorMessage);
 		box2.add(reset);
 		stoicPanel = new JPanel();
 		stoicPanel.add(box2);
 		stoicPanel.setVisible(false);
 		
-		panel.add(box1);
+		panel.add(reader.getPanel());
 		panel.add(stoicPanel);
 		panel.add(stepsPanel);
 		
 		onReactant = true;
 		done = false;
-	}
-	
-	private class AcceptEquation implements ActionListener
-	{
-		public void actionPerformed(ActionEvent arg0)
-		{
-			equation = reader.getEquation();
-			if(equation == null)
-			{
-				errorMessage.setText("You have not entered a valid equation.");
-			}
-			else
-			{
-				panel.remove(box1);
-				displayEquation.add(displayEquation());
-				stoicPanel.setVisible(true);
-			}
-		}
 	}
 	
 	private JPanel displayEquation()
@@ -152,10 +127,10 @@ public class PercentYield extends Function
 		{
 			public void mouseClicked(MouseEvent arg0) 
 			{
-				stoicPanel.setVisible(false);
-				stoicPanel.remove(errorMessage);
+				errorMessage.setText("");
 				if(!done)
 				{
+					stoicPanel.setVisible(false);
 					if(onReactant)
 					{
 						if(equation.getLeft().indexOf(compound) != -1)
@@ -279,8 +254,10 @@ public class PercentYield extends Function
 	
 	public void useSaved(Equation equation)
 	{
-		reader.resetFocus();
-		reader.useSaved(equation);
+		this.equation = equation;
+		panel.remove(reader.getPanel());
+		displayEquation.add(displayEquation());
+		stoicPanel.setVisible(true);
 	}
 	
 	public boolean number()

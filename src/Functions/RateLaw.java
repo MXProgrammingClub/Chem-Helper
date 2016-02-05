@@ -3,7 +3,7 @@
  * equation() returns true- has an EquationReader as an instance variable.
  * 
  * Author: Julia McClellan
- * Version: 12/31/2015
+ * Version: 2/5/2015
  */
 
 package Functions;
@@ -27,12 +27,11 @@ import Equation.Equation;
 
 public class RateLaw extends Function 
 {
-	private JPanel panel, equationPanel, tablePanel, resultPanel;
+	private JPanel panel, tablePanel, resultPanel;
 	private EquationReader reader;
-	private Equation equation;
-	private JButton useEquation, calculate, reset, add;
+	private JButton calculate, reset, add;
 	private ArrayList<TableRow> rows;
-	private Box box1, table, box2, box3, box4;
+	private Box table, box2, box3, box4;
 	private JLabel errorMessage, displayEquation, law, kValue;
 	private ArrayList<Compound> compounds;
 	
@@ -45,16 +44,8 @@ public class RateLaw extends Function
 	
 	private void setPanel()
 	{
-		reader = new EquationReader();
-		useEquation = new JButton("Use equation");
-		useEquation.addActionListener(new UseEquation());
+		reader = new EquationReader(this);
 		errorMessage = new JLabel();
-		box1 = Box.createVerticalBox();
-		box1.add(reader.getPanel());
-		box1.add(errorMessage);
-		box1.add(useEquation);
-		equationPanel = new JPanel();
-		equationPanel.add(box1);
 		
 		displayEquation = new JLabel();
 		add = new JButton("Add row");
@@ -69,6 +60,7 @@ public class RateLaw extends Function
 		box4.add(add);
 		box4.add(Box.createVerticalStrut(10));
 		box4.add(calculate);
+		box4.add(errorMessage);
 		tablePanel = new JPanel();
 		tablePanel.add(box4);
 		tablePanel.setVisible(false);
@@ -89,29 +81,8 @@ public class RateLaw extends Function
 		box3.add(tablePanel);
 		box3.add(resultPanel);
 		
-		panel.add(equationPanel);
+		panel.add(reader.getPanel());
 		panel.add(box3);
-	}
-	
-	private class UseEquation implements ActionListener
-	{
-		public void actionPerformed(ActionEvent arg0)
-		{
-			equation = reader.getEquation();
-			if(equation == null)
-			{
-				errorMessage.setText("You have not entered a valid equation");
-			}
-			else
-			{
-				panel.remove(equationPanel);
-				panel.repaint();
-				compounds = equation.getLeft();
-				displayEquation.setText("<html>" + equation + "</html");
-				generateTable();
-				tablePanel.setVisible(true);
-			}
-		}
 	}
 	
 	private class TableRow extends JPanel
@@ -314,7 +285,7 @@ public class RateLaw extends Function
 			law.setText(rateLaw);
 			double k = Double.parseDouble(rows.get(0).getRate()) / withoutK;
 			String unit = "L<sup>" + (sumOrders - 1) + "</sup>/mol<sup>" + (sumOrders - 1) + "</sup>*s";
-			kValue.setText("<html>k = " + Function.withSigFigs(k, sigFigs) + unit + "<html>");
+			kValue.setText("<html>k = " + Function.withSigFigs(k, sigFigs) + " " + unit + "<html>");
 			resultPanel.setVisible(true);
 		}
 	}
@@ -347,6 +318,11 @@ public class RateLaw extends Function
 	
 	public void useSaved(Equation equation)
 	{
-		reader.useSaved(equation);
+		panel.remove(reader.getPanel());
+		panel.repaint();
+		compounds = equation.getLeft();
+		displayEquation.setText("<html>" + equation + "</html");
+		generateTable();
+		tablePanel.setVisible(true);
 	}
 }

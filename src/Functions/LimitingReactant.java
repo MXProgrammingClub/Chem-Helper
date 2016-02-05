@@ -4,7 +4,7 @@
  * number() returns true- can save any of calculated leftovers and use saved for any of the reactants.
  * 
  * Author: Julia McClellan
- * Version: 1/26/2016
+ * Version: 2/5/2016
  */
 
 package Functions;
@@ -28,12 +28,12 @@ import HelperClasses.TextField;
 
 public class LimitingReactant extends Function
 {
-	private JPanel panel, equationPanel, stoicPanel, enterPanel, resultPanel, stepsPanel;
+	private JPanel panel, stoicPanel, enterPanel, resultPanel, stepsPanel;
 	private EquationReader reader;
-	private JButton acceptEquation, calculate, reset;
+	private JButton calculate, reset;
 	private Equation equation;
 	private JLabel errorMessage, equationDisplay, limitingLabel;
-	private Box box1, box2;
+	private Box box2;
 	private ArrayList<EnterPanel> compounds;
 	private JRadioButton grams, moles;
 	private ArrayList<Double> toSave;
@@ -49,16 +49,7 @@ public class LimitingReactant extends Function
 	
 	private void setPanel()
 	{
-		reader = new EquationReader();
-		acceptEquation = new JButton("Use equation");
-		acceptEquation.addActionListener(new AcceptEquation());
-		errorMessage = new JLabel();
-		box1 = Box.createVerticalBox();
-		box1.add(reader.getPanel());
-		equationPanel = new JPanel();
-		equationPanel.add(acceptEquation);
-		equationPanel.add(errorMessage);
-		box1.add(equationPanel);
+		reader = new EquationReader(this);
 
 		calculate = new JButton("Calculate");
 		calculate.addActionListener(new CalculateListener());
@@ -79,31 +70,11 @@ public class LimitingReactant extends Function
 		stoicPanel.add(box2);
 		stoicPanel.setVisible(false);
 		
-		panel.add(box1);
+		panel.add(reader.getPanel());
 		panel.add(stoicPanel);
 		panel.add(stepsPanel);
 		
 		toSave = new ArrayList<Double>();
-	}
-	
-	private class AcceptEquation implements ActionListener
-	{
-		public void actionPerformed(ActionEvent arg0)
-		{
-			equation = reader.getEquation();
-			if(equation == null)
-			{
-				errorMessage.setText("You have not entered a valid equation.");
-			}
-			else
-			{
-				panel.remove(box1);
-				equationDisplay.setText("<html>" + equation + "<html>");
-				enterPanel.add(generateEnter());
-				stoicPanel.setVisible(true);
-				panel.repaint();
-			}
-		}
 	}
 	
 	private class EnterPanel extends JPanel
@@ -299,8 +270,12 @@ public class LimitingReactant extends Function
 	
 	public void useSaved(Equation equation)
 	{
-		reader.resetFocus();
-		reader.useSaved(equation);
+		this.equation = equation;
+		panel.remove(reader.getPanel());
+		equationDisplay.setText("<html>" + equation + "<html>");
+		enterPanel.add(generateEnter());
+		stoicPanel.setVisible(true);
+		panel.repaint();
 	}
 	
 	public boolean number()

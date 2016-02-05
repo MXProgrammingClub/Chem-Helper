@@ -4,7 +4,7 @@
  * number() returns true- saves most recently calculated value and uses saved as known amount.
  * 
  * Author: Julia McClellan
- * Version: 1/26/2016
+ * Version: 2/5/2016
  */
 
 package Functions;
@@ -30,16 +30,16 @@ import HelperClasses.TextField;
 
 public class Stoichiometry extends Function 
 {
-	private JPanel panel, equationPanel, stoicPanel, displayEquation, knownPanel, unknownPanel, resultPanel, stepsPanel;
+	private JPanel panel, stoicPanel, displayEquation, knownPanel, unknownPanel, resultPanel, stepsPanel;
 	private EquationReader reader;
-	private JButton acceptEquation, calculate, reset;
+	private JButton calculate, reset;
 	private Equation equation;
-	private JLabel errorMessage, instructions;
+	private JLabel instructions;
 	private boolean given, done;
 	private JTextField enter;
 	private JRadioButton mole1, gram1, mole2, gram2;
 	private Compound known, unknown;
-	private Box box1, box2;
+	private Box box2;
 	private double toSave;
 	
 	public Stoichiometry()
@@ -53,16 +53,7 @@ public class Stoichiometry extends Function
 
 	private void setPanel()
 	{
-		reader = new EquationReader();
-		acceptEquation = new JButton("Use equation");
-		acceptEquation.addActionListener(new AcceptEquation());
-		errorMessage = new JLabel();
-		box1 = Box.createVerticalBox();
-		box1.add(reader.getPanel());
-		equationPanel = new JPanel();
-		equationPanel.add(acceptEquation);
-		equationPanel.add(errorMessage);
-		box1.add(equationPanel);
+		reader = new EquationReader(this);
 		
 		displayEquation = new JPanel();
 		instructions = new JLabel("Click on the compound you know the quantity of.");
@@ -90,7 +81,7 @@ public class Stoichiometry extends Function
 		given = true;
 		done = false;
 		
-		panel.add(box1);
+		panel.add(reader.getPanel());
 		panel.add(stoicPanel);
 		panel.add(stepsPanel);
 	}
@@ -98,24 +89,6 @@ public class Stoichiometry extends Function
 	public JPanel getPanel() 
 	{
 		return panel;
-	}
-	
-	private class AcceptEquation implements ActionListener
-	{
-		public void actionPerformed(ActionEvent arg0)
-		{
-			equation = reader.getEquation();
-			if(equation == null)
-			{
-				errorMessage.setText("You have not entered a valid equation.");
-			}
-			else
-			{
-				panel.remove(box1);
-				displayEquation.add(displayEquation());
-				stoicPanel.setVisible(true);
-			}
-		}
 	}
 	
 	private JPanel displayEquation()
@@ -291,8 +264,10 @@ public class Stoichiometry extends Function
 	
 	public void useSaved(Equation equation)
 	{
-		reader.resetFocus();
-		reader.useSaved(equation);
+		this.equation = equation;
+		panel.remove(reader.getPanel());
+		displayEquation.add(displayEquation());
+		stoicPanel.setVisible(true);
 	}
 	
 	public boolean number()
