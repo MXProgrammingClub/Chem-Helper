@@ -152,7 +152,11 @@ public class EnterField extends JPanel
 	}
 	
 	public String getUnitName() {
-			return unit.getSelectedItem().toString();
+		return unit.getSelectedItem().toString();
+	}
+	
+	public String getUnit2Name() {
+		return unit2.getSelectedItem().toString();
 	}
 	
 	public int getUnit2() 
