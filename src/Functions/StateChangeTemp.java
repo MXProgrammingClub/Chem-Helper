@@ -30,7 +30,6 @@ public class StateChangeTemp extends Function {
 	private static final String[] TEMPERATURE_UNITS = Units.getUnits("Temperature");
 	private static final String[] MOLE_UNITS = Units.getUnits("Amount");
 	private static final String[] MASS_UNITS = Units.getUnits("Mass");
-	private static final int UNKNOWN_VALUE = -500, ERROR_VALUE = -501;
 	
 	private JPanel panel, inputPanel;
 	private JRadioButton togetherI, seperatedI;
@@ -40,7 +39,7 @@ public class StateChangeTemp extends Function {
 	private double number;
 	
 	public StateChangeTemp() {
-		super("State Change Temperature");;
+		super("State Change Temperature");
 		
 		Box iBox = Box.createHorizontalBox();
 		togetherI = new JRadioButton("<html><i>i</i> as One Value</html>");
@@ -126,12 +125,12 @@ public class StateChangeTemp extends Function {
 	private class Calculate implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			double[] values = new double[4];
-			values[0] = toKelvin(deltaT.getAmount(), deltaT.getUnit());
+			values[0] = Units.toKelvin(deltaT.getAmount(), deltaT.getUnit());
 			if(togetherI.isSelected())
 				values[1] = i.getAmount();
 			else
-				if(iIon.getAmount() == UNKNOWN_VALUE || iSolute.getAmount() == UNKNOWN_VALUE)
-					values[1] = UNKNOWN_VALUE;
+				if(iIon.getAmount() == Units.UNKNOWN_VALUE || iSolute.getAmount() == Units.UNKNOWN_VALUE)
+					values[1] = Units.UNKNOWN_VALUE;
 				else
 					values[1] = iIon.getAmount() / iSolute.getAmount();
 			values[2] = k.getAmount();
@@ -140,12 +139,11 @@ public class StateChangeTemp extends Function {
 			int blank = -1;
 			
 			for(int index = 0; index < values.length; index++) {
-				if(values[index] == ERROR_VALUE) {
+				if(values[index] == Units.ERROR_VALUE) {
 					result.setText("An entered value was not a number.");
 					return;
 				}
-				else if(values[index] == UNKNOWN_VALUE)
-				{
+				else if(values[index] == Units.UNKNOWN_VALUE) {
 					if(blank == -1)
 						blank = index;
 					else {
@@ -158,47 +156,29 @@ public class StateChangeTemp extends Function {
 			if(blank == -1)
 				result.setText("Leave one value blank");
 			else if(blank == 0)
-				result.setText("\u0394t = " + toOriginalTemp(values[1] * values[2] * values[3], deltaT.getUnit()) 
+				result.setText("\u0394t = " + Units.toOriginalTemp(values[1] * values[2] * values[3], deltaT.getUnit()) 
 								+ " " + deltaT.getUnitName());
-			else if(blank == 1)
-			{
+			else if(blank == 1) {
 				number = values[0] / values[2] / values[3];
 				result.setText("<html><i>i</i></html> = " + number);
 			}
-			else if(blank == 2)
-			{
+			else if(blank == 2) {
 				number = values[0] / values[1] / values[3];
 				result.setText("k = " + number);
 			}
-			else if (blank == 3)
-			{
+			else if (blank == 3) {
 				number = toOriginalMass(values[0] / values[1] / values[2], m.getUnit2());
 				result.setText("m = " + number + " mol/" + MASS_UNITS[m.getUnit2()]);
 			}
 		}
 	}
 	
-	//returns the kelvin amount of a temperature
-	private double toKelvin(double amount, int unit) {
-		if(amount == UNKNOWN_VALUE) return amount;
-		else if(amount == ERROR_VALUE) return amount;
-		else if(unit == 0) return amount; //if kelvin
-		else if(unit == 1) return Units.celsiusToKelvin(amount); //if celcius
-		else return Units.fahrenheitToKelvin(amount); //if fahrenheit
-	}
-	
 	//returns the molality in mol/g
 	private double toMolPerGram(double amount, int unit2) {
-		if(amount == UNKNOWN_VALUE) return amount;
-		else if(amount == ERROR_VALUE) return amount;
+		if(amount == Units.UNKNOWN_VALUE) return amount;
+		else if(amount == Units.ERROR_VALUE) return amount;
 		else if(unit2 == 6) return amount;
 		else return Units.fromBaseUnit(amount, unit2);
-	}
-	
-	private double toOriginalTemp(double amount, int unit) {
-		if(unit == 0) return amount; //if kelvin
-		else if(unit == 1) return Units.kelvinToCelsius(amount);//if celcius
-		else return Units.kelvinToFahrenheit(amount); //if fahrenheit
 	}
 	
 	private double toOriginalMass(double amount, int unit2) {
@@ -210,21 +190,18 @@ public class StateChangeTemp extends Function {
 		return panel;
 	}
 	
-	public boolean number()
-	{
+	public boolean number() {
 		return true;
 	}
 	
-	public double saveNumber()
-	{
+	public double saveNumber() {
 		return number;
 	}
 	
-	public void useSavedNumber(double num)
-	{
+	public void useSavedNumber(double num) {
 		String[] options = {"\u0394t", "<html><i>i</i></html>", "Ions", "Solute", "k", "Molality"};
-		String result = (String) JOptionPane.showInputDialog(panel, "Choose where to use the number", "Choose number", JOptionPane.PLAIN_MESSAGE, null, 
-				options, "\u0394t");
+		String result = (String) JOptionPane.showInputDialog(panel, "Choose where to use the number", 
+				"Choose number", JOptionPane.PLAIN_MESSAGE, null, options, "\u0394t");
 		if(result.equals(options[0])) deltaT.setAmount(num);
 		else if(result.equals(options[1])) i.setAmount(num);
 		else if(result.equals(options[2])) iIon.setAmount(num);
