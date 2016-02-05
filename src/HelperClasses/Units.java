@@ -11,7 +11,8 @@ import java.util.TreeMap;
 
 public class Units
 {
-	public static final double R = .0821, STANDARD_PRESSURE = 1, STANDARD_TEMPERATURE = 273.15, C = 300000000, h = 6.626*Math.pow(10, -34);
+	public static final double R = .0821, STANDARD_PRESSURE = 1, STANDARD_TEMPERATURE = 273.15, C = 3E8, h = 6.626E-34;
+	public static final int UNKNOWN_VALUE = -500, ERROR_VALUE = -501;
 	public static final String[] PREFIXES = {"p", "n", "\u00B5", "m", "c", "d", "", "da", "h", "k", "M", "T", "G"};
 	public static final int[] POWERS = {-12, -9, -6, -3, -2, -1, 0, 1, 2, 3, 6, 9, 12};
 	private static final TreeMap<String, String[]> UNITS = generateMap();
@@ -107,5 +108,19 @@ public class Units
 	public static double betweenUnits(double amount, int from, int to)
 	{
 		return amount * Math.pow(10, POWERS[from - to]);
+	}
+	
+	public static double toKelvin(double amount, int unit) {
+		if(amount == UNKNOWN_VALUE) return amount;
+		else if(amount == ERROR_VALUE) return amount;
+		else if(unit == 0) return amount; //if kelvin
+		else if(unit == 1) return Units.celsiusToKelvin(amount); //if celcius
+		else return Units.fahrenheitToKelvin(amount); //if fahrenheit
+	}
+	
+	public static double toOriginalTemp(double amount, int unit) {
+		if(unit == 0) return amount; //if kelvin
+		else if(unit == 1) return Units.kelvinToCelsius(amount);//if celcius
+		else return Units.kelvinToFahrenheit(amount); //if fahrenheit
 	}
 }
