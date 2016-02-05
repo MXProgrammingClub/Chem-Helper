@@ -32,7 +32,6 @@ public class Nuclear extends Function {
 	private ArrayList<String> SYMBOLS =  new ArrayList<String>();
 	private JPanel panel;
 	private JPanel input;
-	private JPanel steps;
 	private JTextField mass;
 	private JTextField number;
 	private JTextField symbol;
@@ -101,12 +100,14 @@ public class Nuclear extends Function {
 		positron = new JButton("Positron");
 		input.add(positron, c);
 		
-		steps = new JPanel();
+		c.gridx = 0;
+		c.gridy = 2;
+		c.gridwidth = 6;
+		c.anchor = GridBagConstraints.WEST;
 		equation = new JLabel();
-		steps.add(equation, c);
+		input.add(equation, c);
 		
 		panel.add(input);
-		panel.add(steps);
 		
 		//decays the element using an alpha particle
 		alpha.addActionListener(new ActionListener() {
@@ -199,13 +200,25 @@ public class Nuclear extends Function {
 		else
 			somethingDisplayed = true;
 		
-		latext += "\\substack{" + mass.getText() + " \\\\ " + number.getText() + "}" + symbol.getText();
+		String old = latext;
+		String newL = "\\substack{" + mass.getText() + " \\\\ " + number.getText() + "}" + symbol.getText();
+		latext += newL;
 		
 		TeXFormula formula = new TeXFormula (latext);
 		TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, 20);
 				
 		BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
 		icon.paintIcon(new JLabel(), image.getGraphics(), 0, 0);
+		
+		int stepsLength = icon.getIconWidth();
+		if(stepsLength > panel.getParent().getWidth()) {
+			latext = old + "\\\\" + newL;
+			formula = new TeXFormula (latext);
+			icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, 20);
+				
+			image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+			icon.paintIcon(new JLabel(), image.getGraphics(), 0, 0);
+		}
 		
 		equation.setIcon(icon);
 	}
