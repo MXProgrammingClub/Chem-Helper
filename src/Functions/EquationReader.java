@@ -35,7 +35,7 @@ public class EquationReader extends Function
 		this(null);
 	}
 	
-	public EquationReader(Function f)
+	public EquationReader(final Function f)
 	{
 		super("Equation Balancer");
 		
