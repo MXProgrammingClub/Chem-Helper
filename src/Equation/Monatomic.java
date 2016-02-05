@@ -70,4 +70,8 @@ public class Monatomic extends Ions
 	{
 		return "(" + element.getMolarMass() + " * " + super.getNum() + ")";
 	}
+	
+	public boolean equals(Object o){
+		return getElement().equals(((Monatomic) o).getElement());
+	}
 }
