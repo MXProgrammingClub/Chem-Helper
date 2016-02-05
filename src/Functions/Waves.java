@@ -18,17 +18,9 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import HelperClasses.EnterField;
+import HelperClasses.Units;
 
 public class Waves extends Function {
-	
-	//private static final String[] LENGTH_UNITS = {"pm", "nm", "\u00B5m", "mm", "cm", "dm", "m", "dam", "hm", "km", "Mm", "Tm", "Gm"};
-	private static final String[] LENGTH_UNITS = {"m"};
-	private static final String[] FREQ_UNITS = {"1/s"};
-	private static final String[] ENERGY_UNITS = {"J"};
-	//private static final String[] MASS_UNITS = {"pg", "ng", "\u00B5g", "mg", "cg", "dg", "g", "dag", "hg", "kg", "Mg", "Tg", "Gg"};
-	private static final String[] MASS_UNITS = {"kg"};
-	private static final String[] VELOCITY_UNITS = {"m/s"};
-	private static final String[] PLANCK_UNITS = {"J\u00B7s"};
 	
 	private JPanel panel;
 	private EnterField[] input;
@@ -38,15 +30,16 @@ public class Waves extends Function {
 		super("Waves");
 		
 		input = new EnterField[7];
-		input[0] = new EnterField("Wavelength", LENGTH_UNITS);
+		input[0] = new EnterField("Wavelength", Units.getUnits("Length"));
 		input[0].setUnit(6);
-		input[1] = new EnterField("Frequency", FREQ_UNITS);
-		input[2] = new EnterField("Energy", ENERGY_UNITS);
-		input[3] = new EnterField("Mass", MASS_UNITS);
-		input[4] = new EnterField("Velocity", VELOCITY_UNITS);
-		input[5] = new EnterField("Light Speed", VELOCITY_UNITS);
+		input[1] = new EnterField("Frequency", Units.getUnits("Frequency"));
+		input[2] = new EnterField("Energy", Units.getUnits("Energy"));
+		input[3] = new EnterField("Mass", Units.getUnits("Mass"));
+		input[3].setUnit(6);
+		input[4] = new EnterField("Velocity", Units.getUnits("Velocity"));
+		input[5] = new EnterField("Light Speed", Units.getUnits("Velocity"));
 		input[5].setAmount(3E8);
-		input[6] = new EnterField("Planck's", PLANCK_UNITS);
+		input[6] = new EnterField("Planck's", Units.getUnits("Planck"));
 		input[6].setAmount(6.626E-34);
 		
 		JPanel subpanel = new JPanel(new GridBagLayout());
@@ -69,6 +62,8 @@ public class Waves extends Function {
 	
 	private class Calculate implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
+			if(!input[0].isEmpty()) input[0].setAmount(Units.toBaseUnit(input[0].getAmount(), input[0].getUnit()));
+			if(!input[3].isEmpty()) input[3].setAmount(Units.toBaseUnit(input[3].getAmount(), input[3].getUnit()));
 			while(true) {
 				if(input[0].isEmpty() && !input[1].isEmpty() && !input[5].isEmpty()) //wavelength
 					input[0].setAmount(input[5].getAmount() / input[1].getAmount());
@@ -92,6 +87,8 @@ public class Waves extends Function {
 					input[6].setAmount(input[0].getAmount() * input[3].getAmount() * input[4].getAmount());
 				else break;
 			}
+			if(!input[0].isEmpty()) input[0].setAmount(Units.fromBaseUnit(input[0].getAmount(), input[0].getUnit()));
+			if(!input[3].isEmpty()) input[3].setAmount(Units.fromBaseUnit(input[3].getAmount(), input[3].getUnit()));
 		}
 	}
 	

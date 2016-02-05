@@ -27,10 +27,6 @@ import HelperClasses.Units;
 
 public class StateChangeTemp extends Function {
 	
-	//private static final String[] TEMPERATURE_UNITS = Units.getUnits("Temperature");
-	//private static final String[] MOLE_UNITS = Units.getUnits("Amount");
-	//private static final String[] MASS_UNITS = Units.getUnits("Mass");
-	
 	private JPanel panel, inputPanel;
 	private JRadioButton togetherI, seperatedI;
 	private EnterField deltaT, i, iIon, iSolute, k, m;
@@ -155,23 +151,19 @@ public class StateChangeTemp extends Function {
 			
 			if(blank == -1)
 				result.setText("Leave one value blank");
-			else if(blank == 0)
-			{
+			else if(blank == 0) {
 				number = Units.toOriginalTemp(values[1] * values[2] * values[3], deltaT.getUnit());
 				result.setText("\u0394t = " +  number + " " + deltaT.getUnitName());
 			}
-			else if(blank == 1)
-			{
+			else if(blank == 1) {
 				number = values[0] / values[2] / values[3];
 				result.setText("<html><i>i</i></html> = " + number);
 			}
-			else if(blank == 2)
-			{
+			else if(blank == 2) {
 				number = values[0] / values[1] / values[3];
 				result.setText("k = " + number);
 			}
-			else if (blank == 3)
-			{
+			else if (blank == 3) {
 				number = Units.toBaseUnit(values[0] / values[1] / values[2], m.getUnit2()); //toBasUnit because g is in the denom
 				result.setText("m = " + number + " mol/" + m.getUnit2Name());
 			}
@@ -182,18 +174,15 @@ public class StateChangeTemp extends Function {
 		return panel;
 	}
 	
-	public boolean number() 
-	{
+	public boolean number() {
 		return true;
 	}
 	
-	public double saveNumber() 
-	{
+	public double saveNumber() {
 		return number;
 	}
 	
-	public void useSavedNumber(double num)
-	{
+	public void useSavedNumber(double num) {
 		String[] options = {"\u0394t", "<html><i>i</i></html>", "Ions", "Solute", "k", "Molality"};
 		String result = (String) JOptionPane.showInputDialog(panel, "Choose where to use the number", 
 				"Choose number", JOptionPane.PLAIN_MESSAGE, null, options, "\u0394t");
