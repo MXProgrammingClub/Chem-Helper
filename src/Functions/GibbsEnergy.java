@@ -17,6 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import HelperClasses.EnterField;
+import HelperClasses.Units;
 
 public class GibbsEnergy extends Function 
 {
@@ -48,8 +49,8 @@ public class GibbsEnergy extends Function
 							double dH = Double.parseDouble(fields[0].getText()), t = Double.parseDouble(fields[1].getText()), 
 									dS = Double.parseDouble(fields[2].getText());
 							int unit = fields[1].getUnit();
-							if(unit == 1) t = IdealGas.celsiusToKelvin(t);
-							else if(unit == 2) t = IdealGas.fahrenheitToKelvin(t);
+							if(unit == 1) t = Units.celsiusToKelvin(t);
+							else if(unit == 2) t = Units.fahrenheitToKelvin(t);
 							dG = dH - t * dS;
 							answer.setText("\u0394G = " + dG);
 							if(dG > 0) spontaneous.setText("Not spontaneous");

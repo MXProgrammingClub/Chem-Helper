@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import HelperClasses.EnterField;
+import HelperClasses.Units;
 
 public class IdealGas extends Function 
 {
@@ -27,7 +28,6 @@ public class IdealGas extends Function
 	public static final String[][] UNITS = {{"atm", "torr", "kPa"}, 
 			{"pL", "nL", "\u00B5L", "mL", "cL", "dL", "L", "daL", "hL", "kL", "ML", "TL", "GL"}, 
 			{"mol"}, {"K", "\u2103", "\u2109"}};
-	private static final int[] VOLUME_POWERS = {-12, -9, -6, -3, -2, -1, 0, 1, 2, 3, 6, 9, 12};
 	
 	private static final int UNKNOWN_VALUE = -500, ERROR_VALUE = -501; // Values which none of the entered values could be.
 	private static final String[] VALUES = {"Pressure", "Volume", "Moles", "Temperature"};
@@ -155,32 +155,32 @@ public class IdealGas extends Function
 					{
 						if(values[index].getUnit() == 1)
 						{
-							quantities[index] = torrToatm(quantities[index]);
+							quantities[index] = Units.torrToatm(quantities[index]);
 							step += "torr * " + "(0.00131579 atm / 1 torr) = " + quantities[index] + " atm";
 						}
 						else
 						{
-							quantities[index] = kPaToatm(quantities[index]);
+							quantities[index] = Units.kPaToatm(quantities[index]);
 							step += "kPa * " + "(0.00986923 atm / 1 kPa) = " + quantities[index] + " atm";
 						}
 					}
 					else if(index == 1) {
-						quantities[index] = volumeToLiters(quantities[index], values[index].getUnit());
+						//quantities[index] = Units.volumeToLiters(quantities[index], values[index].getUnit());
 						step += values[index].getUnitName();
-						if(VOLUME_POWERS[values[index].getUnit()] != 0) step += " * " + "(10^" + VOLUME_POWERS[values[index].getUnit()]
+						if(Units.POWERS[values[index].getUnit()] != 0) step += " * " + "(10^" + Units.POWERS[values[index].getUnit()]
 								+ " L / "  + values[index].getUnitName() + ") " + " = " + quantities[index] + " L";
 					}
 					else if(index == 3)
 					{
 						if(values[index].getUnit() == 1)
 						{
-							quantities[index] = celsiusToKelvin(quantities[index]);
+							quantities[index] = Units.celsiusToKelvin(quantities[index]);
 							step += "+ 273.15 = " + quantities[index] + " K";
 						}
 						else
 						{
 							step = values[index].getName().trim() + " = (" + quantities[index] + " + 459.67) * (5 / 9) = ";
-							quantities[index] = fahrenheitToKelvin(quantities[index]);
+							quantities[index] = Units.fahrenheitToKelvin(quantities[index]);
 							step += quantities[index] + " K";
 							
 						}
@@ -201,13 +201,13 @@ public class IdealGas extends Function
 				if(unitNum == 1)
 				{
 					String step = unknown + " atm * (1 torr / 0.00131579 atm) = ";
-					unknown = atmTotorr(unknown);
+					unknown = Units.atmTotorr(unknown);
 					steps.add(new JLabel(step + unknown + " torr"));
 				}
 				else if(unitNum == 2)
 				{
 					String step = unknown + " atm * (1 kPa / 0.00986923 atm) = ";
-					unknown = atmTokPa(unknown);
+					unknown = Units.atmTokPa(unknown);
 					steps.add(new JLabel(step + unknown + " kPa"));
 				}
 			}
@@ -228,13 +228,13 @@ public class IdealGas extends Function
 				if(unitNum == 1)
 				{
 					String step = unknown + " K - 273.15 = ";
-					unknown = kelvinToCelsius(unknown);
+					unknown = Units.kelvinToCelsius(unknown);
 					steps.add(new JLabel(step + unknown + " " + UNITS[3][1]));
 				}
 				else if(unitNum == 2)
 				{
 					String step = unknown + " K * (9 / 5) - 273.15 = ";
-					unknown = kelvinToFahrenheit(unknown);
+					unknown = Units.kelvinToFahrenheit(unknown);
 					steps.add(new JLabel(step + unknown + " " + UNITS[3][2]));
 				}
 			}
@@ -242,50 +242,6 @@ public class IdealGas extends Function
 			save = unknown;
 			steps.setVisible(true);
 		}
-	}
-	
-	public static double fahrenheitToKelvin(double fahrenheit)
-	{
-		return (fahrenheit + 459.67) * 5 / 9;
-	}
-	
-	public static double kelvinToFahrenheit(double kelvin)
-	{
-		return (kelvin  * 9 / 5) - 459.67;
-	}
-	
-	public static double celsiusToKelvin(double celsius)
-	{
-		return celsius + 273.15;
-	}
-	
-	public static double kelvinToCelsius(double kelvin)
-	{
-		return kelvin - 273.15;
-	}
-	
-	public static double torrToatm(double torr)
-	{
-		return torr * 0.00131579;
-	}
-	
-	public static double atmTotorr(double atm)
-	{
-		return atm / 0.00131579;
-	}
-	
-	public static double kPaToatm(double kPa)
-	{
-		return kPa * 0.00986923;
-	}
-	
-	public static double atmTokPa(double atm)
-	{
-		return atm / 0.00986923;
-	}
-	
-	public static double volumeToLiters(double volume, int unitIndex) {
-		return volume * Math.pow(10, VOLUME_POWERS[unitIndex]);
 	}
 	
 	public JPanel getPanel()
