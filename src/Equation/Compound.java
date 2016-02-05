@@ -9,6 +9,8 @@
 package Equation;
 
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.TreeSet;
 
 import ChemHelper.InvalidInputException;
 import Elements.Element;
@@ -18,7 +20,10 @@ public class Compound
 	private Ions[] ions;
 	private String state;
 	private int num;
-	public static final String[] VALID_STATES = {"l", "g", "s", "aq", " "};
+	
+	private static final Set<String> VALID_STATES = new TreeSet<String>();{
+		VALID_STATES.add("l");VALID_STATES.add("g");VALID_STATES.add("s");VALID_STATES.add("aq");VALID_STATES.add(" ");
+	}
 	
 	public Compound(Ions[] ions) {
 		this.ions = ions;
@@ -29,17 +34,8 @@ public class Compound
 	public Compound(Ions[] ions, String state)
 	{
 		this.ions = ions;
-		boolean valid = false;
-		for(String str: VALID_STATES)
-		{
-			if(str.equals(state))
-			{
-				valid = true;
-				break;
-			}
-		}
-		if(!valid) this.state = " ";
-		else this.state = state;
+		if(VALID_STATES.contains(state)) this.state = state;
+		else this.state = " ";
 		this.num = 1;
 	}
 	
@@ -82,7 +78,7 @@ public class Compound
 		this.num = num;
 	}
 
-	public static String[] getValidstates() 
+	public static Set<String> getValidstates() 
 	{
 		return VALID_STATES;
 	}
