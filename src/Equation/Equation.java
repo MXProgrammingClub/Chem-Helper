@@ -8,8 +8,6 @@
 package Equation;
 
 import java.util.ArrayList;
-import java.util.Set;
-import java.util.TreeSet;
 
 import ChemHelper.InvalidInputException;
 import Functions.Function;
@@ -264,28 +262,26 @@ public class Equation
 	
 	private boolean isBalanced()
 	{
-		Set<Monatomic> leftIons = toIons(left), rightIons = toIons(right);
+		ArrayList<Monatomic> leftIons = toIons(left), rightIons = toIons(right);
 		for(Monatomic leftIon: leftIons)
 		{
-			if(!rightIons.contains(leftIon)) return false;
-			
-			Monatomic other=null;
+			boolean found = false;
 			for(Monatomic rightIon: rightIons)
 			{
-				if(leftIon.equals(rightIon))
+				if(leftIon.getElement().equals(rightIon.getElement()))
 				{
-					other = rightIon;
+					if(leftIon.getNum() != rightIon.getNum()) return false;
+					found = true;
 				}
 			}
-			if(other!=null&&other.getNum()!=leftIon.getNum()) return false;
-			
+			if(!found) return false;
 		}
 		return true;
 	}
 	
-	private Set<Monatomic> toIons(ArrayList<Compound> compounds)
+	private ArrayList<Monatomic> toIons(ArrayList<Compound> compounds)
 	{
-		Set<Monatomic> ions = new TreeSet<Monatomic>();
+		ArrayList<Monatomic> ions = new ArrayList<Monatomic>();
 		for(Compound c: compounds)
 		{
 			Monatomic[] compoundIons = c.getNoPoly();

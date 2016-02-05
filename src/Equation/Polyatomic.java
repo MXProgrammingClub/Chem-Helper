@@ -41,7 +41,7 @@ public class Polyatomic extends Ions
 	public Polyatomic(ArrayList<Monatomic> elements)
 	{
 		super(1, 0);
-		this.elements.addAll(elements);
+		setArrayList(elements);
 		int charge = 0;
 		for(Monatomic e: elements)
 		{
@@ -53,10 +53,13 @@ public class Polyatomic extends Ions
 	public Polyatomic(ArrayList<Monatomic> elements, int num, int charge)
 	{
 		super(num, charge);
-		this.elements.addAll(elements);
+		setArrayList(elements);
 		name = "";
 	}
-
+	
+	private void setArrayList(ArrayList<Monatomic> elements){
+		for(Monatomic ion: elements) this.elements.add(ion); 
+	}
 	private void setArray(Monatomic[] ions){
 		for(Monatomic ion: ions) this.elements.add(ion);
 	}
