@@ -10,6 +10,7 @@ package Equation;
 import java.util.ArrayList;
 
 import ChemHelper.InvalidInputException;
+import Functions.Function;
 
 
 public class Equation
@@ -245,7 +246,7 @@ public class Equation
 		
 		int lcm = reciprocals[0];
 	    for(int i = 1; i < reciprocals.length; i++) //finds the lcm of all the reciprocals
-	    	lcm = lcm(lcm, reciprocals[i]);
+	    	lcm = Function.lcm(lcm, reciprocals[i]);
 	    
 	    int[] newCo = new int[coefficients.length];
 	    for(int i = 0; i < coefficients.length; i++)
@@ -255,19 +256,9 @@ public class Equation
 	}
 	
 	//finds the least common multiple of two numbers
-	private static int lcm(int a, int b){
-	    return a * (b / gcd(a, b));
-	}
-	
-	//finds the greatest common divisor of two numbers
-	private static int gcd(int a, int b){
-	    while (b > 0) {
-	        int temp = b;
-	        b = a % b; // % is remainder
-	        a = temp;
-	    }
-	    return a;
-	}
+	//private static int lcm(int a, int b){
+	//    return a * (b / Function.gcd(a, b));
+	//}
 	
 	private boolean isBalanced()
 	{

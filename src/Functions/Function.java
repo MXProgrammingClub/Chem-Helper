@@ -126,7 +126,7 @@ public abstract class Function {
 		
 	}
 	
-	// Written by Lewis/Loftus/Cocking
+	// Find gcd of two ints
 	public static int gcd (int num1, int num2)
 	   {
 	      while (num1 != num2)
@@ -137,6 +137,11 @@ public abstract class Function {
 
 	      return num1;
 	   }
+	
+	// Find lcm of two ints
+	public static int lcm(int num1, int num2){
+		return num1 * (num2 / Function.gcd(num1, num2));
+	}
 	
 	/*
 	 * Returns the number of significant figures a number has, if numString is a String representation of a double.
