@@ -97,12 +97,16 @@ public class Units
 	
 	public static double toBaseUnit(double amount, int unit)
 	{
-		return amount * Math.pow(10, POWERS[unit]);
+		if(amount == Units.UNKNOWN_VALUE) return amount;
+		else if(amount == Units.ERROR_VALUE) return amount;
+		else return amount * Math.pow(10, POWERS[unit]);
 	}
 	
 	public static double fromBaseUnit(double amount, int unit)
 	{
-		return amount / Math.pow(10, POWERS[unit]);
+		if(amount == Units.UNKNOWN_VALUE) return amount;
+		else if(amount == Units.ERROR_VALUE) return amount;
+		else return amount / Math.pow(10, POWERS[unit]);
 	}
 	
 	public static double betweenUnits(double amount, int from, int to)

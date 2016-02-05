@@ -27,9 +27,9 @@ import HelperClasses.Units;
 
 public class StateChangeTemp extends Function {
 	
-	private static final String[] TEMPERATURE_UNITS = Units.getUnits("Temperature");
-	private static final String[] MOLE_UNITS = Units.getUnits("Amount");
-	private static final String[] MASS_UNITS = Units.getUnits("Mass");
+	//private static final String[] TEMPERATURE_UNITS = Units.getUnits("Temperature");
+	//private static final String[] MOLE_UNITS = Units.getUnits("Amount");
+	//private static final String[] MASS_UNITS = Units.getUnits("Mass");
 	
 	private JPanel panel, inputPanel;
 	private JRadioButton togetherI, seperatedI;
@@ -52,12 +52,12 @@ public class StateChangeTemp extends Function {
 		inputPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.anchor = GridBagConstraints.WEST;
-		deltaT = new EnterField("\u0394t", TEMPERATURE_UNITS);
+		deltaT = new EnterField("\u0394t", Units.getUnits("Temperature"));
 		i = new EnterField("<html><i>i</i></html>");
-		iIon = new EnterField("Ions", MOLE_UNITS);
-		iSolute = new EnterField("Solute", MOLE_UNITS);
+		iIon = new EnterField("Ions", Units.getUnits("Amount"));
+		iSolute = new EnterField("Solute", Units.getUnits("Amount"));
 		k = new EnterField("k");
-		m = new EnterField("molality", MOLE_UNITS, MASS_UNITS);
+		m = new EnterField("molality", Units.getUnits("Amount"), Units.getUnits("Mass"));
 		c.gridx = 0;
 		c.gridy = 0;
 		inputPanel.add(deltaT, c);
@@ -134,7 +134,7 @@ public class StateChangeTemp extends Function {
 				else
 					values[1] = iIon.getAmount() / iSolute.getAmount();
 			values[2] = k.getAmount();
-			values[3] = toMolPerGram(m.getAmount(), m.getUnit2());
+			values[3] = Units.fromBaseUnit(m.getAmount(), m.getUnit2()); //fromBaseUnit because g is in the denominator
 			
 			int blank = -1;
 			
@@ -167,23 +167,10 @@ public class StateChangeTemp extends Function {
 				result.setText("k = " + number);
 			}
 			else if (blank == 3) {
-				number = toOriginalMass(values[0] / values[1] / values[2], m.getUnit2());
-				result.setText("m = " + number + " mol/" + MASS_UNITS[m.getUnit2()]);
+				number = Units.toBaseUnit(values[0] / values[1] / values[2], m.getUnit2()); //toBasUnit because g is in the denom
+				result.setText("m = " + number + " mol/" + m.getUnit2Name());
 			}
 		}
-	}
-	
-	//returns the molality in mol/g
-	private double toMolPerGram(double amount, int unit2) {
-		if(amount == Units.UNKNOWN_VALUE) return amount;
-		else if(amount == Units.ERROR_VALUE) return amount;
-		else if(unit2 == 6) return amount;
-		else return Units.fromBaseUnit(amount, unit2);
-	}
-	
-	private double toOriginalMass(double amount, int unit2) {
-		if(unit2 == 6) return amount;
-		else return Units.toBaseUnit(amount, unit2);
 	}
 	
 	public JPanel getPanel() {
