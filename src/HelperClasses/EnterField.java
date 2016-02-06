@@ -2,7 +2,7 @@
  * A field to enter information with some sort of text field and some number of combo boxes for units.
  * 
  * Authors: Luke Giacalone and Julia McClellan
- * Version: 1/31/2016
+ * Version: 2/5/2016
  */
 
 package HelperClasses;
@@ -19,15 +19,12 @@ import javax.swing.JTextField;
 
 public class EnterField extends JPanel
 {
-	
-	private static final int UNKNOWN_VALUE = -500, ERROR_VALUE = -501; // Values which none of the entered values could be.
-	
 	private Component amount;
 	private JComboBox<String> unit, unit2;
-	private String name;
+	private String name, type, type2;
 	private boolean isCompoundUnit, hasCompoundField;
 	
-	public EnterField(String name, String[] units, String[] units2, boolean hasCompoundField)
+	public EnterField(String name, String unitType, String unitType2, boolean hasCompoundField)
 	{
 		GridBagConstraints c = new GridBagConstraints();
 		this.setLayout(new GridBagLayout());
@@ -37,14 +34,18 @@ public class EnterField extends JPanel
 		this.hasCompoundField = hasCompoundField;
 		if(!hasCompoundField) amount = new JTextField(6);
 		else amount = new TextField(TextField.COMPOUND);
-		if(units != null) {
-			unit = new JComboBox<String>(units);
+		if(unitType != null) {
+			if(unitType.equals("Moles")) unitType = "Amount";
+			type = unitType;
+			unit = new JComboBox<String>(Units.getUnits(unitType));
 			unit.setSelectedIndex(0);
 			unit.setPreferredSize(new Dimension(76, 28));
 		}
 		isCompoundUnit = false;
-		if(units2 != null) {
-			unit2 = new JComboBox<String>(units2);
+		if(unitType2 != null) {
+			if(unitType2.equals("Moles")) unitType2 = "Amount";
+			type2 = unitType2;
+			unit2 = new JComboBox<String>(Units.getUnits(unitType2));
 			unit2.setSelectedIndex(0);
 			unit2.setPreferredSize(new Dimension(76, 28));
 			isCompoundUnit = true;
@@ -67,7 +68,7 @@ public class EnterField extends JPanel
 			c.gridx = 4;
 			add(unit2, c);
 		}
-		else if(units != null)
+		else if(unitType != null)
 			add(unit, c);
 		else {
 			JLabel temp = new JLabel("");
@@ -84,12 +85,12 @@ public class EnterField extends JPanel
 		this(name, null, null, hasCompoundField);
 	}
 	
-	public EnterField(String name, String[] units) {
-		this(name, units, null, false);
+	public EnterField(String name, String unitType) {
+		this(name, unitType, null, false);
 	}
 	
-	public EnterField(String name, String[] units, String[] units2) {
-		this(name, units, units2, false);
+	public EnterField(String name, String unitType, String unitType2) {
+		this(name, unitType, unitType2, false);
 	}
 	
 	public void setAmount(double newAmount)
@@ -97,7 +98,7 @@ public class EnterField extends JPanel
 		if(!hasCompoundField) ((JTextField)amount).setText("" + newAmount);
 	}
 	
-	//returns the double amount of the box
+	//returns the double amount of the box- converts to the standard unit
 	public double getAmount() 
 	{
 		try 
@@ -105,12 +106,21 @@ public class EnterField extends JPanel
 			double value;
 			if(!hasCompoundField) value = Double.parseDouble(((JTextField)amount).getText());
 			else value = Double.parseDouble(((TextField)amount).getText());
+			if(type != null) value = Units.toStandard(value, unit.getSelectedIndex(), type);
+			if(type2 != null) value =  Units.fromStandard(value, unit2.getSelectedIndex(), type2); //This is in the denominator, so the conversion is reversed.
 			return value;
 		}
 		catch(Throwable e) {
-			if(e.getMessage().equals("empty String")) return UNKNOWN_VALUE;
-			return ERROR_VALUE;
+			if(e.getMessage().equals("empty String")) return Units.UNKNOWN_VALUE;
+			return Units.ERROR_VALUE;
 		}
+	}
+	
+	public double getBlankAmount(double amount)
+	{
+		if(type != null) amount = Units.fromStandard(amount, unit.getSelectedIndex(), type);
+		if(type2 != null) amount = Units.fromStandard(amount, unit2.getSelectedIndex(), type2);
+		return amount;
 	}
 	
 	//returns the string amount of the box

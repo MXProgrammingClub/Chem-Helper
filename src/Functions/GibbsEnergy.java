@@ -35,7 +35,7 @@ public class GibbsEnergy extends Function
 		box.add(new JLabel("\u0394G = \u0394H - T\u0394S"));		
 		fields = new EnterField[3];
 		fields[0] = new EnterField("\u0394H");
-		fields[1] = new EnterField("T", IdealGas.UNITS[3]);
+		fields[1] = new EnterField("T", "Temperature");
 		fields[2] = new EnterField("\u0394S");
 		for(EnterField field: fields) box.add(field);
 		
@@ -44,24 +44,18 @@ public class GibbsEnergy extends Function
 				{
 					public void actionPerformed(ActionEvent arg0)
 					{
-						try
-						{
-							double dH = Double.parseDouble(fields[0].getText()), t = Double.parseDouble(fields[1].getText()), 
-									dS = Double.parseDouble(fields[2].getText());
-							int unit = fields[1].getUnit();
-							if(unit == 1) t = Units.celsiusToKelvin(t);
-							else if(unit == 2) t = Units.fahrenheitToKelvin(t);
-							dG = dH - t * dS;
-							answer.setText("\u0394G = " + dG);
-							if(dG > 0) spontaneous.setText("Not spontaneous");
-							else if(dG == 0) spontaneous.setText("Equilibrium");
-							else spontaneous.setText("Spontaneous");
-						}
-						catch(Throwable e)
+						double dH = fields[0].getAmount(), t = fields[1].getAmount(), dS = fields[2].getAmount();
+						if(dH == Units.ERROR_VALUE || dH == Units.UNKNOWN_VALUE || t == Units.UNKNOWN_VALUE || t == Units.ERROR_VALUE 
+								|| dS == Units.ERROR_VALUE || dS == Units.UNKNOWN_VALUE)
 						{
 							answer.setText("There was a problem with your input.");
 							spontaneous.setText("");
 						}
+						dG = dH - t * dS;
+						answer.setText("\u0394G = " + dG);
+						if(dG > 0) spontaneous.setText("Not spontaneous");
+						else if(dG == 0) spontaneous.setText("Equilibrium");
+						else spontaneous.setText("Spontaneous");
 					}
 				});
 		box.add(calculate);

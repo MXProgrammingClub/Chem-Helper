@@ -145,4 +145,37 @@ public class Units
 		else return amount / 86400; //if days
 	}
 	
+	public static double toAtm(double amount, int unit)
+	{
+		if(amount == UNKNOWN_VALUE || amount == ERROR_VALUE || unit == 0) return amount;
+		if(unit == 1) return torrToatm(amount);
+		return  kPaToatm(amount);
+	}
+	
+	public static double fromAtm(double amount, int unit)
+	{
+		if(amount == UNKNOWN_VALUE || amount == ERROR_VALUE || unit == 0) return amount;
+		if(unit == 1) return atmTotorr(amount);
+		return  atmTokPa(amount);
+	}
+	
+	public static double toStandard(double amount, int unit, String type)
+	{
+		if(amount == UNKNOWN_VALUE || amount == ERROR_VALUE) return amount;
+		if(type.equals("Temperature")) return toKelvin(amount, unit);
+		else if(type.equals("Pressure")) return toAtm(amount, unit);
+		else if(type.equals("Time")) return toSeconds(amount, unit);
+		else if(UNITS.get(type).length == PREFIXES.length) return toBaseUnit(amount, unit);
+		else return amount;
+	}
+	
+	public static double fromStandard(double amount, int unit, String type)
+	{
+		if(amount == UNKNOWN_VALUE || amount == ERROR_VALUE) return amount;
+		if(type.equals("Temperature")) return toOriginalTemp(amount, unit);
+		else if(type.equals("Pressure")) return fromAtm(amount, unit);
+		else if(type.equals("Time")) return toOriginalTime(amount, unit);
+		else if(UNITS.get(type).length == PREFIXES.length) return fromBaseUnit(amount, unit);
+		else return amount;
+	}
 }

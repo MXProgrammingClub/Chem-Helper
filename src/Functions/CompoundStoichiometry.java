@@ -36,17 +36,14 @@ public class CompoundStoichiometry extends Function
 	private Box steps;
 	private double toSave;
 	
-	private static final String[] MASS_UNITS = Units.getUnits("Mass");
-	private static final String[] MOLE_UNITS = Units.getUnits("Amount");
-	
 	public CompoundStoichiometry()
 	{
 		super("Compound Stoichiometry");
 		
 		compound = new EnterField("Compound", true);
-		mass = new EnterField("Mass", MASS_UNITS);
+		mass = new EnterField("Mass", "Mass");
 		mass.setUnit(6); //sets default mass unit to grams
-		moles = new EnterField("Moles", MOLE_UNITS);
+		moles = new EnterField("Moles", "Amount");
 		calculate = new JButton("Calculate");
 		calculate.addActionListener(new Calculate());
 		result = new JLabel();
@@ -114,68 +111,48 @@ public class CompoundStoichiometry extends Function
 				steps.add(new JLabel("Molar mass = ? g/mol"));
 			}
 			
-			try
+			givenMass = mass.getAmount();
+			if(givenMass == Units.UNKNOWN_VALUE)
 			{
-				givenMass = Double.parseDouble(mass.getText().trim());
-				String unit = MASS_UNITS[mass.getUnit()];
-				String step = "Mass = " + givenMass + " " + unit;
-				if(!unit.equals("g"))
+				if(molarMass != blank)
 				{
-					int index = indexOf(MASS_UNITS, unit);
-					step = "<html>" + step + " * (10<sup>" + Units.POWERS[index] + "</sup> g" + " / 1 " + unit + ") = ";
-					givenMass *= Math.pow(10, Units.POWERS[index]);
-					step += givenMass + " g</html>";
-				}
-				steps.add(new JLabel(step));
-			}
-			catch(NumberFormatException e)
-			{
-				if(mass.getText().equals(""))
-				{
-					if(molarMass != blank)
-					{
-						givenMass = blank;
-						steps.add(new JLabel("Mass = ? g"));
-					}
-					else
-					{
-						result.setText("Only one field can be left blank.");
-						return;
-					}
+					givenMass = blank;
+					steps.add(new JLabel("Mass = ? g"));
 				}
 				else
 				{
-					result.setText("The mass must be a number.");
+					result.setText("Only one field can be left blank.");
 					return;
 				}
 			}
+			else if(givenMass == Units.ERROR_VALUE)
+			{
+				result.setText("The mass must be a number.");
+				return;
+			}
+			else steps.add(new JLabel("Mass = " + givenMass + " g"));
 			
-			try
+			givenMoles = moles.getAmount();
+			if(givenMoles == Units.UNKNOWN_VALUE)
 			{
-				givenMoles = Double.parseDouble(moles.getText().trim());
-				steps.add(new JLabel("Moles = " + givenMoles + " mol"));
-			}
-			catch(NumberFormatException e)
-			{
-				if(moles.getText().equals(""))
+				if(molarMass != blank && givenMass != blank)
 				{
-					if(molarMass != blank && givenMass != blank)
-					{
-						givenMoles = blank;
-						steps.add(new JLabel("Moles = ? mol"));
-					}
-					else
-					{
-						result.setText("One one field can be left blank.");
-						return;
-					}
+					givenMoles = blank;
+					steps.add(new JLabel("Moles = ? mol"));
 				}
 				else
 				{
-					result.setText("The number of moles must be a number.");
+					result.setText("One one field can be left blank.");
 					return;
 				}
 			}
+			else if(givenMoles == Units.ERROR_VALUE)
+			{
+				result.setText("The number of moles must be a number.");
+				return;
+			}
+			else steps.add(new JLabel("Moles = " + givenMoles + " mol"));
+			
 			steps.add(Box.createVerticalStrut(5));
 			
 			if(molarMass == blank)
@@ -189,13 +166,12 @@ public class CompoundStoichiometry extends Function
 				toSave = molarMass * givenMoles;
 				
 				steps.add(new JLabel("Mass = " + molarMass + " * " + givenMoles + " = " + toSave + " g"));
-				String unit = MASS_UNITS[mass.getUnit()];
+				String unit = mass.getUnitName();
 				if(!unit.equals("g"))
 				{
-					int index  = indexOf(MASS_UNITS, unit);
-					String step = "<html>" + toSave + " g * (1 " + unit + " / 10<sup>" + Units.POWERS[index] + "</sup> " + " g) = ";
-					toSave /= Math.pow(10, Units.POWERS[index]);
-					step += toSave + " " + unit + "</html>";
+					String step = toSave + " g = ";
+					toSave = mass.getBlankAmount(toSave);
+					step += toSave + " " + unit;
 					steps.add(new JLabel(step));
 				}
 				result.setText("Mass = " + toSave + " " + unit);
@@ -232,14 +208,6 @@ public class CompoundStoichiometry extends Function
 			if(options.indexOf(selected) == 0) mass.setAmount(num);
 			else moles.setAmount(num);
 		}		
-	}
-	
-	private int indexOf(String[] arr, String str) {
-		int index = -1;
-		for(int i = 0; i < arr.length; i++)
-			if(str.equals(arr[i]))
-				index = i;
-		return index;
 	}
 	
 	public boolean help()

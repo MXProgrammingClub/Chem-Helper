@@ -30,16 +30,14 @@ public class Waves extends Function {
 		super("Waves");
 		
 		input = new EnterField[7];
-		input[0] = new EnterField("Wavelength", Units.getUnits("Length"));
-		input[0].setUnit(6);
-		input[1] = new EnterField("Frequency", Units.getUnits("Frequency"));
-		input[2] = new EnterField("Energy", Units.getUnits("Energy"));
-		input[3] = new EnterField("Mass", Units.getUnits("Mass"));
-		input[3].setUnit(6);
-		input[4] = new EnterField("Velocity", Units.getUnits("Velocity"));
-		input[5] = new EnterField("Light Speed", Units.getUnits("Velocity"));
+		input[0] = new EnterField("Wavelength", "Length");
+		input[1] = new EnterField("Frequency", "Frequency");
+		input[2] = new EnterField("Energy", "Energy");
+		input[3] = new EnterField("Mass", "Mass");
+		input[4] = new EnterField("Velocity", "Velocity");
+		input[5] = new EnterField("Light Speed", "Velocity");
 		input[5].setAmount(3E8);
-		input[6] = new EnterField("Planck's", Units.getUnits("Planck"));
+		input[6] = new EnterField("Planck's", "Planck");
 		input[6].setAmount(6.626E-34);
 		
 		JPanel subpanel = new JPanel(new GridBagLayout());

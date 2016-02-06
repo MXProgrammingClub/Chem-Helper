@@ -48,12 +48,12 @@ public class StateChangeTemp extends Function {
 		inputPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.anchor = GridBagConstraints.WEST;
-		deltaT = new EnterField("\u0394t", Units.getUnits("Temperature"));
+		deltaT = new EnterField("\u0394t", "Temperature");
 		i = new EnterField("<html><i>i</i></html>");
-		iIon = new EnterField("Ions", Units.getUnits("Amount"));
-		iSolute = new EnterField("Solute", Units.getUnits("Amount"));
+		iIon = new EnterField("Ions", "Amount");
+		iSolute = new EnterField("Solute", "Amount");
 		k = new EnterField("k");
-		m = new EnterField("molality", Units.getUnits("Amount"), Units.getUnits("Mass"));
+		m = new EnterField("molality", "Amount", "Mass");
 		c.gridx = 0;
 		c.gridy = 0;
 		inputPanel.add(deltaT, c);

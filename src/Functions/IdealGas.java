@@ -26,7 +26,6 @@ public class IdealGas extends Function
 {
 	private static final int UNKNOWN_VALUE = -500, ERROR_VALUE = -501; // Values which none of the entered values could be.
 	private static final String[] VALUES = {"Pressure", "Volume", "Moles", "Temperature"};
-	public static final String[][] UNITS = Units.getUnits(VALUES);
 	
 	private JPanel panel;
 	private JButton calculate;
@@ -44,7 +43,7 @@ public class IdealGas extends Function
 		values = new EnterField[VALUES.length];
 		for(int index = 0; index < values.length; index++)
 		{
-			EnterField field = new EnterField(VALUES[index], UNITS[index]);
+			EnterField field = new EnterField(VALUES[index], VALUES[index]);
 			values[index] = field;
 			valueBox.add(field);
 		}
@@ -135,7 +134,7 @@ public class IdealGas extends Function
 				{
 					if(blank == -1)
 					{
-						steps.add(new JLabel(values[index].getName().trim() + " = " + "? " + UNITS[index][values[index].getUnit()]));
+						steps.add(new JLabel(values[index].getName().trim() + " = " + "? " + values[index].getUnitName()));
 						blank = index;
 					}
 					else
@@ -144,95 +143,50 @@ public class IdealGas extends Function
 						return;
 					}
 				}
-				else if((index == 1 && values[index].getUnit() != 6) || values[index].getUnit() != 0)
+				else
 				{
-					String step = values[index].getName().trim() + " = " + quantities[index] + " ";
-					if(index == 0)
-					{
-						if(values[index].getUnit() == 1)
-						{
-							quantities[index] = Units.torrToatm(quantities[index]);
-							step += "torr * " + "(0.00131579 atm / 1 torr) = " + quantities[index] + " atm";
-						}
-						else
-						{
-							quantities[index] = Units.kPaToatm(quantities[index]);
-							step += "kPa * " + "(0.00986923 atm / 1 kPa) = " + quantities[index] + " atm";
-						}
-					}
-					else if(index == 1) {
-						//quantities[index] = Units.volumeToLiters(quantities[index], values[index].getUnit());
-						step += values[index].getUnitName();
-						if(Units.POWERS[values[index].getUnit()] != 0) step += " * " + "(10^" + Units.POWERS[values[index].getUnit()]
-								+ " L / "  + values[index].getUnitName() + ") " + " = " + quantities[index] + " L";
-					}
-					else if(index == 3)
-					{
-						if(values[index].getUnit() == 1)
-						{
-							quantities[index] = Units.celsiusToKelvin(quantities[index]);
-							step += "+ 273.15 = " + quantities[index] + " K";
-						}
-						else
-						{
-							step = values[index].getName().trim() + " = (" + quantities[index] + " + 459.67) * (5 / 9) = ";
-							quantities[index] = Units.fahrenheitToKelvin(quantities[index]);
-							step += quantities[index] + " K";
-							
-						}
-					}
+					String step = values[index].getName() + " = " + quantities[index] + " ";
+					if(index == 0) step += "atm";
+					else if(index == 1) step += "L";
+					else if(index == 2) step += "mol";
+					else step += "K";
 					steps.add(new JLabel(step));
 				}
-				else steps.add(new JLabel(values[index].getName().trim() + " = " + quantities[index] + " " + UNITS[index][values[index].getUnit()]));
 			}
 			steps.add(new JLabel("R = " + Units.R + " (atm * L) / (mol * K)"));
 			steps.add(Box.createVerticalStrut(5));
 			double unknown;
-			int unitNum = values[blank].getUnit();
-			String unit = UNITS[blank][unitNum];
+			String base;
 			if(blank == 0)
 			{
+				base = "atm";
 				unknown = Units.R * quantities[2] * quantities[3] / quantities[1];
 				steps.add(new JLabel("? = (" + Units.R + " * " + quantities[2] + " * " + quantities[3] + ") / (" + quantities[1] + ") = " + unknown + " atm"));
-				if(unitNum == 1)
-				{
-					String step = unknown + " atm * (1 torr / 0.00131579 atm) = ";
-					unknown = Units.atmTotorr(unknown);
-					steps.add(new JLabel(step + unknown + " torr"));
-				}
-				else if(unitNum == 2)
-				{
-					String step = unknown + " atm * (1 kPa / 0.00986923 atm) = ";
-					unknown = Units.atmTokPa(unknown);
-					steps.add(new JLabel(step + unknown + " kPa"));
-				}
 			}
 			else if(blank == 1)
 			{
+				base = "L";
 				unknown = Units.R * quantities[2] * quantities[3] / quantities[0];
 				steps.add(new JLabel("? = (" + Units.R + " * " + quantities[2] + " * " + quantities[3] + ") / (" + quantities[0] + ") = " + unknown + " L"));
 			}
 			else if(blank == 2)
 			{
+				base = "mol";
 				unknown = quantities[0] * quantities[1] / (Units.R * quantities[3]);
 				steps.add(new JLabel("? = (" + quantities[0] + " * " + quantities[1] + ") / (" + Units.R + " * " + quantities[3] + ") = " + unknown + " mol"));
 			}
 			else
 			{
+				base = "K";
 				unknown = quantities[0] * quantities[1] / (Units.R * quantities[2]);
 				steps.add(new JLabel("? = (" + quantities[0] + " * " + quantities[1] + ") / (" + Units.R + " * " + quantities[2] + ") = " + unknown + " K"));
-				if(unitNum == 1)
-				{
-					String step = unknown + " K - 273.15 = ";
-					unknown = Units.kelvinToCelsius(unknown);
-					steps.add(new JLabel(step + unknown + " " + UNITS[3][1]));
-				}
-				else if(unitNum == 2)
-				{
-					String step = unknown + " K * (9 / 5) - 273.15 = ";
-					unknown = Units.kelvinToFahrenheit(unknown);
-					steps.add(new JLabel(step + unknown + " " + UNITS[3][2]));
-				}
+			}
+			double value = values[blank].getBlankAmount(unknown);
+			String unit = values[blank].getUnitName();
+			if(value != unknown) 
+			{
+				steps.add(new JLabel(unknown + " " + base + " = " + value + " " + unit));
+				unknown = value;
 			}
 			result.setText(VALUES[blank].trim() + " = " + unknown + " " + unit);
 			save = unknown;
