@@ -2,7 +2,7 @@
  * A field to enter information with some sort of text field and some number of combo boxes for units.
  * 
  * Authors: Luke Giacalone and Julia McClellan
- * Version: 2/5/2016
+ * Version: 2/6/2016
  */
 
 package HelperClasses;
@@ -87,6 +87,11 @@ public class EnterField extends JPanel
 	
 	public EnterField(String name, String unitType) {
 		this(name, unitType, null, false);
+	}
+	
+	public EnterField(String name, String unitType, boolean hasCompoundField)
+	{
+		this(name, unitType, null, hasCompoundField);
 	}
 	
 	public EnterField(String name, String unitType, String unitType2) {
