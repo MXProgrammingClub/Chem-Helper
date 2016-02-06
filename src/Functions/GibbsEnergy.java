@@ -3,7 +3,7 @@
  * number returns true- saves last calculated value and can use saved in any field.
  * 
  * Author: Julia McClellan
- * Version: 2/3/2016
+ * Version: 2/6/2016
  */
 package Functions;
 
@@ -26,6 +26,7 @@ public class GibbsEnergy extends Function
 	private JPanel panel;
 	private JButton calculate;
 	private JLabel answer, spontaneous;
+	private Box steps;
 	private double dG;
 	
 	public GibbsEnergy()
@@ -44,18 +45,42 @@ public class GibbsEnergy extends Function
 				{
 					public void actionPerformed(ActionEvent arg0)
 					{
+						steps.removeAll();
 						double dH = fields[0].getAmount(), t = fields[1].getAmount(), dS = fields[2].getAmount();
 						if(dH == Units.ERROR_VALUE || dH == Units.UNKNOWN_VALUE || t == Units.UNKNOWN_VALUE || t == Units.ERROR_VALUE 
 								|| dS == Units.ERROR_VALUE || dS == Units.UNKNOWN_VALUE)
 						{
 							answer.setText("There was a problem with your input.");
 							spontaneous.setText("");
+							return;
 						}
+						int sigFigs = Math.min(Math.min(fields[0].getSigFigs(), fields[1].getSigFigs()), fields[2].getSigFigs());
 						dG = dH - t * dS;
-						answer.setText("\u0394G = " + dG);
-						if(dG > 0) spontaneous.setText("Not spontaneous");
-						else if(dG == 0) spontaneous.setText("Equilibrium");
-						else spontaneous.setText("Spontaneous");
+						
+						steps.add(new JLabel("\u0394G = \u0394H - T\u0394S"));
+						steps.add(Box.createVerticalStrut(5));
+						steps.add(new JLabel("\u0394H = " + dH));
+						steps.add(new JLabel("T = " + t + " K"));
+						steps.add(new JLabel("\0394S = " + dS));
+						steps.add(Box.createVerticalStrut(5));
+						steps.add(new JLabel("\u0394G = " + dH + " - " + t + " * " + dS + " = " + dG));
+						
+						answer.setText("\u0394G = " + Function.withSigFigs(dG, sigFigs));
+						if(dG > 0)
+						{
+							spontaneous.setText("Not spontaneous");
+							steps.add(new JLabel(dG + " > 0, so the reaction is not spontaneous"));
+						}
+						else if(dG == 0)
+						{
+							spontaneous.setText("Equilibrium");
+							steps.add(new JLabel(dG + " = 0, so the reaction is at equilibrium"));
+						}
+						else
+						{
+							spontaneous.setText("Spontaneous");
+							steps.add(new JLabel(dG + " < 0, so the reaction is spontaneous"));
+						}
 					}
 				});
 		box.add(calculate);
@@ -67,6 +92,9 @@ public class GibbsEnergy extends Function
 		
 		panel = new JPanel();
 		panel.add(box);
+		panel.add(Box.createHorizontalStrut(10));
+		steps = Box.createVerticalBox();
+		panel.add(steps);
 	}
 	
 	public boolean number()

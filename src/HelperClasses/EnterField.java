@@ -17,6 +17,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import Functions.Function;
+
 public class EnterField extends JPanel
 {
 	private Component amount;
@@ -185,6 +187,12 @@ public class EnterField extends JPanel
 	
 	public boolean isEmpty() {
 		return getText().isEmpty();
+	}
+	
+	public int getSigFigs()
+	{
+		if(isEmpty()) return -1;
+		return Function.sigFigs(getText());
 	}
 	
 	public String getName() 
