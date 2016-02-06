@@ -30,6 +30,7 @@ public class Units
 		units.put("Energy", new String[]{"J"});
 		units.put("Velocity", new String[] {"m/s"});
 		units.put("Planck", new String[]{"J\u00B7s"});
+		units.put("Time", new String[]{"s", "hr", "day"});
 		return units;
 	}
 	
@@ -131,4 +132,17 @@ public class Units
 		else if(unit == 1) return Units.kelvinToCelsius(amount);//if celcius
 		else return Units.kelvinToFahrenheit(amount); //if fahrenheit
 	}
+	
+	public static double toSeconds(double amount, int unit) {
+		if(unit == 0) return amount; //if seconds
+		else if(unit == 1) return amount * 3600; //if hours
+		else return amount * 86400; //if days
+	}
+	
+	public static double toOriginalTime(double amount, int unit) {
+		if(unit == 0) return amount; //if seconds
+		else if(unit == 1) return amount / 3600; //if hours
+		else return amount / 86400; //if days
+	}
+	
 }
