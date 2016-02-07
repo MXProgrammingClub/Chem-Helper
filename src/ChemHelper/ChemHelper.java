@@ -100,7 +100,8 @@ public class ChemHelper extends JFrame {		//Primary GUI class
 		ld.dispose();
 	}
 
-	private void createMenu(){
+	private void createMenu()
+	{
 		funcs = new Function[21];
 		funcs[0] = new PeriodicTable(ChemHelper.getIntPreference("Table Style"), ChemHelper.getBooleanPreference("State Colors"));
 		funcs[1] = new ElectronShell();
@@ -143,7 +144,8 @@ public class ChemHelper extends JFrame {		//Primary GUI class
 		}
 	}
 
-	private class FunctionMenuItem extends JMenuItem{
+	private class FunctionMenuItem extends JMenuItem
+	{
 		private Function function;
 		
 		public FunctionMenuItem(Function function)
