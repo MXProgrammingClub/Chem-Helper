@@ -228,15 +228,6 @@ public class Equation
 			var += alphabet.charAt(nums.get(i) - 1);
 		return var;
 	}
-	
-	///@TODO make more efficient
-	//returns the number of the variable
-	private static int getVarNum(String var) {
-		int i = 1;
-		while(!getNextVar(i).equals(var))
-			i++;
-		return i;
-	}
 		
 	//takes an array of doubles and makes them into integers
 	private static int[] integerize(double[] coefficients) {
