@@ -8,7 +8,6 @@
 package Equation;
 
 import java.util.ArrayList;
-import java.util.Set;
 
 import ChemHelper.InvalidInputException;
 import Elements.Element;
@@ -44,7 +43,7 @@ public abstract class Ions
 		this.charge = charge;
 	}
 	
-	public abstract Set<Monatomic> getElements();
+	public abstract Monatomic[] getElements();
 	
 	public abstract String toString();
 	

@@ -8,7 +8,6 @@
 package Equation;
 
 import java.util.ArrayList;
-import java.util.Set;
 
 import Elements.Carbon;
 import Elements.Chlorine;
@@ -23,13 +22,13 @@ import Elements.Sulfur;
 
 public class Polyatomic extends Ions
 {
-	private Set<Monatomic> elements;
+	private Monatomic[] elements;
 	String name;
 	
 	public Polyatomic(Monatomic[] elements)
 	{
 		super(1, 0);
-		for(Monatomic ion: elements) this.elements.add(ion);
+		this.elements = elements;
 		int charge = 0;
 		for(Monatomic e: elements)
 		{
@@ -41,7 +40,8 @@ public class Polyatomic extends Ions
 	public Polyatomic(ArrayList<Monatomic> elements)
 	{
 		super(1, 0);
-		setArrayList(elements);
+		Monatomic[] array = new Monatomic[elements.size()];
+		this.elements = elements.toArray(array);
 		int charge = 0;
 		for(Monatomic e: elements)
 		{
@@ -53,39 +53,37 @@ public class Polyatomic extends Ions
 	public Polyatomic(ArrayList<Monatomic> elements, int num, int charge)
 	{
 		super(num, charge);
-		setArrayList(elements);
+		Monatomic[] array = new Monatomic[elements.size()];
+		this.elements = elements.toArray(array);
 		name = "";
-	}
-	
-	private void setArrayList(ArrayList<Monatomic> elements){
-		for(Monatomic ion: elements) this.elements.add(ion); 
-	}
-	private void setArray(Monatomic[] ions){
-		for(Monatomic ion: ions) this.elements.add(ion);
 	}
 	
 	public Polyatomic(Monatomic[] elements, int num, int charge)
 	{
 		super(num, charge);
-		setArray(elements);
+		this.elements = elements;
 		name = "";
 	}
 	
 	private Polyatomic(Monatomic[] elements, int charge, String name)
 	{
 		super(1, charge);
-		setArray(elements);
+		this.elements = elements;
 		this.name = name;
 	}
 	
-	public Set<Monatomic> getElements()
+	public Monatomic[] getElements()
 	{
 		return elements;
 	}
 
 	public boolean contains(Element e)
 	{
-		return elements.contains(e);
+		for(Monatomic element: elements)
+		{
+			if(e.equals(element)) return true;
+		}
+		return false;
 	}
 	
 	public String toString() 

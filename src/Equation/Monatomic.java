@@ -7,9 +7,6 @@
 
 package Equation;
 
-import java.util.Set;
-import java.util.TreeSet;
-
 import Elements.Element;
 
 public class Monatomic extends Ions
@@ -39,11 +36,10 @@ public class Monatomic extends Ions
 		return element;
 	}
 	
-	public Set<Monatomic> getElements()
+	public Monatomic[] getElements()
 	{
-		Set<Monatomic> elem = new TreeSet<Monatomic>();
-		elem.add(this);
-		return elem;
+		Monatomic[] list = {this};
+		return list;
 	}
 
 	public String toString() 
