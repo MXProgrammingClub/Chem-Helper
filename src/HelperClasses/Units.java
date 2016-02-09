@@ -31,6 +31,7 @@ public class Units
 		units.put("Velocity", new String[] {"m/s"});
 		units.put("Planck", new String[]{"J\u00B7s"});
 		units.put("Time", new String[]{"s", "hr", "day"});
+		units.put("Mass*Temp", new String[]{"g\u00B7K", "g\u00B7\u2103"});
 		return units;
 	}
 	

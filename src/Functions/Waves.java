@@ -31,9 +31,11 @@ public class Waves extends Function {
 		
 		input = new EnterField[7];
 		input[0] = new EnterField("Wavelength", "Length");
+		input[0].setUnit(6);
 		input[1] = new EnterField("Frequency", "Frequency");
 		input[2] = new EnterField("Energy", "Energy");
 		input[3] = new EnterField("Mass", "Mass");
+		input[3].setUnit(6);
 		input[4] = new EnterField("Velocity", "Velocity");
 		input[5] = new EnterField("Light Speed", "Velocity");
 		input[5].setAmount(3E8);
