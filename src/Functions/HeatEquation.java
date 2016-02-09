@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import HelperClasses.EnterField;
@@ -18,6 +19,7 @@ public class HeatEquation extends Function {
 	private EnterField[] input;
 	private JButton calculate;
 	private JLabel result;
+	private double answer;
 	
 	public HeatEquation() {
 		super("Heat");
@@ -47,6 +49,7 @@ public class HeatEquation extends Function {
 		subpanel.add(calculate, c);
 		
 		result = new JLabel();
+		c.gridy++;
 		subpanel.add(result, c);
 		
 		panel = new JPanel();
@@ -68,26 +71,44 @@ public class HeatEquation extends Function {
 			if(!input[2].isEmpty()) input[2].setAmount(Units.toBaseUnit(input[2].getAmount(), input[2].getUnit()));
 			if(!input[3].isEmpty()) input[3].setAmount(Units.toSeconds(input[3].getAmount(), input[3].getUnit()));
 			if(blank == 0) {
-				double answer = input[1].getAmount() * input[2].getAmount() * input[3].getAmount();
+				answer = input[1].getAmount() * input[2].getAmount() * input[3].getAmount();
 				result.setText("q = " + answer + " J");
 			}
 			else if(blank == 1) {
-				double answer = input[0].getAmount() / input[2].getAmount() / input[3].getAmount();
+				answer = input[0].getAmount() / input[2].getAmount() / input[3].getAmount();
 				result.setText("c = " + answer + " J/(" + input[1].getUnit2Name() + ")");
 			}
 			else if(blank == 2) {
-				double answer = input[0].getAmount() / input[1].getAmount() / input[3].getAmount();
+				answer = input[0].getAmount() / input[1].getAmount() / input[3].getAmount();
 				answer = Units.fromBaseUnit(answer, input[2].getUnit());
 				result.setText("m = " + answer + " " + input[2].getUnitName());
 			}
 			else if(blank == 3) {
-				double answer = input[0].getAmount() / input[1].getAmount() / input[2].getAmount();
+				answer = input[0].getAmount() / input[1].getAmount() / input[2].getAmount();
 				answer = Units.toOriginalTime(answer, input[3].getUnit());
 				result.setText("\u0394t = " + answer + " " + input[3].getUnit());
 			}
 			if(!input[2].isEmpty()) input[2].setAmount(Units.fromBaseUnit(input[2].getAmount(), input[2].getUnit()));
 			if(!input[3].isEmpty()) input[3].setAmount(Units.toOriginalTime(input[3].getAmount(), input[3].getUnit()));
 		}
+	}
+	
+	public boolean number() {
+		return true;
+	}
+	
+	public double saveNumber() {
+		return answer;
+	}
+	
+	public void useSavedNumber(double num) {
+		String[] options = {"Heat Energy", "Specific Heat", "Mass", "\u0394t"};
+		String result = (String) JOptionPane.showInputDialog(panel, "Choose where to use the number", 
+				"Choose number", JOptionPane.PLAIN_MESSAGE, null, options, "Heat Energy");
+		if(result.equals(options[0])) input[0].setAmount(num);
+		else if(result.equals(options[1])) input[1].setAmount(num);
+		else if(result.equals(options[2])) input[2].setAmount(num);
+		else if(result.equals(options[3])) input[3].setAmount(num);
 	}
 	
 	public JPanel getPanel() {
