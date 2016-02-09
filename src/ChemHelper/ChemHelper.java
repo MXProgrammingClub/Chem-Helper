@@ -2,7 +2,7 @@
  * The main class for the ChemHelper project
  * 
  * Author: Julia McClellan, Luke Giacalone, and Ted Pyne -- MXCSClub
- * Version: 2/3/2016
+ * Version: 2/8/2016
  */
 
 package ChemHelper;
@@ -102,7 +102,7 @@ public class ChemHelper extends JFrame {		//Primary GUI class
 
 	private void createMenu()
 	{
-		funcs = new Function[21];
+		funcs = new Function[22];
 		funcs[0] = new PeriodicTable(ChemHelper.getIntPreference("Table Style"), ChemHelper.getBooleanPreference("State Colors"));
 		funcs[1] = new ElectronShell();
 		funcs[2] = new CompoundStoichiometry();
@@ -113,21 +113,22 @@ public class ChemHelper extends JFrame {		//Primary GUI class
 		funcs[7] = new ContainerChanges();
 		funcs[8] = new Effusion();
 		funcs[9] = new EquationReader();
-		funcs[10] = new RateLaw();
-		funcs[11] = new Combustion();
-		funcs[12] = new Nuclear();
-		funcs[13] = new GibbsEnergy();
-		funcs[14] = new Empirical();
-		funcs[15] = new Density();
-		funcs[16] = new StateChangeTemp();
-		funcs[17] = new Waves();
-		funcs[18] = new HeatEquation();
-		funcs[19] = new About();
-		funcs[20] = new Prefs(this);
+		funcs[10] = new Combustion();
+		funcs[11] = new Nuclear();
+		funcs[12] = new GibbsEnergy();
+		funcs[13] = new HeatEquation();
+		funcs[14] = new RateLaw();
+		funcs[15] = new Empirical();
+		funcs[16] = new Density();
+		funcs[17] = new StateChangeTemp();
+		funcs[18] = new Waves();
+		funcs[19] = new HenrysLaw();
+		funcs[20] = new About();
+		funcs[21] = new Prefs(this);
 		
 		String[] menuNames = {"General", "Stoichiometry", "Gas Laws", "Reactions", "Reaction Energy", "Other", "Help"};
 			//Lists the names of the different menus on the menu bar.
-		int[] menuCutoffs = {0, 2, 6, 9, 13, 14, 19}; //Specifies the indices where a new menu would start from funcs
+		int[] menuCutoffs = {0, 2, 6, 9, 12, 15, 20}; //Specifies the indices where a new menu would start from funcs
 		
 		menu = new JMenuBar();
 		for(int menuNum = 0; menuNum < menuCutoffs.length; menuNum++)

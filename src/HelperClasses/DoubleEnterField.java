@@ -2,7 +2,7 @@
  * A class that uses two EnterFields to make: beforeValue -> afterValue
  * 
  * Author: Luke Giacalone and Julia McClellan
- * Version: 2/5/2016
+ * Version: 2/8/2016
  */
 
 package HelperClasses;
@@ -18,7 +18,7 @@ public class DoubleEnterField extends JPanel {
 	private EnterField before;
 	private EnterField after;
 
-	public DoubleEnterField(String name, boolean isLeft, String type) {
+	public DoubleEnterField(String name, boolean isLeft, String type1, String type2) {
 		this.name = name;
 		this.isLeft = isLeft;
 		this.setLayout(new GridBagLayout());
@@ -26,16 +26,21 @@ public class DoubleEnterField extends JPanel {
 
 		c.gridx = 0;
 		c.gridy = 0;
-		before = new EnterField(name, type);
+		before = new EnterField(name, type1, type2);
 		this.add(before, c);
 
 		c.gridx = 1;
 		this.add(new JLabel("\u2192"), c);
 
 		c.gridx = 2;
-		after = new EnterField(null, type);
+		after = new EnterField(null, type1, type2);
 		after.remove(0); //removing the empty space where label is
 		this.add(after, c);
+	}
+	
+	public DoubleEnterField(String name, boolean isLeft, String type)
+	{
+		this(name, isLeft, type, null);
 	}
 
 	public double getBeforeValue()
@@ -79,7 +84,15 @@ public class DoubleEnterField extends JPanel {
 
 	public String getDesiredUnit()
 	{
-		return (String) after.getUnitName();
+		String unit = after.getUnitName();
+		try
+		{
+			return unit + " / " + after.getUnit2Name();
+		}
+		catch(Throwable e)
+		{
+			return unit;
+		}
 	}
 
 	public String getName()
@@ -95,5 +108,12 @@ public class DoubleEnterField extends JPanel {
 	public double getBlankAmount(double amount)
 	{
 		return after.getBlankAmount(amount);
+	}
+	
+	public int getSigFigs()
+	{
+		int sigfigs1 = before.getSigFigs(), sigfigs2 = after.getSigFigs();
+		if(after.getSigFigs() != -1) return Math.min(sigfigs1, sigfigs2);
+		return sigfigs1;
 	}
 }

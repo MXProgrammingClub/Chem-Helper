@@ -2,7 +2,7 @@
  * A field to enter information with some sort of text field and some number of combo boxes for units.
  * 
  * Authors: Luke Giacalone and Julia McClellan
- * Version: 2/6/2016
+ * Version: 2/8/2016
  */
 
 package HelperClasses;
@@ -40,7 +40,8 @@ public class EnterField extends JPanel
 			if(unitType.equals("Moles")) unitType = "Amount";
 			type = unitType;
 			unit = new JComboBox<String>(Units.getUnits(unitType));
-			unit.setSelectedIndex(0);
+			if(unit.getItemCount() == Units.POWERS.length) unit.setSelectedIndex(6);
+			else unit.setSelectedIndex(0);
 			unit.setPreferredSize(new Dimension(76, 28));
 		}
 		isCompoundUnit = false;
@@ -48,7 +49,8 @@ public class EnterField extends JPanel
 			if(unitType2.equals("Moles")) unitType2 = "Amount";
 			type2 = unitType2;
 			unit2 = new JComboBox<String>(Units.getUnits(unitType2));
-			unit2.setSelectedIndex(0);
+			if(unit2.getItemCount() == Units.POWERS.length) unit2.setSelectedIndex(6);
+			else unit2.setSelectedIndex(0);
 			unit2.setPreferredSize(new Dimension(76, 28));
 			isCompoundUnit = true;
 		}
@@ -126,7 +128,7 @@ public class EnterField extends JPanel
 	public double getBlankAmount(double amount)
 	{
 		if(type != null) amount = Units.fromStandard(amount, unit.getSelectedIndex(), type);
-		if(type2 != null) amount = Units.fromStandard(amount, unit2.getSelectedIndex(), type2);
+		if(type2 != null) amount = Units.toStandard(amount, unit2.getSelectedIndex(), type2);
 		return amount;
 	}
 	
