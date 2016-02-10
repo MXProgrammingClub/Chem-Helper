@@ -2,7 +2,7 @@
  * The main class for the ChemHelper project
  * 
  * Author: Julia McClellan, Luke Giacalone, and Ted Pyne -- MXCSClub
- * Version: 2/8/2016
+ * Version: 2/9/2016
  */
 
 package ChemHelper;
@@ -12,9 +12,12 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
-import java.util.prefs.Preferences;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -26,10 +29,17 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import com.apple.eawt.AboutHandler;
+import com.apple.eawt.Application;
+import com.apple.eawt.AppEvent.AboutEvent;
+
 import Equation.Equation;
 import Functions.*;
+import HelperClasses.Preferences;
 
 public class ChemHelper extends JFrame {		//Primary GUI class
+	private static final String PREFS_FILE = "prefs.txt";
+	
 	Container pane;
 	JPanel last, buttons, eqButtons, numButtons;
 	JMenuBar menu;
@@ -38,13 +48,14 @@ public class ChemHelper extends JFrame {		//Primary GUI class
 	Equation equation;
 	Function lastFunc;
 	LinkedList<Double> savedNumbers;
-	
-	private static Preferences preferences; {
-		preferences = Preferences.userNodeForPackage(ChemHelper.class);
-	}
+	Preferences preferences;
 	
 	public ChemHelper() {
 		LoadingDialog ld = new LoadingDialog();
+		
+		try {
+			preferences = new Preferences(PREFS_FILE);
+		} catch (IOException e) {}
 		
 		pane = getContentPane();
 		pane.setLayout(new BorderLayout());
@@ -55,6 +66,11 @@ public class ChemHelper extends JFrame {		//Primary GUI class
 		pane.add(funcs[0].getPanel(), BorderLayout.WEST); //sets periodic table to show by default
 		last = funcs[0].getPanel();
 		lastFunc = funcs[0];
+		
+		if(System.getProperty("os.name").equals("Mac OS X")) {
+			menu.getMenu(menu.getMenuCount() - 1).remove(0);
+			Application.getApplication().setAboutHandler(new AboutWindow());
+		}
 		
 		saveEq = new JButton("Save equation");
 		saveEq.addActionListener(new EquationSaver());
@@ -93,6 +109,14 @@ public class ChemHelper extends JFrame {		//Primary GUI class
 		buttons.setVisible(false);
 		equation = null;
 		
+		this.addWindowListener(new WindowAdapter() {
+		    public void windowClosing(WindowEvent e) {
+		        try {
+					preferences.export();
+				} catch (FileNotFoundException | UnsupportedEncodingException e1) {}
+		    }
+		});
+		
 		pack();
 		this.setPreferredSize(this.getSize());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -103,7 +127,7 @@ public class ChemHelper extends JFrame {		//Primary GUI class
 	private void createMenu()
 	{
 		funcs = new Function[22];
-		funcs[0] = new PeriodicTable(ChemHelper.getIntPreference("Table Style"), ChemHelper.getBooleanPreference("State Colors"));
+		funcs[0] = new PeriodicTable(getIntPreference("Table_Style"), getBooleanPreference("State_Colors"));
 		funcs[1] = new ElectronShell();
 		funcs[2] = new CompoundStoichiometry();
 		funcs[3] = new Stoichiometry();
@@ -207,8 +231,8 @@ public class ChemHelper extends JFrame {		//Primary GUI class
 			}
 			else
 			{
-				Object selected = JOptionPane.showInputDialog(pane, "Choose a number to use", "Choose Number", JOptionPane.PLAIN_MESSAGE, 
-						null, savedNumbers.toArray(), new Double(0));
+				Object selected = JOptionPane.showInputDialog(pane, "Choose a number to use", "Choose Number"
+						, JOptionPane.PLAIN_MESSAGE, null, savedNumbers.toArray(), new Double(0));
 				if(selected instanceof Double) lastFunc.useSavedNumber((Double)selected);
 			}
 		}
@@ -248,26 +272,43 @@ public class ChemHelper extends JFrame {		//Primary GUI class
 		
 	}
 	
+	private class AboutWindow extends JFrame implements AboutHandler {
+		public void handleAbout(AboutEvent arg0) {
+			if(last != null) pane.remove(last);
+			lastFunc = funcs[20];
+			JPanel func = funcs[20].getPanel();
+			pane.add(func, BorderLayout.WEST);
+			eqButtons.setVisible(lastFunc.equation());
+			numButtons.setVisible(lastFunc.number());
+			help.setVisible(lastFunc.help());
+			buttons.setVisible(true);
+			pane.repaint();
+			pack();
+			last = func;
+			lastFunc.resetFocus();
+		}
+	}
+	
 	public void refreshTable() {
-		funcs[0] = new PeriodicTable(ChemHelper.getIntPreference("Table Style"), ChemHelper.getBooleanPreference("State Colors"));
+		funcs[0] = new PeriodicTable(this.getIntPreference("Table_Style"), this.getBooleanPreference("State_Colors"));
 		menu.getMenu(0).remove(0);
 		menu.getMenu(0).add(new FunctionMenuItem(funcs[0]), 0);
 	}
 	
-	public static void changePreference(String key, boolean value) {
+	public void changePreference(String key, boolean value) {
 		preferences.putBoolean(key, value);
 	}
 	
-	public static void changePreference(String key, int value) {
-		preferences.putInt(key, value);
+	public void changePreference(String key, int value) {
+		preferences.putInteger(key, value);
 	}
 	
-	public static boolean getBooleanPreference(String key) {
-		return preferences.getBoolean(key, false);
+	public boolean getBooleanPreference(String key) {
+		return preferences.getBoolean(key);
 	}
 	
-	public static int getIntPreference(String key) {
-		return preferences.getInt(key, 0);
+	public int getIntPreference(String key) {
+		return preferences.getInteger(key);
 	}
 	
 	public static void main(String[] args) {

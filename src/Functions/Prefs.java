@@ -44,20 +44,20 @@ public class Prefs extends Function {
 		subpanel.add(new JLabel("Table Style: "), c);
 		c.gridx = 1;
 		tableStyles = new JComboBox<String>(TABLE_STYLES);
-		tableStyles.setSelectedIndex(ChemHelper.getIntPreference("Table Style"));
+		tableStyles.setSelectedIndex(chelper.getIntPreference("Table_Style"));
 		subpanel.add(tableStyles, c);
 		c.gridx = 0;
 		c.gridy = 2;
 		subpanel.add(new JLabel("Element Labels Colored by State: "), c);
 		c.gridx = 1;
 		stateColors = new JCheckBox();
-		stateColors.setSelected(ChemHelper.getBooleanPreference("State Colors"));
+		stateColors.setSelected(chelper.getBooleanPreference("State_Colors"));
 		subpanel.add(stateColors, c);
 		
 		tableStyles.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					ChemHelper.changePreference("Table Style", tableStyles.getSelectedIndex());
+					chelper.changePreference("Table_Style", tableStyles.getSelectedIndex());
 					chelper.refreshTable();
 				}
 				catch(Throwable e2) {}
@@ -67,7 +67,7 @@ public class Prefs extends Function {
 		stateColors.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					ChemHelper.changePreference("State Colors", stateColors.isSelected());
+					chelper.changePreference("State_Colors", stateColors.isSelected());
 					chelper.refreshTable();
 				}
 				catch(Throwable e2) {}
