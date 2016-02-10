@@ -4,7 +4,7 @@
  * number() returns true- saves latest calculated value and can used saved for a molar mass or ratio.
  * 
  * Author: Julia McClellan
- * Version: 1/30/2016
+ * Version: 2/9/2016
  */
 
 package Functions;
@@ -103,6 +103,7 @@ public class Effusion extends Function
 			steps.removeAll();
 			steps.setVisible(false);
 			double mass1 = 0, mass2 = 0, rate = 0;
+			int sigFigs = Integer.MAX_VALUE;
 			
 			if(!comp1.getText().trim().equals(""))
 			{
@@ -129,6 +130,7 @@ public class Effusion extends Function
 					try
 					{
 						mass1 = Double.parseDouble(comp1.getText());
+						sigFigs = Function.sigFigs(comp1.getText());
 					}
 					catch(Throwable e)
 					{
@@ -165,6 +167,7 @@ public class Effusion extends Function
 					try
 					{
 						mass2 = Double.parseDouble(comp2.getText());
+						sigFigs = Math.min(sigFigs, Function.sigFigs(comp2.getText()));
 					}
 					catch(Throwable e)
 					{
@@ -186,6 +189,7 @@ public class Effusion extends Function
 				try
 				{
 					rate = Double.parseDouble(ratio.getText());
+					sigFigs = Math.min(sigFigs, Function.sigFigs(ratio.getText()));
 				}
 				catch(Throwable e)
 				{
@@ -206,19 +210,19 @@ public class Effusion extends Function
 			{
 				toSave = Math.sqrt(mass1 / mass2);
 				steps.add(new JLabel("Ratio of rates = \u221A(" + mass1 + " / " + mass2 + ") = " + toSave));
-				result.setText("Ratio of rates = " + toSave);
+				result.setText("Ratio of rates = " + Function.withSigFigs(toSave, sigFigs));
 			}
 			else if(mass2 == 0)
 			{
 				toSave = mass1 / (rate * rate);
 				steps.add(new JLabel("<html>Mass 2 = " + mass1 + " / " + rate + "<sup>2</sup> = " + toSave + "</html>"));
-				result.setText("Mass of compound 2 = " + toSave);
+				result.setText("Mass of compound 2 = " + Function.withSigFigs(toSave, sigFigs));
 			}
 			else if(mass1 == 0)
 			{
 				toSave = (rate * rate) / mass2;
 				steps.add(new JLabel("<html>Mass 1 = " + rate + "<sup>2</sup> / " + mass2 + " = " + toSave + "</html>"));
-				result.setText("Mass of compound 1 = " + toSave);
+				result.setText("Mass of compound 1 = " + Function.withSigFigs(toSave, sigFigs));
 			}
 			else
 			{

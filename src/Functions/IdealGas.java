@@ -4,7 +4,7 @@
  * number() returns true- saves the latest calculated value, can use saved for P, V, n, or T.
  * 
  * Author: Julia McClellan and Luke Giacalone
- * Version: 2/5/2016
+ * Version: 2/9/2016
  */
 
 package Functions;
@@ -48,8 +48,6 @@ public class IdealGas extends Function
 			valueBox.add(field);
 		}
 		
-		values[1].setUnit(6);//sets default volume to L
-		
 		stp = new JCheckBox("STP");
 		stp.addActionListener(new ActionListener()
 				{
@@ -59,7 +57,6 @@ public class IdealGas extends Function
 						{
 							values[0].setAmount(Units.STANDARD_PRESSURE);
 							values[0].setUnit(0);
-							values[1].setUnit(6);
 							values[3].setAmount(Units.STANDARD_TEMPERATURE);
 							values[3].setUnit(0);
 						}
@@ -85,8 +82,6 @@ public class IdealGas extends Function
 		
 		save = 0;
 	}
-	
-	
 	
 	public boolean number()
 	{
@@ -121,7 +116,7 @@ public class IdealGas extends Function
 			steps.add(new JLabel("PV=nRT"));
 			steps.add(Box.createVerticalStrut(5));
 			double[] quantities = new double[4];
-			int blank = -1;
+			int blank = -1, sigFigs = Integer.MAX_VALUE;
 			for(int index = 0; index < values.length; index++)
 			{
 				quantities[index] = values[index].getAmount();
@@ -145,6 +140,7 @@ public class IdealGas extends Function
 				}
 				else
 				{
+					sigFigs = Math.min(sigFigs, values[index].getSigFigs());
 					String step = values[index].getName() + " = " + quantities[index] + " ";
 					if(index == 0) step += "atm";
 					else if(index == 1) step += "L";
@@ -188,7 +184,7 @@ public class IdealGas extends Function
 				steps.add(new JLabel(unknown + " " + base + " = " + value + " " + unit));
 				unknown = value;
 			}
-			result.setText(VALUES[blank].trim() + " = " + unknown + " " + unit);
+			result.setText(VALUES[blank].trim() + " = " + Function.withSigFigs(unknown, sigFigs) + " " + unit);
 			save = unknown;
 			steps.setVisible(true);
 		}

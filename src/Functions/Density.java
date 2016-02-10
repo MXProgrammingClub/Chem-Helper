@@ -3,7 +3,7 @@
  * number() returns true- saves last calculated value and can use saved for density, mass, or volume.
  * 
  * Author: Julia McClellan
- * Version: 2/5/2016
+ * Version: 2/9/2016
  */
 
 package Functions;
@@ -148,8 +148,10 @@ public class Density extends Function
 			steps.add(Box.createVerticalStrut(5));
 			
 			String unknownUnit = "";
+			int sigFigs;
 			if(unknown.equals("Mass"))
 			{
+				sigFigs = Math.min(volume.getSigFigs(), density.getSigFigs());
 				toSave = givenDensity * givenVolume;
 				steps.add(new JLabel("Mass = " + givenDensity + " * " + givenVolume + " = " + toSave + " kg"));
 				unknownUnit = mass.getUnitName();
@@ -163,6 +165,7 @@ public class Density extends Function
 			}
 			else if(unknown.equals("Volume"))
 			{
+				sigFigs = Math.min(mass.getSigFigs(), density.getSigFigs());
 				toSave = givenMass / givenDensity;
 				steps.add(new JLabel("Volume = " + givenMass + " / " + givenDensity + " = " + toSave + " L"));
 				unknownUnit = volume.getUnitName();
@@ -175,6 +178,7 @@ public class Density extends Function
 			}
 			else if(unknown.equals("Density"))
 			{
+				sigFigs = Math.min(mass.getSigFigs(), volume.getSigFigs());
 				toSave = givenMass / givenVolume;
 				steps.add(new JLabel("Density = " + givenMass + " / " + givenVolume + " = " + toSave + " kg/L"));
 				String mUnit = density.getUnitName(), vUnit = density.getUnit2Name();
@@ -192,7 +196,7 @@ public class Density extends Function
 				result.setText("Leave one field blank.");
 				return;
 			}
-			result.setText(unknown + " = " + toSave + " " + unknownUnit);
+			result.setText(unknown + " = " + Function.withSigFigs(toSave, sigFigs) + " " + unknownUnit);
 			steps.setVisible(true);
 		}
 	}

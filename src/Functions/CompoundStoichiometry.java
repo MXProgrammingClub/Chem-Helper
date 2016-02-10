@@ -4,7 +4,7 @@
  * number() returns true- saves last calculated value and can use saved in moles or mass.
  * 
  * Authors: Julia McClellan and Luke Giacalone
- * Version: 2/6/2016
+ * Version: 2/9/2016
  */
 
 package Functions;
@@ -42,7 +42,6 @@ public class CompoundStoichiometry extends Function
 		
 		compound = new EnterField("Compound", true);
 		mass = new EnterField("Mass", "Mass", true);
-		mass.setUnit(6); //sets default mass unit to grams
 		moles = new EnterField("Moles", "Amount", true);
 		calculate = new JButton("Calculate");
 		calculate.addActionListener(new Calculate());
@@ -89,7 +88,9 @@ public class CompoundStoichiometry extends Function
 			steps.removeAll();
 			steps.setVisible(false);
 			final int blank = -1;
+			int sigFigs = Integer.MAX_VALUE;
 			double molarMass, givenMass, givenMoles;
+	
 			try
 			{
 				Compound c = Compound.parseCompound(compound.getText().trim());
@@ -130,7 +131,11 @@ public class CompoundStoichiometry extends Function
 				result.setText("The mass must be a number.");
 				return;
 			}
-			else steps.add(new JLabel("Mass = " + givenMass + " g"));
+			else 
+			{
+				steps.add(new JLabel("Mass = " + givenMass + " g"));
+				sigFigs = mass.getSigFigs();
+			}
 			
 			givenMoles = moles.getAmount();
 			if(givenMoles == Units.UNKNOWN_VALUE)
@@ -151,14 +156,18 @@ public class CompoundStoichiometry extends Function
 				result.setText("The number of moles must be a number.");
 				return;
 			}
-			else steps.add(new JLabel("Moles = " + givenMoles + " mol"));
+			else 
+			{
+				steps.add(new JLabel("Moles = " + givenMoles + " mol"));
+				sigFigs = Math.min(sigFigs, moles.getSigFigs());
+			}
 			
 			steps.add(Box.createVerticalStrut(5));
 			
 			if(molarMass == blank)
 			{
 				toSave = givenMass / givenMoles;
-				result.setText("Molar mass = " + toSave + " g/mol");
+				result.setText("Molar mass = " + Function.withSigFigs(toSave, sigFigs) + " g/mol");
 				steps.add(new JLabel("Molar mass = " + givenMass + " / " + givenMoles + " = " + toSave + " g/mol"));
 			}
 			else if(givenMass == blank)
@@ -174,12 +183,12 @@ public class CompoundStoichiometry extends Function
 					step += toSave + " " + unit;
 					steps.add(new JLabel(step));
 				}
-				result.setText("Mass = " + toSave + " " + unit);
+				result.setText("Mass = " + Function.withSigFigs(toSave, sigFigs) + " " + unit);
 			}
 			else
 			{
 				toSave = givenMass / molarMass;
-				result.setText("Moles = " + toSave + " mol");
+				result.setText("Moles = " + Function.withSigFigs(toSave, sigFigs) + " mol");
 				steps.add(new JLabel("Mass = " + givenMass + " / " + molarMass + " = " + toSave + " mol"));
 			}
 			steps.setVisible(true);

@@ -3,7 +3,7 @@
  * number() returns true- saves latest calculated value, uses saved for any field.
  * 
  * Author: Julia McClellan and Luke Giacalone
- * Version: 2/5/2016
+ * Version: 2/9/2016
  */
 
 package Functions;
@@ -126,11 +126,13 @@ public class ContainerChanges extends Function
 		{
 			double before = 1, after = 1;
 			DoubleEnterField unknown = null;
+			int sigFigs = Integer.MAX_VALUE;
 			
 			for(DoubleEnterField field: information)
 			{
 				if(field.isVisible())
 				{
+					sigFigs = Math.min(sigFigs, field.getSigFigs());
 					double thisBefore = field.getBeforeValue();
 					if(thisBefore != ERROR_VALUE) before *= thisBefore;
 					else
@@ -164,7 +166,7 @@ public class ContainerChanges extends Function
 				String unit = unknown.getDesiredUnit();
 				unknown.getBlankAmount(resultant);
 				toSave = resultant;
-				result.setText(unknown.getName() + " = " + resultant + " " + unit);
+				result.setText(unknown.getName() + " = " + Function.withSigFigs(resultant, sigFigs) + " " + unit);
 			}
 			else result.setText("Leave a value blank.");
 		}
