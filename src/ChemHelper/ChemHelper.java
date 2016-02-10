@@ -12,8 +12,6 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -34,7 +32,9 @@ import Functions.*;
 import HelperClasses.Preferences;
 
 public class ChemHelper extends JFrame {		//Primary GUI class
-	private static final String PREFS_FILE = "prefs.txt";
+	
+	//place where to save the preferences file -- use extension .prefs to make it harder to edit by hand
+	private static final String PREFS_FILE = "preferences.prefs"; 
 	
 	Container pane;
 	JPanel last, buttons, eqButtons, numButtons;
@@ -106,14 +106,14 @@ public class ChemHelper extends JFrame {		//Primary GUI class
 		buttons.setVisible(false);
 		equation = null;
 		
-		this.addWindowListener(new WindowAdapter() {
-		    public void windowClosing(WindowEvent e) {
-		        try {
+		//Add a shutdownhook that will save the preferences set by the user
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			public void run() {
+				try {
 					preferences.export();
-				} catch (FileNotFoundException | UnsupportedEncodingException e1) {}
-		    }
+				} catch (FileNotFoundException | UnsupportedEncodingException e) {}
+			}
 		});
-		//Runtime.getRuntime().addShutdownHook(new Thread(preferences.export()));
 		
 		pack();
 		this.setPreferredSize(this.getSize());
