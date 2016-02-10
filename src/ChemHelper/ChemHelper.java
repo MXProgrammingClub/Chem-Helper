@@ -29,10 +29,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import com.apple.eawt.AboutHandler;
-import com.apple.eawt.Application;
-import com.apple.eawt.AppEvent.AboutEvent;
-
 import Equation.Equation;
 import Functions.*;
 import HelperClasses.Preferences;
@@ -67,9 +63,10 @@ public class ChemHelper extends JFrame {		//Primary GUI class
 		last = funcs[0].getPanel();
 		lastFunc = funcs[0];
 		
+		
 		if(System.getProperty("os.name").equals("Mac OS X")) {
 			menu.getMenu(menu.getMenuCount() - 1).remove(0);
-			Application.getApplication().setAboutHandler(new AboutWindow());
+			com.apple.eawt.Application.getApplication().setAboutHandler(new AboutWindow());
 		}
 		
 		saveEq = new JButton("Save equation");
@@ -116,6 +113,7 @@ public class ChemHelper extends JFrame {		//Primary GUI class
 				} catch (FileNotFoundException | UnsupportedEncodingException e1) {}
 		    }
 		});
+		//Runtime.getRuntime().addShutdownHook(new Thread(preferences.export()));
 		
 		pack();
 		this.setPreferredSize(this.getSize());
@@ -272,8 +270,10 @@ public class ChemHelper extends JFrame {		//Primary GUI class
 		
 	}
 	
-	private class AboutWindow extends JFrame implements AboutHandler {
-		public void handleAbout(AboutEvent arg0) {
+	
+	
+	private class AboutWindow extends JFrame implements com.apple.eawt.AboutHandler {
+		public void handleAbout(com.apple.eawt.AppEvent.AboutEvent arg0) {
 			if(last != null) pane.remove(last);
 			lastFunc = funcs[20];
 			JPanel func = funcs[20].getPanel();
@@ -312,7 +312,7 @@ public class ChemHelper extends JFrame {		//Primary GUI class
 	}
 	
 	public static void main(String[] args) {
-		if(System.getProperty("os.name").equals("Mac OS X"))
+		if(System.getProperty("os.name").contains("Mac"))
 			System.setProperty("apple.laf.useScreenMenuBar", "true");
 		new ChemHelper();
 	}
