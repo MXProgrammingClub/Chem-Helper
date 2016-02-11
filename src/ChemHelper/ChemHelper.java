@@ -29,6 +29,7 @@ import javax.swing.JPanel;
 
 import Equation.Equation;
 import Functions.*;
+import HelperClasses.MacMenuChanges;
 import HelperClasses.Preferences;
 
 public class ChemHelper extends JFrame {		//Primary GUI class
@@ -36,14 +37,14 @@ public class ChemHelper extends JFrame {		//Primary GUI class
 	//place where to save the preferences file -- use extension .prefs to make it harder to edit by hand
 	private static final String PREFS_FILE = "preferences.prefs"; 
 	
-	Container pane;
-	JPanel last, buttons, eqButtons, numButtons;
-	JMenuBar menu;
-	Function[] funcs;
-	JButton saveEq, useEq, saveNum, useNum, help;
-	Equation equation;
-	Function lastFunc;
-	LinkedList<Double> savedNumbers;
+	public Container pane;
+	public JPanel last, buttons, eqButtons, numButtons;
+	public JMenuBar menu;
+	public Function[] funcs;
+	public JButton saveEq, useEq, saveNum, useNum, help;
+	public Equation equation;
+	public Function lastFunc;
+	public LinkedList<Double> savedNumbers;
 	Preferences preferences;
 	
 	public ChemHelper() {
@@ -64,11 +65,9 @@ public class ChemHelper extends JFrame {		//Primary GUI class
 		lastFunc = funcs[0];
 		
 		
-		if(System.getProperty("os.name").equals("Mac OS X")) {
-			menu.getMenu(menu.getMenuCount() - 1).remove(0);
-			com.apple.eawt.Application.getApplication().setAboutHandler(new AboutWindow());
-			menu.getMenu(menu.getMenuCount() - 1).remove(0);
-			com.apple.eawt.Application.getApplication().setPreferencesHandler(new PreferenceWindow());
+		if(System.getProperty("os.name").contains("Mac")) {
+			MacMenuChanges mac = new MacMenuChanges();
+			mac.changeMenu(this);
 		}
 		
 		saveEq = new JButton("Save equation");
@@ -268,40 +267,6 @@ public class ChemHelper extends JFrame {		//Primary GUI class
 					System.exit(0);
 				}
 			});
-		}
-	}
-	
-	private class AboutWindow extends JFrame implements com.apple.eawt.AboutHandler {
-		public void handleAbout(com.apple.eawt.AppEvent.AboutEvent arg0) {
-			if(last != null) pane.remove(last);
-			lastFunc = funcs[20];
-			JPanel func = funcs[20].getPanel();
-			pane.add(func, BorderLayout.WEST);
-			eqButtons.setVisible(lastFunc.equation());
-			numButtons.setVisible(lastFunc.number());
-			help.setVisible(lastFunc.help());
-			buttons.setVisible(true);
-			pane.repaint();
-			pack();
-			last = func;
-			lastFunc.resetFocus();
-		}
-	}
-	
-	private class PreferenceWindow extends JFrame implements com.apple.eawt.PreferencesHandler {
-		public void handlePreferences(com.apple.eawt.AppEvent.PreferencesEvent arg0) {
-			if(last != null) pane.remove(last);
-			lastFunc = funcs[21];
-			JPanel func = funcs[21].getPanel();
-			pane.add(func, BorderLayout.WEST);
-			eqButtons.setVisible(lastFunc.equation());
-			numButtons.setVisible(lastFunc.number());
-			help.setVisible(lastFunc.help());
-			buttons.setVisible(true);
-			pane.repaint();
-			pack();
-			last = func;
-			lastFunc.resetFocus();
 		}
 	}
 	
