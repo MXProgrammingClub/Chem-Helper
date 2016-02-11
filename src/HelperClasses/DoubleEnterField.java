@@ -2,7 +2,7 @@
  * A class that uses two EnterFields to make: beforeValue -> afterValue
  * 
  * Author: Luke Giacalone and Julia McClellan
- * Version: 2/8/2016
+ * Version: 2/10/2016
  */
 
 package HelperClasses;
@@ -72,7 +72,7 @@ public class DoubleEnterField extends JPanel {
 		try 
 		{
 			double value = after.getAmount();
-			if(!isLeft) value = 1 / value;
+			if(value != Units.UNKNOWN_VALUE && value != Units.ERROR_VALUE && !isLeft) value = 1 / value;
 			return value;
 		}
 		catch(Throwable e) 

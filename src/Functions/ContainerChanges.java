@@ -3,7 +3,7 @@
  * number() returns true- saves latest calculated value, uses saved for any field.
  * 
  * Author: Julia McClellan and Luke Giacalone
- * Version: 2/9/2016
+ * Version: 2/10/2016
  */
 
 package Functions;
@@ -22,10 +22,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import HelperClasses.DoubleEnterField;
+import HelperClasses.Units;
 
 public class ContainerChanges extends Function
 {
-	private static final int UNKNOWN_VALUE = -501, ERROR_VALUE = -502;
 	private static final String[] VALUES = {"Pressure", "Volume", "Moles", "Temperature"};
 	
 	private JPanel panel;
@@ -134,19 +134,19 @@ public class ContainerChanges extends Function
 				{
 					sigFigs = Math.min(sigFigs, field.getSigFigs());
 					double thisBefore = field.getBeforeValue();
-					if(thisBefore != ERROR_VALUE) before *= thisBefore;
+					if(thisBefore != Units.ERROR_VALUE) before *= thisBefore;
 					else
 					{
 						result.setText("There was a problem with your input.");
 						return;
 					}
 					double thisAfter = field.getAfterValue();
-					if(thisAfter == ERROR_VALUE)
+					if(thisAfter == Units.ERROR_VALUE)
 					{
 						result.setText("There was a problem with your input.");
 						return;
 					}
-					else if(thisAfter == UNKNOWN_VALUE)
+					else if(thisAfter == Units.UNKNOWN_VALUE)
 					{
 						if(unknown == null) unknown = field;
 						else
