@@ -27,7 +27,7 @@ public class Prefs extends Function {
 	private JComboBox<String> tableStyles;
 	private JCheckBox stateColors;
 	
-	private static final String[] TABLE_STYLES = {"Blank", "Colored", "Luke's Table"};
+	private static final String[] TABLE_STYLES = {"Blank", "Color coded", "Color coded version 2"};
 	
 	public Prefs(ChemHelper ch) {
 		super("Preferences");
