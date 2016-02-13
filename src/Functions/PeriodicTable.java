@@ -32,7 +32,7 @@ public class PeriodicTable extends Function
 	
 	public PeriodicTable(int type, boolean stateColors) //0 = blank, 1 = colors, 2 = lukes
 	{
-		super(/*(type == 1) ? "Color Coded" : (type == 2) ? "Luke's Table" : "Blank"*/"Periodic Table");
+		super("Periodic Table");
 		panels = new ElementPanel[7][18];
 		alPanels = new ElementPanel[2][14];
 		for(int row = 0; row < panels.length; row++)

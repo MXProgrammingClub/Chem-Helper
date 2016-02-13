@@ -295,6 +295,14 @@ public class ChemHelper extends JFrame {		//Primary GUI class
 	public static void main(String[] args) {
 		if(System.getProperty("os.name").contains("Mac"))
 			System.setProperty("apple.laf.useScreenMenuBar", "true");
-		new ChemHelper();
+		
+		ChemHelper chelper = null;
+		try {
+			chelper = new ChemHelper();
+		}
+		catch(Throwable e) {
+			chelper.dispose();
+			new CrashFrame(e, e.getStackTrace());
+		}
 	}
 }
