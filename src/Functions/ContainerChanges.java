@@ -3,7 +3,7 @@
  * number() returns true- saves latest calculated value, uses saved for any field.
  * 
  * Author: Julia McClellan and Luke Giacalone
- * Version: 2/10/2016
+ * Version: 2/12/2016
  */
 
 package Functions;
@@ -34,6 +34,7 @@ public class ContainerChanges extends Function
 	private JLabel result;
 	private double toSave;
 	private CheckBox[] boxes;
+	private Box steps;
 	
 	public ContainerChanges()
 	{
@@ -79,8 +80,11 @@ public class ContainerChanges extends Function
 		c.anchor = GridBagConstraints.WEST;
 		subpanel.add(result, c);
 		
+		steps = Box.createVerticalBox();
+		
 		panel = new JPanel();
 		panel.add(subpanel);
+		panel.add(steps);
 		
 		toSave = 0;
 	}
@@ -127,19 +131,24 @@ public class ContainerChanges extends Function
 			double before = 1, after = 1;
 			DoubleEnterField unknown = null;
 			int sigFigs = Integer.MAX_VALUE;
-			
+			steps.removeAll();
+			steps.setVisible(false);
+			String beforeStep = "", afterStep = "";
 			for(DoubleEnterField field: information)
 			{
 				if(field.isVisible())
 				{
 					sigFigs = Math.min(sigFigs, field.getSigFigs());
 					double thisBefore = field.getBeforeValue();
-					if(thisBefore != Units.ERROR_VALUE) before *= thisBefore;
-					else
+					if(thisBefore == Units.ERROR_VALUE)
 					{
 						result.setText("There was a problem with your input.");
 						return;
 					}
+					before *= thisBefore;
+					steps.add(new JLabel(field.getName() + "-before = " + thisBefore + " " + field.getStandardUnit()));
+					beforeStep += before + " * ";
+					
 					double thisAfter = field.getAfterValue();
 					if(thisAfter == Units.ERROR_VALUE)
 					{
@@ -148,25 +157,38 @@ public class ContainerChanges extends Function
 					}
 					else if(thisAfter == Units.UNKNOWN_VALUE)
 					{
-						if(unknown == null) unknown = field;
+						if(unknown == null)
+						{
+							unknown = field;
+							steps.add(new JLabel(field.getName() + "-after = ? " + field.getStandardUnit()));
+						}
 						else
 						{
 							result.setText("Only one value can be left blank.");
 							return;
 						}
 					}
-					else after *= thisAfter;
+					else 
+					{
+						after *= thisAfter;
+						steps.add(new JLabel(field.getName() + "-after = " + thisAfter + " " + field.getStandardUnit()));
+						afterStep += after + " * ";
+					}
 				}
 			}
 			if(unknown != null)
 			{
+				beforeStep = beforeStep.substring(0, beforeStep.length() - 3);
+				afterStep += " x";
 				double resultant;
 				if(unknown.isLeft()) resultant = before / after;
 				else resultant = after / before;
+				steps.add(new JLabel("x = " + resultant + " " + unknown.getStandardUnit()));
 				String unit = unknown.getDesiredUnit();
-				unknown.getBlankAmount(resultant);
-				toSave = resultant;
+				toSave = unknown.getBlankAmount(resultant);
+				steps.add(new JLabel(resultant + " " + unknown.getStandardUnit() + " = " + toSave + " " + unknown.getDesiredUnit()));
 				result.setText(unknown.getName() + " = " + Function.withSigFigs(resultant, sigFigs) + " " + unit);
+				steps.setVisible(true);
 			}
 			else result.setText("Leave a value blank.");
 		}

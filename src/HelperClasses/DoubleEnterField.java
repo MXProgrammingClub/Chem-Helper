@@ -2,7 +2,7 @@
  * A class that uses two EnterFields to make: beforeValue -> afterValue
  * 
  * Author: Luke Giacalone and Julia McClellan
- * Version: 2/10/2016
+ * Version: 2/12/2016
  */
 
 package HelperClasses;
@@ -115,5 +115,10 @@ public class DoubleEnterField extends JPanel {
 		int sigfigs1 = before.getSigFigs(), sigfigs2 = after.getSigFigs();
 		if(after.getSigFigs() != -1) return Math.min(sigfigs1, sigfigs2);
 		return sigfigs1;
+	}
+	
+	public String getStandardUnit()
+	{
+		return before.getStandardUnit();
 	}
 }
