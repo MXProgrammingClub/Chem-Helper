@@ -1,8 +1,8 @@
 /*
  * Text field for entering equations and compounds.
  * 
- * Author: Julia McClellan
- * Version: 1/30/2016
+ * Author: Julia McClellan and Luke Giacalone
+ * Version: 2/14/2016
  */
 
 package HelperClasses;
