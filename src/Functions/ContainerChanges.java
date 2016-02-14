@@ -3,7 +3,7 @@
  * number() returns true- saves latest calculated value, uses saved for any field.
  * 
  * Author: Julia McClellan and Luke Giacalone
- * Version: 2/12/2016
+ * Version: 2/13/2016
  */
 
 package Functions;
@@ -100,6 +100,8 @@ public class ContainerChanges extends Function
 			check = new JCheckBox();
 			check.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					steps.setVisible(false);
+					result.setText("");
 					if(VALUES[0].equals(label.getText()))
 						information.get(0).setVisible(!information.get(0).isVisible());
 					else if(VALUES[1].equals(label.getText()))
@@ -133,7 +135,7 @@ public class ContainerChanges extends Function
 			int sigFigs = Integer.MAX_VALUE;
 			steps.removeAll();
 			steps.setVisible(false);
-			String beforeStep = "", afterStep = "";
+			String[] step = {"(", "(", "(", "("};
 			for(DoubleEnterField field: information)
 			{
 				if(field.isVisible())
@@ -146,10 +148,16 @@ public class ContainerChanges extends Function
 						return;
 					}
 					before *= thisBefore;
-					steps.add(new JLabel(field.getName() + "-before = " + thisBefore + " " + field.getStandardUnit()));
-					beforeStep += before + " * ";
+					double val = thisBefore;
+					if(!field.isLeft())
+					{
+						val = 1 / val;
+						step[1] += val + " * ";
+					}
+					else step[0] += val + " * ";
+					steps.add(new JLabel(field.getName() + "-before = " + val + " " + field.getStandardUnit()));
 					
-					double thisAfter = field.getAfterValue();
+					double thisAfter = val = field.getAfterValue();
 					if(thisAfter == Units.ERROR_VALUE)
 					{
 						result.setText("There was a problem with your input.");
@@ -161,6 +169,8 @@ public class ContainerChanges extends Function
 						{
 							unknown = field;
 							steps.add(new JLabel(field.getName() + "-after = ? " + field.getStandardUnit()));
+							if(field.isLeft()) step[2] += "x * ";
+							else step[3] += "x * ";
 						}
 						else
 						{
@@ -171,22 +181,42 @@ public class ContainerChanges extends Function
 					else 
 					{
 						after *= thisAfter;
-						steps.add(new JLabel(field.getName() + "-after = " + thisAfter + " " + field.getStandardUnit()));
-						afterStep += after + " * ";
+						if(!field.isLeft())
+						{
+							val = 1 / val;
+							step[3] += val + " * ";
+						}
+						else step[2] += val + " * ";
+						steps.add(new JLabel(field.getName() + "-after = " + val + " " + field.getStandardUnit()));
 					}
 				}
 			}
+			steps.add(Box.createVerticalStrut(10));
+			
 			if(unknown != null)
 			{
-				beforeStep = beforeStep.substring(0, beforeStep.length() - 3);
-				afterStep += " x";
+				for(int index = 0; index < 4; index ++)
+				{
+					if(step[index].equals("("))
+					{
+						if(index % 2 == 0) step[index] = "1";
+						else step[index] = "";
+					}
+					else
+					{
+						step[index] = step[index].substring(0, step[index].length() - 3) + ")";
+						if(index % 2 != 0) step[index] = " / " + step[index];
+					}
+				}
+				steps.add(new JLabel(step[0] + step[1] + " = " + step[2] + step[3]));
+				
 				double resultant;
 				if(unknown.isLeft()) resultant = before / after;
 				else resultant = after / before;
 				steps.add(new JLabel("x = " + resultant + " " + unknown.getStandardUnit()));
 				String unit = unknown.getDesiredUnit();
 				toSave = unknown.getBlankAmount(resultant);
-				steps.add(new JLabel(resultant + " " + unknown.getStandardUnit() + " = " + toSave + " " + unknown.getDesiredUnit()));
+				if(toSave != resultant) steps.add(new JLabel(resultant + " " + unknown.getStandardUnit() + " = " + toSave + " " + unknown.getDesiredUnit()));
 				result.setText(unknown.getName() + " = " + Function.withSigFigs(resultant, sigFigs) + " " + unit);
 				steps.setVisible(true);
 			}
