@@ -21,6 +21,10 @@ import Functions.Function;
 
 public class EnterField extends JPanel
 {
+	
+	private static final int UNIT_WIDTH = 76;
+	private static final int UNIT_HEIGHT = 28;
+	
 	private Component amount;
 	private JComboBox<String> unit, unit2;
 	private String name, type, type2;
@@ -34,15 +38,15 @@ public class EnterField extends JPanel
 		this.setSize(300, this.getHeight());
 		this.name = name;
 		this.hasCompoundField = hasCompoundField;
-		if(!hasCompoundField) amount = new JTextField(6);
-		else amount = new TextField(TextField.COMPOUND);
+		if(!hasCompoundField) amount = new JTextField(Units.ENTERFIELD_AMOUNT_COLUMNS);
+		else amount = new TextField(Units.ENTERFIELD_AMOUNT_WIDTH);
 		if(unitType != null) {
 			if(unitType.equals("Moles")) unitType = "Amount";
 			type = unitType;
 			unit = new JComboBox<String>(Units.getUnits(unitType));
 			if(unit.getItemCount() == Units.POWERS.length) unit.setSelectedIndex(6);
 			else unit.setSelectedIndex(0);
-			unit.setPreferredSize(new Dimension(76, 28));
+			unit.setPreferredSize(new Dimension(UNIT_WIDTH, UNIT_HEIGHT));
 		}
 		isCompoundUnit = false;
 		if(unitType2 != null) {
@@ -51,7 +55,7 @@ public class EnterField extends JPanel
 			unit2 = new JComboBox<String>(Units.getUnits(unitType2));
 			if(unit2.getItemCount() == Units.POWERS.length) unit2.setSelectedIndex(6);
 			else unit2.setSelectedIndex(0);
-			unit2.setPreferredSize(new Dimension(76, 28));
+			unit2.setPreferredSize(new Dimension(UNIT_WIDTH, UNIT_HEIGHT));
 			isCompoundUnit = true;
 		}
 		
@@ -76,7 +80,7 @@ public class EnterField extends JPanel
 			add(unit, c);
 		else {
 			JLabel temp = new JLabel("");
-			temp.setPreferredSize(new Dimension(75, 28));
+			temp.setPreferredSize(new Dimension(UNIT_WIDTH, UNIT_HEIGHT));
 			add(temp); //same width as unit would be to make a space
 		}
 	}
@@ -116,7 +120,7 @@ public class EnterField extends JPanel
 			if(!hasCompoundField) value = Double.parseDouble(((JTextField)amount).getText());
 			else value = Double.parseDouble(((TextField)amount).getText());
 			if(type != null) value = Units.toStandard(value, unit.getSelectedIndex(), type);
-			if(type2 != null) value =  Units.fromStandard(value, unit2.getSelectedIndex(), type2); //This is in the denominator, so the conversion is reversed.
+			if(type2 != null) value = Units.fromStandard(value, unit2.getSelectedIndex(), type2); //This is in the denominator, so the conversion is reversed.
 			return value;
 		}
 		catch(Throwable e) {

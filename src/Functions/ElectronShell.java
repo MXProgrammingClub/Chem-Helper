@@ -76,7 +76,7 @@ public class ElectronShell extends Function
 		subpanel.add(enterPanel, c);
 		c.gridx = 0;
 		c.gridy = 2;
-		c.gridwidth = 2;
+		c.gridwidth = 3;
 		subpanel.add(results, c);
 		
 		//adds the subpanel to the real panel so that the contents will be at the top, not the center, of the screen

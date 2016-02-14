@@ -9,6 +9,7 @@ package HelperClasses;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
@@ -31,18 +32,23 @@ public class TextField extends JPanel
 	
 	public TextField(int length)
 	{
+		this.setLayout(new GridLayout());
+		this.setPreferredSize(new Dimension(length, 26));
 		current = "<html></html>";
 		index = 6;
 		label = new JLabel(current);
-		label.setPreferredSize(new Dimension(length, 26));
+		
+		
 		JTextField temp = new JTextField();
 		label.setBorder(temp.getBorder());
 		label.setOpaque(true);
 		label.setBackground(Color.WHITE);
 		
-		JPanel panel = new JPanel();
+		/*JPanel panel = new JPanel(new GridLayout());
+		panel.setPreferredSize(new Dimension(length, 26));
 		panel.add(label);
-		add(panel);
+		add(panel);*/
+		add(label);
 				
 		sup = new Button(this, "<sup>", "</sup>");
 		sub = new Button(this, "<sub>", "</sub>");

@@ -41,8 +41,8 @@ public class CompoundStoichiometry extends Function
 		super("Compound Stoichiometry");
 		
 		compound = new EnterField("Compound", true);
-		mass = new EnterField("Mass", "Mass", true);
-		moles = new EnterField("Moles", "Amount", true);
+		mass = new EnterField("Mass", "Mass", false);
+		moles = new EnterField("Moles", "Amount", false);
 		calculate = new JButton("Calculate");
 		calculate.addActionListener(new Calculate());
 		result = new JLabel();

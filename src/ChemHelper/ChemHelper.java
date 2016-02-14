@@ -301,7 +301,7 @@ public class ChemHelper extends JFrame {		//Primary GUI class
 			chelper = new ChemHelper();
 		}
 		catch(Throwable e) {
-			chelper.dispose();
+			if(chelper != null) chelper.dispose();
 			new CrashFrame(e, e.getStackTrace());
 		}
 	}
