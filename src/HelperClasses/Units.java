@@ -14,7 +14,8 @@ import javax.swing.JTextField;
 public class Units
 {
 	public static final int ENTERFIELD_AMOUNT_COLUMNS = 6;
-	public static final int ENTERFIELD_AMOUNT_WIDTH =  (int)(new JTextField(ENTERFIELD_AMOUNT_COLUMNS).getPreferredSize().getWidth());
+	public static final int ENTERFIELD_AMOUNT_WIDTH = ((System.getProperty("os.name").contains("Mac")) ? -6 : 0) +
+			(int)(new JTextField(ENTERFIELD_AMOUNT_COLUMNS).getPreferredSize().getWidth());
 	public static final double R = .0821, STANDARD_PRESSURE = 1, STANDARD_TEMPERATURE = 273.15, C = 3E8, h = 6.626E-34;
 	public static final int UNKNOWN_VALUE = -500, ERROR_VALUE = -501;
 	public static final String[] PREFIXES = {"p", "n", "\u00B5", "m", "c", "d", "", "da", "h", "k", "M", "T", "G"};
