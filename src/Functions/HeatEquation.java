@@ -22,7 +22,7 @@ public class HeatEquation extends Function {
 	private double answer;
 	
 	public HeatEquation() {
-		super("Heat");
+		super("Heat Equation");
 		
 		JPanel subpanel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
