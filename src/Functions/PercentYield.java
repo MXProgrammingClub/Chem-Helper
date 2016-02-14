@@ -137,7 +137,7 @@ public class PercentYield extends Function
 							String name;
 							if(reactant.getNum() == 1) name = "<html>" + compound + "</html>";
 							else name = "<html>" + compound.toString().substring(1) + "</html>";
-							fieldR = new RadioEnterField(name, true, "Mass", "Amount");
+							fieldR = new RadioEnterField(name, true, "Mass", "Amount", false);
 							reactantPanel.add(fieldR);
 							instructions.setText("Now click on the product you know the quantity of.");
 							onReactant = false;
@@ -156,7 +156,7 @@ public class PercentYield extends Function
 							String name;
 							if(product.getNum() == 1) name = "<html>" + compound + "</html>";
 							else name = "<html>" + compound.toString().substring(1) + "</html>";
-							fieldP = new RadioEnterField(name, true, "Mass", "Amount");
+							fieldP = new RadioEnterField(name, true, "Mass", "Amount", false);
 							productPanel.add(fieldP);
 							productPanel.add(calculate);
 							instructions.setText("Once you have entered the quantities and units, click the calculate button");

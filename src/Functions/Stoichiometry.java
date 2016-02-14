@@ -126,7 +126,7 @@ public class Stoichiometry extends Function
 					String name;
 					if(known.getNum() == 1) name = "<html>" + compound.withoutCharge() + "</html>";
 					else name = "<html>" + compound.withoutCharge().substring(1) + "</html>";
-					field1 = new RadioEnterField(name, true, "Mass", "Amount");
+					field1 = new RadioEnterField(name, true, "Mass", "Amount", false);
 					box2.add(field1);
 					instructions.setText("Now click on the compound of which you wish to find the quanitity");
 					given = false;
@@ -137,7 +137,7 @@ public class Stoichiometry extends Function
 					String name;
 					if(unknown.getNum() == 1) name = "<html>" + compound.withoutCharge() + "</html>";
 					else name = "<html>" + compound.withoutCharge().substring(1) + "</html>";
-					field2 = new RadioEnterField(name, false, "Mass", "Amount");
+					field2 = new RadioEnterField(name, false, "Mass", "Amount", false);
 					box2.add(field2);
 					box2.add(calculate);
 					instructions.setText("Once you have entered the quantities and units, click the calculate button");

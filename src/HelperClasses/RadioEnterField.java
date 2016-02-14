@@ -2,12 +2,13 @@
  * An enterfield with radio buttons to choose between sets of units.
  * 
  * Author: Julia McClellan
- * Version: 2/13/16
+ * Version: 2/14/16
  */
 
 package HelperClasses;
 
 import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -22,10 +23,19 @@ public class RadioEnterField extends JPanel
 	private JComboBox<String> unit1, unit2;
 	private JRadioButton one, two;
 	private String type1, type2;
+	private JCheckBox check;
 	
-	public RadioEnterField(String name, boolean textfield, String unitName1, String unitName2)
+	public RadioEnterField(String name, boolean textfield, String unitName1, String unitName2, boolean checkbox)
 	{
+		if(checkbox)
+		{
+			check = new JCheckBox();
+			check.setSelected(true);
+			add(check);
+		}
+		
 		add(new JLabel(name));
+		
 		if(textfield)
 		{
 			text = new JTextField(6);
@@ -68,19 +78,17 @@ public class RadioEnterField extends JPanel
 		catch(Throwable e)
 		{
 			return Units.ERROR_VALUE;
-		}
+			}
 	}
 	
 	public String getUnit()
 	{
-		if(one.isSelected()) return (String)unit1.getSelectedItem();
-		else return (String)unit2.getSelectedItem();
+		return one.isSelected() ? (String)unit1.getSelectedItem() : (String)unit2.getSelectedItem();
 	}
 	
 	public double getBlankAmount(double amount)
 	{
-		if(one.isSelected()) return Units.fromStandard(amount, unit1.getSelectedIndex(), type1);
-		else return Units.fromStandard(amount, unit2.getSelectedIndex(), type2);
+		return one.isSelected() ? Units.fromStandard(amount, unit1.getSelectedIndex(), type1) : Units.fromStandard(amount, unit2.getSelectedIndex(), type2);
 	}
 	
 	public int getSigFigs()
@@ -91,5 +99,10 @@ public class RadioEnterField extends JPanel
 	public void setText(String str)
 	{
 		text.setText(str);
+	}
+	
+	public boolean isSelected()
+	{
+		return check == null ? false : check.isSelected();
 	}
 }

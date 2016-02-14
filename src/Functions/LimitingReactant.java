@@ -4,7 +4,7 @@
  * number() returns true- can save any of calculated leftovers and use saved for any of the reactants.
  * 
  * Author: Julia McClellan
- * Version: 2/13/2016
+ * Version: 2/14/2016
  */
 
 package Functions;
@@ -89,14 +89,14 @@ public class LimitingReactant extends Function
 			String compoundString = compound.toString();
 			if(compound.getNum() != 1) compoundString = compoundString.substring(1);
 			compoundString = "<html>" + compoundString + "</html>";
-			RadioEnterField field = new RadioEnterField(compoundString, true, "Mass", "Amount");
+			RadioEnterField field = new RadioEnterField(compoundString, true, "Mass", "Amount", true);
 			this.compounds.add(field);
 			enterBox.add(field);
 			list.add(compound);
 		}
 		JPanel subPanel = new JPanel();
 		subPanel.add(new JLabel("Select a unit for the leftover compound: "));
-		leftover = new RadioEnterField("", false, "Mass", "Amount");
+		leftover = new RadioEnterField("", false, "Mass", "Amount", false);
 		subPanel.add(leftover);
 		enterBox.add(subPanel);
 		enterBox.add(calculate);
@@ -114,42 +114,45 @@ public class LimitingReactant extends Function
 			double min = Double.MAX_VALUE;
 			for(int index = 0; index < amounts.length; index++)
 			{
-				Compound compound = list.get(index);
-				String compoundName = compound.toString();
-				if(compound.getNum() != 1) compoundName = compoundName.substring(1);
-				double amount;
-				errorMessage.setText("");
-				panel.repaint();
-				
-				int thisSigFigs = compounds.get(index).getSigFigs();
-				if(thisSigFigs < sigFigs) sigFigs = thisSigFigs;
-				amount = compounds.get(index).getAmount();
-				if(amount == Units.ERROR_VALUE || amount == Units.UNKNOWN_VALUE)
+				if(compounds.get(index).isSelected())
 				{
-					enterPanel.setVisible(false);
-					errorMessage.setText("There was a problem with your input");
-					enterPanel.add(errorMessage);
-					enterPanel.setVisible(true);
-					return;
-				}
-				if(compounds.get(index).unit1()) 
-				{
-					String massString = compound.getMolarMassSteps();
-					steps += "Calculate the molar mass of " + compoundName + ":<br>\u2003" + massString;
-					double mass = Double.parseDouble(massString.substring(massString.lastIndexOf("=") + 1, massString.lastIndexOf("g")));
-					steps += "<br>Convert grams to moles by dividing grams of " +  compoundName + " by its molar mass:<br>\u2003" + amount + " g / " + mass;
-					amount = amount / mass;
-					steps += " g/mol " + " = " + amount + " mol<br>";
-				}
-				steps += " Divide by the coefficient of " + compoundName + ":<br>\u2003" + amount + " mol / " + compound.getNum();
-				amount = amount / compound.getNum();
-				steps += " = " + amount + " mol<br>";
-				amounts[index] = amount;
-				if(amount < min)
-				{
-					min = amount;
-					limitIndex = index;
-					limiting = compound;
+					Compound compound = list.get(index);
+					String compoundName = compound.toString();
+					if(compound.getNum() != 1) compoundName = compoundName.substring(1);
+					double amount;
+					errorMessage.setText("");
+					panel.repaint();
+
+					int thisSigFigs = compounds.get(index).getSigFigs();
+					if(thisSigFigs < sigFigs) sigFigs = thisSigFigs;
+					amount = compounds.get(index).getAmount();
+					if(amount == Units.ERROR_VALUE || amount == Units.UNKNOWN_VALUE)
+					{
+						enterPanel.setVisible(false);
+						errorMessage.setText("There was a problem with your input");
+						enterPanel.add(errorMessage);
+						enterPanel.setVisible(true);
+						return;
+					}
+					if(compounds.get(index).unit1()) 
+					{
+						String massString = compound.getMolarMassSteps();
+						steps += "Calculate the molar mass of " + compoundName + ":<br>\u2003" + massString + "<br>";
+						double mass = Double.parseDouble(massString.substring(massString.lastIndexOf("=") + 1, massString.lastIndexOf("g")));
+						steps += "Convert grams to moles by dividing grams of " +  compoundName + " by its molar mass:<br>\u2003" + amount + " g / " + mass;
+						amount = amount / mass;
+						steps += " g/mol " + " = " + amount + " mol<br>";
+					}
+					steps += " Divide by the coefficient of " + compoundName + ":<br>\u2003" + amount + " mol / " + compound.getNum();
+					amount = amount / compound.getNum();
+					steps += " = " + amount + " mol<br>";
+					amounts[index] = amount;
+					if(amount < min)
+					{
+						min = amount;
+						limitIndex = index;
+						limiting = compound;
+					}
 				}
 			}
 			String limitingString = limiting.toString();
