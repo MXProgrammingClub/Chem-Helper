@@ -38,8 +38,12 @@ public class EnterField extends JPanel
 		this.setSize(300, this.getHeight());
 		this.name = name;
 		this.hasCompoundField = hasCompoundField;
-		if(!hasCompoundField) amount = new JTextField(Units.ENTERFIELD_AMOUNT_COLUMNS);
-		else amount = new TextField(Units.ENTERFIELD_AMOUNT_WIDTH);
+		if(!hasCompoundField) {
+			amount = new JTextField(Units.ENTERFIELD_AMOUNT_COLUMNS);
+			amount.setPreferredSize(new Dimension((int) amount.getPreferredSize().getWidth(), Units.ENTERFIELD_AMOUNT_HEIGHT));
+		}
+		else 
+			amount = new TextField(Units.ENTERFIELD_AMOUNT_WIDTH);
 		if(unitType != null) {
 			if(unitType.equals("Moles")) unitType = "Amount";
 			type = unitType;

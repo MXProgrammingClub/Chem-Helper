@@ -147,7 +147,7 @@ public class CompoundStoichiometry extends Function
 				}
 				else
 				{
-					result.setText("One one field can be left blank.");
+					result.setText("Only one field can be left blank.");
 					return;
 				}
 			}
