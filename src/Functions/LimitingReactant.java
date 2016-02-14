@@ -4,7 +4,7 @@
  * number() returns true- can save any of calculated leftovers and use saved for any of the reactants.
  * 
  * Author: Julia McClellan
- * Version: 2/5/2016
+ * Version: 2/13/2016
  */
 
 package Functions;
@@ -14,17 +14,16 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.Box;
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
 
 import Equation.Compound;
 import Equation.Equation;
+import HelperClasses.RadioEnterField;
 import HelperClasses.TextField;
+import HelperClasses.Units;
 
 public class LimitingReactant extends Function
 {
@@ -34,9 +33,10 @@ public class LimitingReactant extends Function
 	private Equation equation;
 	private JLabel errorMessage, equationDisplay, limitingLabel;
 	private Box box2;
-	private ArrayList<EnterPanel> compounds;
-	private JRadioButton grams, moles;
+	private ArrayList<RadioEnterField> compounds;
+	private ArrayList<Compound> list;
 	private ArrayList<Double> toSave;
+	private RadioEnterField leftover;
 	
 	public LimitingReactant()
 	{
@@ -62,6 +62,7 @@ public class LimitingReactant extends Function
 		equationDisplay = new JLabel();
 		box2.add(equationDisplay);
 		enterPanel = new JPanel();
+		errorMessage = new JLabel();
 		box2.add(enterPanel);
 		resultPanel = new JPanel();
 		resultPanel.setVisible(false);
@@ -76,72 +77,27 @@ public class LimitingReactant extends Function
 		
 		toSave = new ArrayList<Double>();
 	}
-	
-	private class EnterPanel extends JPanel
-	{
-		private Compound compound;
-		JRadioButton moles, grams;
-		JTextField enter;
-		
-		public EnterPanel(Compound compound)
-		{
-			this.compound = compound;
-			String compoundString = compound.toString();
-			if(compound.getNum() != 1) compoundString = compoundString.substring(1);
-			compoundString = "<html>" + compoundString + "</html>";
-			add(new JLabel(compoundString));
-			enter = new JTextField(5);
-			add(enter);
-			moles = new JRadioButton("Moles");
-			grams = new JRadioButton("Grams", true);
-			ButtonGroup group = new ButtonGroup();
-			group.add(grams);
-			group.add(moles);
-			add(moles);
-			add(grams);
-		}
-		
-		public Compound getCompound()
-		{
-			return compound;
-		}
-		
-		public void setAmount(double newAmount)
-		{
-			enter.setText("" + newAmount);
-		}
-		
-		public String getAmount()
-		{
-			return enter.getText();
-		}
-		
-		public boolean inGrams()
-		{
-			return grams.isSelected();
-		}	
-	}
-	
+
 	private Box generateEnter()
 	{
 		Box enterBox = Box.createVerticalBox();
 		ArrayList<Compound> compounds = equation.getLeft();
-		this.compounds = new ArrayList<EnterPanel>();
+		list = new ArrayList<Compound>();
+		this.compounds = new ArrayList<RadioEnterField>();
 		for(Compound compound: compounds)
 		{
-			EnterPanel panel = new EnterPanel(compound);
-			this.compounds.add(panel);
-			enterBox.add(panel);
+			String compoundString = compound.toString();
+			if(compound.getNum() != 1) compoundString = compoundString.substring(1);
+			compoundString = "<html>" + compoundString + "</html>";
+			RadioEnterField field = new RadioEnterField(compoundString, true, "Mass", "Amount");
+			this.compounds.add(field);
+			enterBox.add(field);
+			list.add(compound);
 		}
-		moles = new JRadioButton("Moles");
-		grams = new JRadioButton("Grams", true);
-		ButtonGroup group = new ButtonGroup();
-		group.add(grams);
-		group.add(moles);
 		JPanel subPanel = new JPanel();
 		subPanel.add(new JLabel("Select a unit for the leftover compound: "));
-		subPanel.add(moles);
-		subPanel.add(grams);
+		leftover = new RadioEnterField("", false, "Mass", "Amount");
+		subPanel.add(leftover);
 		enterBox.add(subPanel);
 		enterBox.add(calculate);
 		return enterBox;
@@ -158,19 +114,17 @@ public class LimitingReactant extends Function
 			double min = Double.MAX_VALUE;
 			for(int index = 0; index < amounts.length; index++)
 			{
-				Compound compound = compounds.get(index).getCompound();
+				Compound compound = list.get(index);
 				String compoundName = compound.toString();
 				if(compound.getNum() != 1) compoundName = compoundName.substring(1);
 				double amount;
-				enterPanel.remove(errorMessage);
+				errorMessage.setText("");
 				panel.repaint();
-				try
-				{
-					int thisSigFigs = Function.sigFigs(compounds.get(index).getAmount());
-					if(thisSigFigs < sigFigs) sigFigs = thisSigFigs;
-					amount = Double.parseDouble(compounds.get(index).getAmount());
-				}
-				catch(Throwable e)
+				
+				int thisSigFigs = compounds.get(index).getSigFigs();
+				if(thisSigFigs < sigFigs) sigFigs = thisSigFigs;
+				amount = compounds.get(index).getAmount();
+				if(amount == Units.ERROR_VALUE || amount == Units.UNKNOWN_VALUE)
 				{
 					enterPanel.setVisible(false);
 					errorMessage.setText("There was a problem with your input");
@@ -178,7 +132,7 @@ public class LimitingReactant extends Function
 					enterPanel.setVisible(true);
 					return;
 				}
-				if(compounds.get(index).inGrams()) 
+				if(compounds.get(index).unit1()) 
 				{
 					String massString = compound.getMolarMassSteps();
 					steps += "Calculate the molar mass of " + compoundName + ":<br>\u2003" + massString;
@@ -206,7 +160,7 @@ public class LimitingReactant extends Function
 			steps += "<br>The smallest of these is " + limitingString + ", so it is the limiting reactant.";
 			for(int index = 0; index < amounts.length; index++)
 			{
-				Compound compound = compounds.get(index).getCompound();
+				Compound compound = list.get(index);
 				String compoundString = compound.toString();
 				if(compound.getNum() != 1) compoundString = compoundString.substring(1);
 				double amount = amounts[index];
@@ -217,7 +171,7 @@ public class LimitingReactant extends Function
 					steps += "<br>The amount of " + compoundString + " leftover: (" + amounts[index] + " mol - " + min + " mol) * " + compound.getNum() + 
 							" = " + amount + " mol";
 					String unit = "mol";
-					if(compounds.get(index).inGrams()) 
+					if(compounds.get(index).unit1()) 
 					{
 						String massString = compound.getMolarMassSteps();
 						steps += "<br>Calculate the molar mass of " + compoundString + "<br>\u2003" + massString;
@@ -225,7 +179,12 @@ public class LimitingReactant extends Function
 						steps += "<br>Convert the amount " + compoundString + " leftover to grams<br>\u2003" + amount + " mol * " + mass + " g/mol = ";
 						amount *= compound.getMolarMass();
 						steps += amount + " g";
-						unit = "g";
+						unit = leftover.getUnit();
+						if(!unit.equals("g")) 
+						{
+							double temp = leftover.getBlankAmount(amount);
+							steps += "<br>" + amount + " g = " + temp + " " + unit;
+						}
 					}
 					toSave.add(amount);
 					String amountString = Function.withSigFigs(amount, sigFigs) + " " + unit;
@@ -298,7 +257,7 @@ public class LimitingReactant extends Function
 		ArrayList<String> compoundString = new ArrayList<String>();
 		for(int index = 0; index < compounds.size(); index++)
 		{
-			Compound c = compounds.get(index).getCompound();
+			Compound c = list.get(index);
 			String string = c.toString();
 			if(c.getNum() != 1) compoundString.add("<html>" + string.substring(1) + "</html>");
 			else compoundString.add("<html>" + string + "</html>");
@@ -308,7 +267,7 @@ public class LimitingReactant extends Function
 		reader.resetFocus();
 		if(selected instanceof String)
 		{
-			compounds.get(compoundString.indexOf((String)selected)).setAmount(num);
+			compounds.get(compoundString.indexOf((String)selected)).setText("" + num);
 		}
 	}
 	

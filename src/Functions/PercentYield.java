@@ -4,7 +4,7 @@
  * number() returns true - saves most recently calculated value, uses saved as product or reactant amount.
  * 
  * Author: Julia McClellan
- * Version: 2/5/2015
+ * Version: 2/13/2015
  */
 
 package Functions;
@@ -16,17 +16,16 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.Box;
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
 
 import Equation.Compound;
 import Equation.Equation;
+import HelperClasses.RadioEnterField;
 import HelperClasses.TextField;
+import HelperClasses.Units;
 
 public class PercentYield extends Function 
 {
@@ -36,8 +35,7 @@ public class PercentYield extends Function
 	private Equation equation;
 	private JLabel errorMessage, instructions;
 	private boolean onReactant, done;
-	private JTextField enterR, enterP;
-	private JRadioButton mole1, gram1, mole2, gram2;
+	private RadioEnterField fieldR, fieldP;
 	private Compound reactant, product;
 	private Box box2;
 	private double toSave;
@@ -136,17 +134,11 @@ public class PercentYield extends Function
 						if(equation.getLeft().indexOf(compound) != -1)
 						{
 							reactant = compound;
-							if(reactant.getNum() == 1) reactantPanel.add(new JLabel("<html>" + compound + "</html>"));
-							else reactantPanel.add(new JLabel("<html>" + compound.toString().substring(1) + "</html>"));
-							enterR = new JTextField(5);
-							reactantPanel.add(enterR);
-							mole1 = new JRadioButton("Moles");
-							gram1 = new JRadioButton("Grams", true);
-							ButtonGroup group = new ButtonGroup();
-							group.add(gram1);
-							group.add(mole1);
-							reactantPanel.add(mole1);
-							reactantPanel.add(gram1);
+							String name;
+							if(reactant.getNum() == 1) name = "<html>" + compound + "</html>";
+							else name = "<html>" + compound.toString().substring(1) + "</html>";
+							fieldR = new RadioEnterField(name, true, "Mass", "Amount");
+							reactantPanel.add(fieldR);
 							instructions.setText("Now click on the product you know the quantity of.");
 							onReactant = false;
 						}
@@ -161,17 +153,11 @@ public class PercentYield extends Function
 						if(equation.getRight().indexOf(compound) != -1)
 						{
 							product = compound;
-							if(product.getNum() == 1) productPanel.add(new JLabel("<html>" + compound + "</html>"));
-							else productPanel.add(new JLabel("<html>" + compound.toString().substring(1) + "</html>"));
-							enterP = new JTextField(5);
-							productPanel.add(enterP);
-							mole2 = new JRadioButton("Moles");
-							gram2 = new JRadioButton("Grams", true);
-							ButtonGroup group = new ButtonGroup();
-							group.add(gram2);
-							group.add(mole2);
-							productPanel.add(mole2);
-							productPanel.add(gram2);
+							String name;
+							if(product.getNum() == 1) name = "<html>" + compound + "</html>";
+							else name = "<html>" + compound.toString().substring(1) + "</html>";
+							fieldP = new RadioEnterField(name, true, "Mass", "Amount");
+							productPanel.add(fieldP);
 							productPanel.add(calculate);
 							instructions.setText("Once you have entered the quantities and units, click the calculate button");
 							done = true;
@@ -197,30 +183,36 @@ public class PercentYield extends Function
 	{
 		public void actionPerformed(ActionEvent arg0)
 		{
-			try
-			{
-				resultPanel.setVisible(false);
-				int sigFigs = Math.min(Function.sigFigs(enterR.getText()), Function.sigFigs(enterP.getText()));
-				double amount = Double.parseDouble(enterR.getText()), actual = Double.parseDouble(enterP.getText());
-				String steps = "<html>First, find the theoretical yield-<br>" + Stoichiometry.calculate(reactant, amount, gram1.isSelected(), product, 
-						gram2.isSelected());
-				double expected = Double.parseDouble(steps.substring(steps.lastIndexOf("=") + 1, steps.lastIndexOf("g"))), percent = 100 * actual / expected;
-				toSave = percent;
-				String percentString = Function.withSigFigs(percent, sigFigs) + "%", unit = "mol";
-				if(gram2.isSelected()) unit = "g";
-				steps += "<br>Then divide the actual yield by the theoretical to find the percent yield:<br>\u2003" + actual + " " + unit + " / " + expected + 
-						" " + unit + " * 100 = " + percent + "%</html>";
-				resultPanel.removeAll();
-				resultPanel.add(new JLabel(percentString));
-				reset.setVisible(true);
-				resultPanel.setVisible(true);
-				stepsPanel.add(new JLabel(steps));
-				stepsPanel.setVisible(true);
-			}
-			catch(Throwable e)
+			resultPanel.setVisible(false);
+			
+			double amount = fieldR.getAmount(), actual = fieldP.getAmount();
+			if(amount == Units.ERROR_VALUE || amount == Units.UNKNOWN_VALUE)
 			{
 				errorMessage.setText("There was a problem with your input");
+				return;
 			}
+			
+			int sigFigs = Math.min(fieldR.getSigFigs(), fieldP.getSigFigs());
+			String steps = "<html>First, find the theoretical yield-<br>" + Stoichiometry.calculate(reactant, amount, fieldR.unit1(), product, fieldP.unit1());
+			double expected;
+			if(fieldP.unit1())
+			{
+				expected = Double.parseDouble(steps.substring(steps.lastIndexOf("=") + 1, steps.lastIndexOf("g")));
+				double temp = fieldR.getBlankAmount(expected);
+				if(temp != expected) steps += "<br>" + expected + " g = " + temp + " " + fieldR.getUnit();
+			}
+			else expected = Double.parseDouble(steps.substring(steps.lastIndexOf("=") + 1, steps.lastIndexOf("mol"))); 
+			double percent = 100 * actual / expected;
+			toSave = percent;
+			String percentString = Function.withSigFigs(percent, sigFigs) + "%", unit = fieldR.getUnit();
+			steps += "<br>Then divide the actual yield by the theoretical to find the percent yield:<br>\u2003" + actual + " " + unit + " / " + expected + 
+					" " + unit + " * 100 = " + percent + "%</html>";
+			resultPanel.removeAll();
+			resultPanel.add(new JLabel(percentString));
+			reset.setVisible(true);
+			resultPanel.setVisible(true);
+			stepsPanel.add(new JLabel(steps));
+			stepsPanel.setVisible(true);
 		}
 	}
 	
@@ -277,8 +269,8 @@ public class PercentYield extends Function
 		Object selected = JOptionPane.showInputDialog(panel, "Choose where to use the number", "Choose Number", JOptionPane.PLAIN_MESSAGE, 
 				null, options, "Reactant");
 		reader.resetFocus();
-		if(selected.equals("Reactant") && enterR != null) enterR.setText("" + num);
-		else if(selected.equals("Product") && enterP != null) enterP.setText("" + num);
+		if(selected.equals("Reactant") && fieldR != null) fieldR.setText("" + num);
+		else if(selected.equals("Product") && fieldP != null) fieldP.setText("" + num);
 	}
 	
 	public boolean help()
