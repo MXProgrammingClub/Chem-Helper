@@ -21,6 +21,7 @@ import java.util.Scanner;
 public class Preferences extends HashMap<String, String> {
 	
 	private String file;
+	PrintWriter writer;
 
 	public Preferences(String file) throws IOException {
 		this.file = file;
@@ -37,30 +38,37 @@ public class Preferences extends HashMap<String, String> {
 	}
 	
 	public void export() throws FileNotFoundException, UnsupportedEncodingException {
-		PrintWriter writer = new PrintWriter(file, "UTF-8");
-		
-		for(String key: this.keySet())
-			writer.println(key + " " + this.get(key));
-		
-		writer.close();
+		writer = new PrintWriter(file, "UTF-8");
+		Thread write = new Thread(new backgroundWriter());
+		write.run();
+	}
+	
+	private void intExport(){
+		try {
+			export();
+		} catch (FileNotFoundException | UnsupportedEncodingException e) {
+		}
 	}
 	
 	public void putString(String key, String value) {
 		if(key.contains(" ") || value.contains(" "))
 			throw new InvalidParameterException();
 		this.put(key, value);
+		intExport();
 	}
 	
 	public void putBoolean(String key, boolean value) {
 		if(key.contains(" "))
 			throw new InvalidParameterException();
 		this.put(key, "" + value);
+		intExport();
 	}
 	
 	public void putInteger(String key, int value) {
 		if(key.contains(" "))
 			throw new InvalidParameterException();
 		this.put(key, "" + value);
+		intExport();
 	}
 	
 	public String getString(String key) {
@@ -91,6 +99,16 @@ public class Preferences extends HashMap<String, String> {
 		catch(Throwable e) {
 			return 0;
 		}
+	}
+	
+	private class backgroundWriter implements Runnable{
+		public void run(){ 
+			for(String key: keySet())
+				writer.println(key + " " + get(key));
+			
+			writer.close();
+		}
+		
 	}
 	
 }

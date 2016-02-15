@@ -18,6 +18,7 @@ public class OxidationNumber extends Function{	//Oxidation number in compound
 	private TextField field;
 	private Box box;
 	private JButton calculate;
+	private JLabel result;
 	
 	public OxidationNumber() {
 		super("Oxidation Number");
