@@ -45,7 +45,7 @@ public class ChemHelper extends JFrame {		//Primary GUI class
 	public Equation equation;
 	public Function lastFunc;
 	public LinkedList<Double> savedNumbers;
-	Preferences preferences;
+	public Preferences preferences;
 	
 	public ChemHelper() {
 		LoadingDialog ld = new LoadingDialog();
@@ -302,7 +302,12 @@ public class ChemHelper extends JFrame {		//Primary GUI class
 			chelper = new ChemHelper();
 		}
 		catch(Throwable e) {
-			if(chelper != null) chelper.dispose();
+			if(chelper != null) {
+				try {
+					chelper.preferences.export();
+				} catch (FileNotFoundException | UnsupportedEncodingException e1) {}
+				chelper.dispose();
+			}
 			new CrashFrame(e, e.getStackTrace());
 		}
 	}
