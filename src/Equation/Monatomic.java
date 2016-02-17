@@ -2,7 +2,7 @@
  * Represents a monatomic ion.
  * 
  * Author: Julia McClellan
- * Version: 2/2/2016
+ * Version: 2/17/2016
  */
 
 package Equation;
@@ -29,6 +29,15 @@ public class Monatomic extends Ions
 	{
 		super(num, charge);
 		this.element = element;
+	}
+	
+	/*
+	 * A copy constructor.
+	 */
+	public Monatomic(Monatomic copy)
+	{
+		super(copy.getNum(), copy.getCharge());
+		element = copy.getElement();
 	}
 	
 	public Element getElement()
@@ -65,5 +74,13 @@ public class Monatomic extends Ions
 	public String getMolarMassSteps() 
 	{
 		return "(" + element.getMolarMass() + " * " + super.getNum() + ")";
+	}
+	
+	/*
+	 * Returns true if the element of each ion is the same.
+	 */
+	public boolean equals(Monatomic other)
+	{
+		return other.getElement().equals(element);
 	}
 }

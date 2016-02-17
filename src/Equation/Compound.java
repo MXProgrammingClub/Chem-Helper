@@ -160,32 +160,22 @@ public class Compound
 	
 	public Monatomic[] getNoPoly()
 	{
-		ArrayList<Monatomic> ionList = new ArrayList<Monatomic>();
-		for(Ions ion: ions)
-		{	
-			for(Monatomic mon: ion.getElements())
+		ArrayList<Monatomic> list = new ArrayList<Monatomic>();
+		for(Ions i: ions)
+		{
+			for(Monatomic m: i.getElements())
 			{
-				int index = -1, factor = 1;
-				Element e = mon.getElement();
-				for(int i = 0; i < ionList.size(); i++)
-				{
-					if(e.equals(ionList.get(i).getElement()))
-					{
-						index = i;
-						break;
-					}
-				}
-				if(ion instanceof Polyatomic) factor = ion.getNum();
-				if(index != -1) ionList.get(index).setNum(ionList.get(index).getNum() + mon.getNum() * factor);
+				int index = list.indexOf(m);
+				if(index == -1) list.add(new Monatomic(m));
 				else
 				{
-					Monatomic temp = new Monatomic(mon.getElement(), mon.getNum() * factor, mon.getCharge());
-					ionList.add(temp);
+					Monatomic element = list.get(index);
+					element.setNum(element.getNum() + m.getNum());
 				}
 			}
 		}
-		Monatomic[] array = new Monatomic[ionList.size()];
-		return ionList.toArray(array);
+		System.out.println(list);
+		return (Monatomic[])list.toArray();
 	}
 	
 	public static Compound parseCompound(String cmp) throws InvalidInputException
