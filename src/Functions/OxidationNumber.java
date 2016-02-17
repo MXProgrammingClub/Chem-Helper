@@ -1,9 +1,10 @@
 package Functions;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -16,7 +17,6 @@ import HelperClasses.TextField;
 public class OxidationNumber extends Function{	//Oxidation number in compound
 	private JPanel panel;
 	private TextField field;
-	private Box box;
 	private JButton calculate;
 	private JLabel result;
 	
@@ -28,14 +28,22 @@ public class OxidationNumber extends Function{	//Oxidation number in compound
 
 	private void setPanel() {
 		panel = new JPanel();
-		panel.add(new JLabel("Enter the compound to calulate Oxidation numbers for: "));
-		box = Box.createVerticalBox();
-		field = new TextField(80);
+		JPanel subpanel = new JPanel(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridy = 0;
+		c.gridx = 0;
+		c.anchor = GridBagConstraints.NORTH;
+		subpanel.add(new JLabel("Enter the compound to calulate Oxidation numbers for: "), c);
+		c.gridy++;
+		field = new TextField(TextField.EQUATION);
 		calculate = new JButton("Calulate");
 		calculate.addActionListener(new ButtonListener());
-		box.add(field);
-		box.add(calculate);
-		panel.add(box);
+		subpanel.add(field, c);
+		c.gridy++;
+		subpanel.add(calculate, c);
+		result = new JLabel();
+		subpanel.add(result, c);
+		panel.add(subpanel);
 	}
 
 
@@ -50,7 +58,7 @@ public class OxidationNumber extends Function{	//Oxidation number in compound
 				Compound compound = Compound.parseCompound(field.getText());
 				findNumbers(compound);
 			} catch (InvalidInputException e) {
-				box.add(new JLabel("There was an error with your input"));
+				result.setText("There was an error with your input");
 			}
 		}
 
@@ -58,7 +66,7 @@ public class OxidationNumber extends Function{	//Oxidation number in compound
 			Ions[] ions = compound.getIons();
 			int charge = 0;
 			for(Ions ion:ions) charge+=ion.getCharge()*ion.getNum();
-			System.out.println(charge);
+			result.setText(charge + "");
 		}
 		
 	}
