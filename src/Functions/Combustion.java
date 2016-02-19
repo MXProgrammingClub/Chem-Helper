@@ -3,16 +3,17 @@
  * equation() returns true- can save latest produced equation, but can't use a saved equation.
  * 
  * Author: Julia McClellan
- * Version: 1/30/2016
+ * Version: 2/18/2016
  */
 
 package Functions;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -46,14 +47,20 @@ public class Combustion extends Function
 		combust.addActionListener(new Combust());
 		result = new JLabel();
 		
-		Box box = Box.createVerticalBox();
-		box.add(new JLabel("Enter a compound to combust."));
-		box.add(compound);
-		box.add(combust);
-		box.add(result);
+		JPanel subpanel = new JPanel(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridy = 0;
+		c.anchor = GridBagConstraints.CENTER;
+		subpanel.add(new JLabel("Enter a compound to combust."), c);
+		c.gridy++;
+		subpanel.add(compound, c);
+		c.gridy++;
+		subpanel.add(combust, c);
+		c.gridy++;
+		subpanel.add(result, c);
 		
 		panel = new JPanel();
-		panel.add(box);
+		panel.add(subpanel);
 	}
 	
 	private class Combust implements ActionListener
