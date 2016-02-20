@@ -2,7 +2,7 @@
  * Represents a polyatomic ion and has a public array of common polyatomic ions.
  * 
  * Author: Julia McClellan
- * Version: 1/16/2016
+ * Version: 2/19/2016
  */
 
 package Equation;
@@ -74,6 +74,18 @@ public class Polyatomic extends Ions
 	
 	public Monatomic[] getElements()
 	{
+		Monatomic[] e = new Monatomic[elements.length];
+		for(int index = 0; index < e.length; index++)
+		{
+			e[index] = new Monatomic(elements[index]);
+			e[index].setNum(e[index].getNum() * getNum());
+		}
+		return e;
+	}
+	
+	public Monatomic[] getElements(boolean numbers)
+	{
+		if(numbers) return getElements();
 		return elements;
 	}
 

@@ -4,7 +4,7 @@
  * classes that need them.
  * 
  * Authors: Ted Pyne, Hyun Choi, Julia McClellan
- * Version: 1/26/2016
+ * Version: 2/19/2016
  */
 
 package Functions;
@@ -86,7 +86,7 @@ public abstract class Function {
 				for (Ions ion: comp.getIons()) {
 					if(ion instanceof Polyatomic) str += "(";
 					
-					for(Monatomic sub: ion.getElements())
+					for(Monatomic sub: ion.getElements(false))
 					{
 						str += "\\text{" + sub.getElement().getSymbol() + "}";
 					

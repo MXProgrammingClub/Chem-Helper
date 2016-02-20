@@ -174,8 +174,8 @@ public class Compound
 				}
 			}
 		}
-		System.out.println(list);
-		return (Monatomic[])list.toArray();
+		Monatomic[] array = new Monatomic[list.size()];
+		return list.toArray(array);
 	}
 	
 	public static Compound parseCompound(String cmp) throws InvalidInputException
@@ -199,11 +199,18 @@ public class Compound
 		ArrayList<Ions> ions = new ArrayList<Ions>();
         String temp = "";
         boolean mid = false;
-        for(int index = 0; index < cmp.length(); index++) 
+        int index = 0, coefficient = 0;
+        for(; index < cmp.length() && Character.isDigit(cmp.charAt(index)); index++)
+        {
+        	coefficient = 10 * coefficient + (char)Math.abs('0' - cmp.charAt(index));
+        }
+        if(coefficient == 0) coefficient = 1;
+        for(; index < cmp.length(); index++) 
         {
         	char ch = cmp.charAt(index);
         	if(!mid)
         	{
+        		
         		if(Character.isUpperCase(ch))
         		{
         			if(temp.length() > 0) ions.add(Ions.parseIons(temp));
@@ -225,6 +232,6 @@ public class Compound
         }
         ions.add(Ions.parseIons(temp));
         Ions[] i = new Ions[ions.size()];
-		return new Compound(ions.toArray(i), state);
+		return new Compound(ions.toArray(i), state, coefficient);
 	}
 }

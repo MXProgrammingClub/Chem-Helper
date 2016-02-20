@@ -2,7 +2,7 @@
  * Represents a chemical equation. 
  * 
  * Authors: Luke Giacalone, Julia McClellan, Hyun Choi
- * Version: 1/24/2016
+ * Version: 2/19/2016
  */
 
 package Equation;
@@ -118,11 +118,12 @@ public class Equation
 		int var = 1;
 		for(Compound c: left) { //getting and assigning vars to left side compounds
 			for(Monatomic e: c.getNoPoly()) //getting all the different ions in the equation
-				if(!ions.contains(e)) ions.add(e);
+				if(!ions.contains(e)) ions.add(new Monatomic(e));
 			if(!skeleton.equals("")) skeleton += "+";
 			skeleton += getNextVar(var);
 			var++;
 		}
+		//System.out.println(ions);
 		skeleton += "=";
 		for(Compound c: right) { //getting and assigning vars to right side compounds
 			if(skeleton.charAt(skeleton.length() - 1) != '=') skeleton += "+";
@@ -245,11 +246,6 @@ public class Equation
 	    
 	    return newCo;
 	}
-	
-	//finds the least common multiple of two numbers
-	//private static int lcm(int a, int b){
-	//    return a * (b / Function.gcd(a, b));
-	//}
 	
 	private boolean isBalanced()
 	{

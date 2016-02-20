@@ -2,7 +2,7 @@
  * Represents a monatomic ion.
  * 
  * Author: Julia McClellan
- * Version: 2/17/2016
+ * Version: 2/19/2016
  */
 
 package Equation;
@@ -49,6 +49,11 @@ public class Monatomic extends Ions
 	{
 		Monatomic[] list = {this};
 		return list;
+	}
+	
+	public Monatomic[] getElements(boolean numbers)
+	{
+		return getElements();
 	}
 
 	public String toString() 
