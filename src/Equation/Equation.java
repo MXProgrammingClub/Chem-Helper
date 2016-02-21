@@ -7,6 +7,7 @@
 
 package Equation;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import ChemHelper.InvalidInputException;
@@ -89,14 +90,22 @@ public class Equation
 	public boolean balance() {
 		if(isBalanced()) return true;
 		String[] equations = createEquations();
+		//for(String s: equations) System.out.println(s);
 		equations = subForA(equations);
+		//System.out.println();
+		//for(String s: equations) System.out.println(s);
 		Matrix m = new Matrix(equations);
+		//System.out.println(m);
 		double[] solved = m.solve();
 		double[] doubleCoeff = new double[solved.length + 1];
 		doubleCoeff[0] = 1.0; //setting a = 1
 		for(int i = 1; i < doubleCoeff.length; i++) //transferring the rest of the variables over
 			doubleCoeff[i] = solved[i - 1];
+		//System.out.println();
+		//for(double d: doubleCoeff) System.out.println(d);
 		int[] coefficients = integerize(doubleCoeff);
+		//System.out.println();
+		//for(double d: coefficients) System.out.println(d);
 		
 		int index = 0;
 		for(Compound c: left) {
@@ -210,7 +219,8 @@ public class Equation
 	/*public static void main(String[] args) {
 		Equation eq = null;
 		try {
-			eq = Equation.parseEquation("O.2+C.6/H.12/O.6=C/O.2+H.2/O");
+			eq = Equation.parseEquation("Al/O.2=Al.2/O.3");
+			System.out.println(eq + "\n");
 		} catch (InvalidInputException e) {
 			e.printStackTrace();
 		}
@@ -229,10 +239,34 @@ public class Equation
 			var += alphabet.charAt(nums.get(i) - 1);
 		return var;
 	}
-		
+	
+	/**@TODO When a coefficient is repeating, it does not work.*/
 	//takes an array of doubles and makes them into integers
 	private static int[] integerize(double[] coefficients) {
-		int[] reciprocals = new int[coefficients.length];
+		//for(double c: coefficients) System.out.println(c);
+		double[] c2 = coefficients.clone();
+		int[] denominators = new int[coefficients.length];
+		for(int i = 0; i < c2.length; i++) {
+			String s = String.valueOf(c2[i]);
+	        int digitsDec = s.length() - 1 - s.indexOf('.');
+	        int denom = 1;
+	        for (int j = 0; j < digitsDec; j++) {
+	        	c2[i] *= 10;  
+	            denom *= 10;
+	        }
+	        int num = (int) Math.round(c2[i]);
+	        int g = Function.gcd(num, denom);
+	        denominators[i] = denom / g;
+		}
+		
+		int lcm = denominators[0];
+		for(int i = 1; i < denominators.length; i++)
+			lcm = Function.lcm(lcm, denominators[i]);
+		int[] newCo = new int[coefficients.length];
+	    for(int i = 0; i < coefficients.length; i++)
+			newCo[i] = (int) (coefficients[i] * lcm);
+	    return newCo;
+		/*int[] reciprocals = new int[coefficients.length];
 		for(int i = 0; i < coefficients.length; i++) //e.g. 0.2 (or 1/5) becomes 5
 			reciprocals[i] = (int) (1.0 / coefficients[i]);
 		
@@ -244,7 +278,7 @@ public class Equation
 	    for(int i = 0; i < coefficients.length; i++)
 			newCo[i] = (int) (coefficients[i] * lcm);
 	    
-	    return newCo;
+	    return newCo;*/
 	}
 	
 	private boolean isBalanced()
