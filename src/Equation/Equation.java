@@ -7,7 +7,6 @@
 
 package Equation;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import ChemHelper.InvalidInputException;
@@ -97,10 +96,7 @@ public class Equation
 		doubleCoeff[0] = 1; //setting a = 1
 		for(int i = 1; i < doubleCoeff.length; i++) //transferring the rest of the variables over
 			doubleCoeff[i] = solved[i - 1];
-		for(double d: doubleCoeff) System.out.println(d);
 		int[] coefficients = integerize(doubleCoeff);
-		System.out.println();
-		for(int i: coefficients) System.out.println(i);
 		
 		int index = 0;
 		for(Compound c: left) {
@@ -211,17 +207,6 @@ public class Equation
 		return newEq;
 	}
 	
-	/*public static void main(String[] args) {
-		Equation eq = null;
-		try {
-			//eq = Equation.parseEquation("Na+Cl\u2192Na<sub>2</sub>Cl");
-			eq = Equation.parseEquation("Al+O<sub>2</sub>\u2192Al<sub>2</sub>O<sub>3</sub>");
-		} catch (InvalidInputException e) {
-			e.printStackTrace();
-		}
-		eq.balance();
-	}*/
-	
 	//provides a new variable
 	//BUG: the variables past the alphabet dont work right  
 	private static String getNextVar(int prev) {
@@ -238,32 +223,12 @@ public class Equation
 	//takes an array of Fractions and makes them into integers
 	private static int[] integerize(double[] c) {
 		double[] c2 = c.clone();
-		int times = 1;
-		for(int i = 1; i < c2.length; i++) {
-			int num = 1;
-			while(!closeToInt(c2[i])) {
-				num++;
-				c2[i] = num * c[i];
-			}
-			if(times % num != 0) times *= num;
-		}
+		int times = Function.integerize(c2);
 		
 		int[] newCo = new int[c.length];
 		for(int i = 0; i < newCo.length; i++)
 			newCo[i] = (int) (c[i] * times);
-		int gcd = newCo[0];
-		for(int num: newCo)
-			gcd = Function.gcd(gcd, num);
-		for(int i = 0; i < newCo.length; i++)
-			newCo[i] /= gcd;
 		return newCo;
-	}
-	
-	private static boolean closeToInt(double num) {
-		final double TOLERANCE = 0.0000001;
-		int down = (int) num;
-		int up = down + 1;
-		return num - down < TOLERANCE || up - num < TOLERANCE;
 	}
 	
 	private boolean isBalanced()

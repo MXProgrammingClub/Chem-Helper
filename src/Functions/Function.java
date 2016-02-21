@@ -4,7 +4,7 @@
  * classes that need them.
  * 
  * Authors: Ted Pyne, Hyun Choi, Julia McClellan
- * Version: 2/20/2016
+ * Version: 2/21/2016
  */
 
 package Functions;
@@ -31,6 +31,7 @@ import Equation.Polyatomic;
 public abstract class Function {
 	private String name;
 	private static int sigFig;
+	public static final double TOLERANCE = .05;
 	
 	public Function(String name)
 	{
@@ -250,5 +251,32 @@ public abstract class Function {
 			else resultant = resultant.substring(0, resultant.length() - 1);
 		}
 		return resultant;
+	}
+	
+	/*
+	 * Returns the smallest possible factor to mulitply each number by in order to have an array of integers.
+	 */
+	public static int integerize(double[] values)
+	{
+		int factor = 1;
+		for(int index = 0; index < values.length; index++)
+		{
+			for(int num = 1; num <= Integer.MAX_VALUE; num++) //Though I hope it doesn't get there.
+			{
+				double value = num * values[index];
+				if(closeToInt(value))
+				{
+					if(factor % num != 0) factor *= num;
+					break;
+				}
+			}
+		}
+		return factor;
+	}
+	
+	private static boolean closeToInt(double num)
+	{
+		int down = (int)num, up = down + 1;
+		return num - down < TOLERANCE || up - num < TOLERANCE;
 	}
 }

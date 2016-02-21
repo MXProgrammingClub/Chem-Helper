@@ -4,7 +4,7 @@
  * number() returns true- can save either the empirical or molecular molar mass, and use a saved number in moles or mass for molecular calculations.
  * 
  * Author: Julia McClellan
- * Version: 1/5/2016
+ * Version: 2/21/2016
  */
 
 package Functions;
@@ -27,9 +27,8 @@ import Elements.Element;
 
 public class Empirical extends Function
 {
-	private static final double ERROR_VALUE = 101, REST = -1, TOLERANCE = .05;
+	private static final double ERROR_VALUE = 101, REST = -1;
 	private static final String ENTER_REST = "R";
-	private static final int MAX_TEST = 20;
 	
 	private JPanel panel, amounts;
 	private JTextField moles, mass;
@@ -254,25 +253,13 @@ public class Empirical extends Function
 			steps.add(Box.createVerticalStrut(5));
 			
 			steps.add(new JLabel("Divide each value by the smallest, " + min + ":"));
-			int times = 1;
 			for(int index = 0; index < values.length; index++)
 			{
 				String step = elements[index] + ": " + values[index] + " / " + min + " = ";
 				values[index] /= min;
 				steps.add(new JLabel(step + values[index]));
-				if(!closeToInt(values[index]))
-				{
-					for(int num = 2; num < MAX_TEST; num++)
-					{
-						double value = num * values[index];
-						if(closeToInt(value))
-						{
-							if(times % num != 0) times *= num;
-							break;
-						}
-					}
-				}
 			}
+			int times = integerize(values);
 			steps.add(Box.createVerticalStrut(5));
 			
 			steps.add(new JLabel("Multiply by " + times + " to round to an integer value:"));
@@ -282,7 +269,7 @@ public class Empirical extends Function
 			for(int index = 0; index < coefficients.length; index++)
 			{
 				String step = elements[index] + ": " + values[index] + " * " + times + " \u2248 ";
-				coefficients[index] = round(values[index] * times);
+				coefficients[index] = (int)Math.round(values[index] * times);
 				steps.add(new JLabel(step + coefficients[index]));
 				double mass = elements[index].getMolarMass();
 				eMass += coefficients[index] * mass;
@@ -314,7 +301,7 @@ public class Empirical extends Function
 						mMass = massForMoles / mole;
 						steps.add(new JLabel(step + mMass + " g/mol"));
 					}
-					int factor = round(mMass / eMass);
+					int factor = (int)Math.round(mMass / eMass);
 					steps.add(new JLabel("Find ratio of masses and round to an integer: " + mMass + " / " + eMass + " \u2248 " + factor));
 					steps.add(new JLabel("Multiply all of the coefficients by " + factor + ":"));
 					formula = "<html>Molecular formula: ";
@@ -336,19 +323,6 @@ public class Empirical extends Function
 				}
 			}
 			steps.setVisible(true);
-		}
-		
-		private boolean closeToInt(double num)
-		{
-			int down = (int)num, up = down + 1;
-			return num - down < TOLERANCE || up - num < TOLERANCE;
-		}
-		
-		private int round(double num)
-		{
-			int round = (int)num;
-			if(round + .5 > num) return round;
-			else return round + 1;
 		}
 	}
 	
