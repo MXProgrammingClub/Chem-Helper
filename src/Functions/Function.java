@@ -4,7 +4,7 @@
  * classes that need them.
  * 
  * Authors: Ted Pyne, Hyun Choi, Julia McClellan
- * Version: 2/19/2016
+ * Version: 2/20/2016
  */
 
 package Functions;
@@ -30,6 +30,7 @@ import Equation.Polyatomic;
 
 public abstract class Function {
 	private String name;
+	private static int sigFig;
 	
 	public Function(String name)
 	{
@@ -143,11 +144,17 @@ public abstract class Function {
 		return num1 * (num2 / Function.gcd(num1, num2));
 	}
 	
+	public static void setSigFigPref(int newPref)
+	{
+		sigFig = newPref;
+	}
+	
 	/*
 	 * Returns the number of significant figures a number has, if numString is a String representation of a double.
 	 */
 	public static int sigFigs(String numString)
 	{
+		if(sigFig == 0) return 0; //There is no point in calculating if they won't be used.
 		int sigFigs = numString.length();
 		if(numString.indexOf("-") != -1) sigFigs--;
 		if(numString.indexOf(".") != -1) sigFigs--;
@@ -158,12 +165,61 @@ public abstract class Function {
 	}
 
 	/*
-	 * Returns a String representation of the number with the given number of significant figures, unless that would require scientific notation
-	 * because I didn't feel like doing that and might do it later. 
+	 * Returns a String representation of the number with the given number of significant figures.
 	 * pre: sigFigs >= 1
 	 */
 	public static String withSigFigs(double num, int sigFigs)
 	{
+		if(sigFig == 0) return num + "";
+		if(sigFig == 1)
+		{
+			int count = 0;
+			boolean neg = num < 0, no = false; //neg for whether to add a negative sign later, no for if it needs to be in scientific notation
+			num = Math.abs(num);
+			String original = "" + num, numString = "";
+			int index;
+			if(num > 1)
+			{
+				for(; count < original.length() && original.charAt(count) != '.' && count < sigFigs; numString += original.charAt(count), count++);
+				if(count == sigFigs) // Adding extra zeros to the end if necessary.
+				{
+					
+					if((count + 1 < original.length() && original.charAt(count) == '.' && original.charAt(count + 1) >= '5') || 
+							(count < original.length() && original.charAt(count) >= '5'))
+					{
+						numString = roundUp(numString);
+					}
+					if(numString.charAt(sigFigs - 1) == '0') no = true; //If the last character is 0, it has to be in scientific notation
+					else
+					{
+						for(int i = count; i < original.length() && original.charAt(i) != '.'; i++, numString += '0');
+						if(neg) numString = '-' + numString;
+						return numString;
+					}
+				}
+				index = count + 1;
+			}
+			else 
+			{
+				numString = "0";
+				index = 2;
+			}
+			if(!no)
+			{
+				numString += '.';
+				for(; index < original.length() && count < sigFigs;  numString += original.charAt(index), count++, index++);
+				if(count == sigFigs && index < original.length() && original.charAt(index) >= '5') 
+				{
+					numString = roundUp(numString);
+				}
+				for(; count < sigFigs; count++, numString += '0');
+				if(numString.length() == sigFigs + 1)
+				{
+					if(neg) numString = '-' + numString;
+					return numString;
+				}
+			}
+		}
 		String format = "0";
 		if(sigFigs>1) format += ".";
 		for(int i = 1; i < sigFigs; i++) format+="0";
@@ -173,7 +229,7 @@ public abstract class Function {
 		NumberFormat formatter = new DecimalFormat(format);
 		return formatter.format(num);
 	}
-
+	
 	private static String roundUp(String toRound)
 	{
 		
@@ -195,5 +251,4 @@ public abstract class Function {
 		}
 		return resultant;
 	}
-	
 }

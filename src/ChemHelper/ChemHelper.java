@@ -107,6 +107,8 @@ public class ChemHelper extends JFrame {		//Primary GUI class
 		buttons.setVisible(false);
 		equation = null;
 		
+		Function.setSigFigPref(preferences.getInteger("Sig_Figs"));
+		
 		//Add a shutdownhook that will save the preferences set by the user
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {

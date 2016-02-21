@@ -1,7 +1,8 @@
 /*
  * File: Prefs.java (I wanted Preferences.java but eclipse didn't let me)
  * Author: Luke Giacalone
- * Version: 01/29/2016
+ * Edited: Julia McClellan - added significant figures preference
+ * Version: 2/20/2016
  * ----------------------------------------------------------------------
  * Holds the preferences for the ChemHelper program
  */
@@ -24,10 +25,10 @@ public class Prefs extends Function {
 	
 	private ChemHelper chelper;
 	private JPanel panel;
-	private JComboBox<String> tableStyles;
+	private JComboBox<String> tableStyles, sigFigFormat;
 	private JCheckBox stateColors;
 	
-	private static final String[] TABLE_STYLES = {"Blank", "Color Coded 1", "Color Coded 2"};
+	private static final String[] TABLE_STYLES = {"Blank", "Color Coded 1", "Color Coded 2"}, SIG_FIGS = {"None", "Standard", "Scientific Notation"};
 	
 	public Prefs(ChemHelper ch) {
 		super("Preferences");
@@ -54,6 +55,14 @@ public class Prefs extends Function {
 		stateColors.setSelected(chelper.getBooleanPreference("State_Colors"));
 		subpanel.add(stateColors, c);
 		
+		c.gridy++;
+		c.gridx = 0;
+		subpanel.add(new JLabel("Significant Figures Format:"), c);
+		c.gridx++;
+		sigFigFormat = new JComboBox<String>(SIG_FIGS);
+		sigFigFormat.setSelectedIndex(chelper.getIntPreference("Sig_Figs"));
+		subpanel.add(sigFigFormat, c);
+		
 		tableStyles.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -73,6 +82,16 @@ public class Prefs extends Function {
 				catch(Throwable e2) {}
 			}
 		});
+		
+		sigFigFormat.addActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent arg0)
+				{
+					int pref = sigFigFormat.getSelectedIndex();
+					chelper.changePreference("Sig_Figs", pref);
+					Function.setSigFigPref(pref);
+				}
+			});
 		
 		panel = new JPanel();
 		panel.add(subpanel);
