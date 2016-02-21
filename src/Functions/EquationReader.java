@@ -2,8 +2,8 @@
  * Parses and balances an equation. Displays equations with latex.
  * equation() returns true- saves latest balanced equation and can display a saved one.
  * 
- * Author: Julia McClellan, Hyun Choi
- * Version: 2/5/2016
+ * Author: Julia McClellan, Hyun Choi, Luke Giacalone
+ * Version: 2/21/2016
  */
 
 package Functions;
@@ -69,6 +69,7 @@ public class EquationReader extends Function
 		c.gridy = 2;
 		box.add(buttons, c);
 		c.gridy = 3;
+		c.gridwidth = 2;
 		box.add(result, c);
 		c.gridy = 4;
 		box.add(balanced, c);

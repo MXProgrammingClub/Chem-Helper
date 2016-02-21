@@ -1,6 +1,6 @@
 /*
  * Author: Luke Giacalone and Julia McClellan
- * Version: 01/11/2015
+ * Version: 02/21/2015
  */
 
 package Equation;
