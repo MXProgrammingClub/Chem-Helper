@@ -28,7 +28,8 @@ public class Prefs extends Function {
 	private JComboBox<String> tableStyles, sigFigFormat;
 	private JCheckBox stateColors;
 	
-	private static final String[] TABLE_STYLES = {"Blank", "Color Coded 1", "Color Coded 2"}, SIG_FIGS = {"None", "Standard", "Scientific Notation"};
+	private static final String[] TABLE_STYLES = {"Blank", "Color Coded 1", "Color Coded 2"};
+	private static final String[] SIG_FIGS = {"None", "Standard", "Scientific Notation"};
 	
 	public Prefs(ChemHelper ch) {
 		super("Preferences");
@@ -52,15 +53,19 @@ public class Prefs extends Function {
 		subpanel.add(new JLabel("Element Labels Colored by State: "), c);
 		c.gridx = 1;
 		stateColors = new JCheckBox();
-		stateColors.setSelected(chelper.getBooleanPreference("State_Colors"));
+		stateColors.setSelected(chelper.getBooleanPreference("Table_State_Colors"));
 		subpanel.add(stateColors, c);
 		
 		c.gridy++;
 		c.gridx = 0;
-		subpanel.add(new JLabel("Significant Figures Format:"), c);
+		subpanel.add(new JLabel("<html><h3><br><u>Significant Figure Settings</u></h3></html>"), c);
+		
+		c.gridy++;
+		c.gridx = 0;
+		subpanel.add(new JLabel("Format: "), c);
 		c.gridx++;
 		sigFigFormat = new JComboBox<String>(SIG_FIGS);
-		sigFigFormat.setSelectedIndex(chelper.getIntPreference("Sig_Figs"));
+		sigFigFormat.setSelectedIndex(chelper.getIntPreference("SigFigs_Format"));
 		subpanel.add(sigFigFormat, c);
 		
 		tableStyles.addActionListener(new ActionListener() {
@@ -76,7 +81,7 @@ public class Prefs extends Function {
 		stateColors.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					chelper.changePreference("State_Colors", stateColors.isSelected());
+					chelper.changePreference("Table_State_Colors", stateColors.isSelected());
 					chelper.refreshTable();
 				}
 				catch(Throwable e2) {}
@@ -88,7 +93,7 @@ public class Prefs extends Function {
 				public void actionPerformed(ActionEvent arg0)
 				{
 					int pref = sigFigFormat.getSelectedIndex();
-					chelper.changePreference("Sig_Figs", pref);
+					chelper.changePreference("SigFigs_Format", pref);
 					Function.setSigFigPref(pref);
 				}
 			});
