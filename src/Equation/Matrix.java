@@ -18,11 +18,10 @@ public class Matrix {
 	//				there are the same number of equations as there are unknowns
 	public Matrix(String[] equations) {
 		numVar = equations[0].split("=")[0].split("\\+").length;
-
 		matrix = new int[numVar][numVar + 1];
 		int index1 = 0;
-		
 		while(numVar < equations.length) { //to check whether 2 equations are the same and then remove the unneeded one
+			boolean broken = false;
 			check:
 			for(int i = 0; i < equations.length; i++) {
 				for(int j = 0; j < equations.length; j++) {
@@ -35,17 +34,30 @@ public class Matrix {
 								index++;
 							}
 						equations = temp;
-						break check;
+						if(i != equations.length - 1) break check;
+					}
+					if(i == j && i == equations.length - 1) {
+						broken = true;
+						break;
 					}
 				}
+				if(broken) break;
 			}
+			if(broken) break;
+		}
+		
+		while(numVar < equations.length) {
+			String[] temp = new String[equations.length - 1];
+			for(int i = 0; i < temp.length; i++)
+				temp[i] = equations[i];
+			equations = temp;
 		}
 		
 		for(String str: equations) {
 			String half1 = str.substring(0, str.indexOf("="));
 			String half2 = str.substring(str.indexOf("=") + 1);
 			int index2 = 0;
-
+			
 			//for the part before the equal sign
 			for(String part: half1.split("\\+")) {
 				String temp = part.substring(0, part.length() - 1);
@@ -55,7 +67,7 @@ public class Matrix {
 				matrix[index1][index2] = Integer.parseInt(temp);
 				index2++;
 			}
-
+			
 			//for the part after the equal sign
 			matrix[index1][index2] = Integer.parseInt(half2);
 
