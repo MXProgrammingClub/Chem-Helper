@@ -92,7 +92,7 @@ public class Equation
 		equations = subForA(equations);
 		Matrix m = new Matrix(equations);
 		double[] solved = m.solve();
-		for(double n: solved) System.out.println(n);
+		//for(double n: solved) System.out.println(n);
 		double[] doubleCoeff = new double[solved.length + 1];
 		doubleCoeff[0] = 1; //setting a = 1
 		for(int i = 1; i < doubleCoeff.length; i++) //transferring the rest of the variables over
@@ -275,7 +275,7 @@ public class Equation
 		return ions;
 	}
 	
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		try {
 			Equation eq = parseEquation("AgNO<sub>3</sub>+MgCl<sub>2</sub>\u2192AgCl+Mg(NO<sub>3</sub>)<sub>2</sub>");
 			eq.balance();
@@ -283,7 +283,6 @@ public class Equation
 		catch (Throwable e) {
 			e.printStackTrace();
 		}
-	}
-	
+	}*/
 	
 }

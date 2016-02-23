@@ -9,6 +9,8 @@
 
 package Equation;
 
+import java.util.ArrayList;
+
 public class Matrix {
 	
 	private int[][] matrix;
@@ -18,7 +20,6 @@ public class Matrix {
 	//				there are the same number of equations as there are unknowns
 	public Matrix(String[] equations) {
 		numVar = equations[0].split("=")[0].split("\\+").length;
-		matrix = new int[numVar][numVar + 1];
 		int index1 = 0;
 		while(numVar < equations.length) { //to check whether 2 equations are the same and then remove the unneeded one
 			boolean broken = false;
@@ -46,12 +47,8 @@ public class Matrix {
 			if(broken) break;
 		}
 		
-		while(numVar < equations.length) {
-			String[] temp = new String[equations.length - 1];
-			for(int i = 0; i < temp.length; i++)
-				temp[i] = equations[i];
-			equations = temp;
-		}
+		//matrix = new int[numVar][numVar + 1];
+		matrix = new int[equations.length][numVar + 1]; //will be cut to size if needed
 		
 		for(String str: equations) {
 			String half1 = str.substring(0, str.indexOf("="));
@@ -74,6 +71,32 @@ public class Matrix {
 			index1++;
 		}
 		
+		if(numVar < matrix.length) {
+			ArrayList<Integer>[] options = new ArrayList[numVar];
+			for(int i = 0; i < options.length; i++)
+				options[i] = new ArrayList<Integer>();
+			for(int var = 0; var < matrix[0].length - 1; var++) //adds the indexes of the equations with numbers for each var
+				for(int eq = 0; eq < matrix.length; eq++)
+					if(matrix[eq][var] != 0) options[var].add(eq);
+			
+			int[] indexes = new int[numVar];
+			chooseEquations(0, options, indexes);
+			int[][] temp = new int[numVar][numVar + 1];
+			for(int i = 0; i < indexes.length; i++)
+				temp[i] = matrix[indexes[i]];
+			matrix = temp;
+		}
+		
+	}
+	
+	private boolean chooseEquations(int number, ArrayList<Integer>[] list, int[] chosen) {
+		if(number == chosen.length) return true;
+		for(int i = 0; i < list[number].size(); i++) {
+			chosen[number] = list[number].get(i);
+			boolean complete = chooseEquations(number + 1, list, chosen);
+			if(complete) return true;
+		}
+		return false;
 	}
 
 	//switches two rows
