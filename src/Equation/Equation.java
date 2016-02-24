@@ -2,7 +2,7 @@
  * Represents a chemical equation. 
  * 
  * Authors: Luke Giacalone, Julia McClellan, Hyun Choi
- * Version: 2/21/2016
+ * Version: 2/23/2016
  */
 
 package Equation;
@@ -86,11 +86,13 @@ public class Equation
 		return right;
 	}
 	
-	public boolean balance() {
+	public boolean balance() throws InvalidInputException {
 		if(isBalanced()) return true;
 		String[] equations = createEquations();
 		equations = subForA(equations);
-		Matrix m = new Matrix(equations);
+		Matrix m;
+		try{m = new Matrix(equations);}
+		catch(InvalidInputException e){throw e;}
 		double[] solved = m.solve();
 		//for(double n: solved) System.out.println(n);
 		double[] doubleCoeff = new double[solved.length + 1];

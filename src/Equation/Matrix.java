@@ -1,8 +1,8 @@
 /*
  * File: Matrix.java
  * Package: Equation
- * Version: 02/21/2016
- * Author: Luke Giacalone
+ * Version: 02/23/2016
+ * Author: Luke Giacalone and Julia McClellan
  * ----------------------
  * Represents a matrix which will be used to solve a system of equations
  */
@@ -11,6 +11,8 @@ package Equation;
 
 import java.util.ArrayList;
 
+import ChemHelper.InvalidInputException;
+
 public class Matrix {
 	
 	private int[][] matrix;
@@ -18,7 +20,7 @@ public class Matrix {
 
 	//precondition: the equations are in the form 1a + 2b = c where c is a constant
 	//				there are the same number of equations as there are unknowns
-	public Matrix(String[] equations) {
+	public Matrix(String[] equations) throws InvalidInputException {
 		numVar = equations[0].split("=")[0].split("\\+").length;
 		int index1 = 0;
 		while(numVar < equations.length) { //to check whether 2 equations are the same and then remove the unneeded one
@@ -80,7 +82,8 @@ public class Matrix {
 					if(matrix[eq][var] != 0) options[var].add(eq);
 			
 			int[] indexes = new int[numVar];
-			chooseEquations(0, options, indexes);
+			boolean chosen = chooseEquations(0, options, indexes);
+			if(!chosen) throw new InvalidInputException(InvalidInputException.NOT_BALANCED);
 			int[][] temp = new int[numVar][numVar + 1];
 			for(int i = 0; i < indexes.length; i++)
 				temp[i] = matrix[indexes[i]];
@@ -126,7 +129,7 @@ public class Matrix {
 	public boolean isIdentity() {
 		for(int row = 0; row < matrix.length; row++) {
 			for(int i = 0; i < matrix[row].length - 1; i++) {
-				System.out.println(row + ", " + i + ", " + matrix[row][i]);
+				//System.out.println(row + ", " + i + ", " + matrix[row][i]);
 				if(!(row == i && matrix[row][i] == 1) && !(row != i && matrix[row][i] == 0)) return false;
 			}
 		}
