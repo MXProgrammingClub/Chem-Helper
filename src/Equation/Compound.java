@@ -21,9 +21,7 @@ public class Compound
 	private String state;
 	private int num;
 	
-	private static final Set<String> VALID_STATES = new TreeSet<String>();{
-		VALID_STATES.add("l");VALID_STATES.add("g");VALID_STATES.add("s");VALID_STATES.add("aq");VALID_STATES.add(" ");
-	}
+	private static final Set<String> VALID_STATES = createSet();
 	
 	public Compound(Ions[] ions) {
 		this.ions = ions;
@@ -112,6 +110,17 @@ public class Compound
 		return str;
 	}
 	
+	public String withoutNum()
+	{
+		String str = "";
+		for(Ions ion: ions)
+		{
+			str += ion.withoutCharge();
+		}
+		if(!state.equals(" ")) str += "(" + state + ")";
+		return str;
+	}
+	
 	public double getMolarMass()
 	{
 		double total = 0;
@@ -184,17 +193,8 @@ public class Compound
 		if(cmp.charAt(cmp.length() - 1) == ')')
 		{
 			state = cmp.substring(cmp.lastIndexOf('(') + 1, cmp.length() - 1);
-			boolean found = false;
-			for(String s: VALID_STATES)
-			{
-				if(s.equals(state))
-				{
-					found = true;
-					cmp = cmp.substring(0, cmp.lastIndexOf("("));
-					break;
-				}
-			}
-			if(!found) state = "";
+			if(VALID_STATES.contains(state)) cmp = cmp.substring(0, cmp.lastIndexOf("("));
+			else state = "";
 		}
 		ArrayList<Ions> ions = new ArrayList<Ions>();
         String temp = "";
@@ -233,5 +233,15 @@ public class Compound
         ions.add(Ions.parseIons(temp));
         Ions[] i = new Ions[ions.size()];
 		return new Compound(ions.toArray(i), state, coefficient);
+	}
+	
+	private static TreeSet<String> createSet()
+	{
+		TreeSet<String> set = new TreeSet<String>();
+		set.add("g");
+		set.add("l");
+		set.add("s");
+		set.add("aq");
+		return set;
 	}
 }
