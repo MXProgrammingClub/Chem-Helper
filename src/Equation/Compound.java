@@ -115,7 +115,7 @@ public class Compound
 		String str = "";
 		for(Ions ion: ions)
 		{
-			str += ion.withoutCharge();
+			str += ion;
 		}
 		if(!state.equals(" ")) str += "(" + state + ")";
 		return str;

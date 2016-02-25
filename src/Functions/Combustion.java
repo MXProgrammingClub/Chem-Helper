@@ -71,6 +71,7 @@ public class Combustion extends Function
 			{
 				Element carbon = new Carbon(), hydrogen = new Hydrogen(), oxygen = new Oxygen();
 				Compound c = Compound.parseCompound(compound.getText());
+				boolean state = c.getState().equals(" ") ? false : true;
 				Ions[] ions = c.getIons();
 				int[] coefficients = new int[3], indices = {c.indexOf(hydrogen), c.indexOf(carbon), c.indexOf(oxygen)};
 				int num = 0;
@@ -102,10 +103,10 @@ public class Combustion extends Function
 				ArrayList<Compound> left = new ArrayList<Compound>(), right = new ArrayList<Compound>();
 				Ions[] o2 = {new Monatomic(oxygen, 2)}, h2o = {new Monatomic(hydrogen, 2), new Monatomic(oxygen)}, 
 						co2 = {new Monatomic(carbon), new Monatomic(oxygen, 2)};
-				left.add(new Compound(o2));
+				left.add(new Compound(o2, state ? "g" : ""));
 				left.add(c);
-				right.add(new Compound(h2o));
-				right.add(new Compound(co2));
+				right.add(new Compound(h2o, state ? "l" : ""));
+				right.add(new Compound(co2, state ? "g" : ""));
 				
 				//Balancing hydrogens
 				if(coefficients[0] % 2 != 0)

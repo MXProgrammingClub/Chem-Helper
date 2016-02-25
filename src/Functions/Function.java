@@ -103,6 +103,7 @@ public abstract class Function {
 						
 					}
 				}
+				if(!comp.getState().equals(" ")) str += "\\text{(" + comp.getState() + ")}";
 				str += "+";
 				
 				
