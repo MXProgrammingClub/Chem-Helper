@@ -2,7 +2,7 @@
  * Displays with latex an element's electron shell configuration given its atomic number, name, or symbol.
  * 
  * Authors: Julia McClellan, Luke Giacalone, Hyun Choi, Ted Pyne
- * Version: 1/2/2016
+ * Version: 2/25/2016
  */
 
 package Functions;
@@ -104,6 +104,7 @@ public class ElectronShell extends Function
 					int atomicNum = Integer.parseInt(input);
 					if(atomicNum < 1 || table.length < atomicNum)
 					{
+						results.setIcon(null);
 						results.setText(atomicNum + " is not a valid atomic number.");
 					}
 					else
@@ -115,6 +116,7 @@ public class ElectronShell extends Function
 				}
 				catch(NumberFormatException e)
 				{
+					results.setIcon(null);
 					results.setText("Please enter a number.");
 				}
 				
@@ -133,6 +135,7 @@ public class ElectronShell extends Function
 					}
 					if(!found)
 					{
+						results.setIcon(null);
 						results.setText(input + " is not a valid symbol.");
 					}
 				}
@@ -151,6 +154,7 @@ public class ElectronShell extends Function
 					}
 					if(!found)
 					{
+						results.setIcon(null);
 						results.setText(input + " is not a valid element.");
 					}
 				}
