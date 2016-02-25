@@ -31,8 +31,8 @@ public class Solutions extends Function
 	private LinkedList<Double> numbers;
 	private Box steps;
 	private JLabel error;
-	private static final String[] solValues1 = {"Solute", "Solvent", "Solution"}, solValues2 = {"Mass", "Vol", "Mole"}, percents = {"% by Mass",
-			"% by Volume"}, moles = {"Molarity", "Molality", "Mole Fraction"};
+	private static final String[] solValues1 = {"Solute", "Solvent", "Solution"}, solValues2 = {"Mass", "Vol", "Mole"}, 
+			percents = {"% by Mass", "% by Volume"}, moles = {"Molarity", "Molality", "Mole Fraction"};
 	
 	public Solutions()
 	{
@@ -58,7 +58,7 @@ public class Solutions extends Function
 		percent = new EnterField[percents.length];
 		for(int i = 0; i < percents.length; i++)
 		{
-			percent[i] = new EnterField(percents[i]);
+			percent[i] = new EnterField(percents[i], "Percent");
 			subPanel.add(percent[i], c);
 			c.gridy++;
 		}

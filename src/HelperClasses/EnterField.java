@@ -35,7 +35,6 @@ public class EnterField extends JPanel
 		GridBagConstraints c = new GridBagConstraints();
 		this.setLayout(new GridBagLayout());
 		
-		this.setSize(300, this.getHeight());
 		this.name = name;
 		this.hasCompoundField = hasCompoundField;
 		if(!hasCompoundField) {
@@ -64,7 +63,7 @@ public class EnterField extends JPanel
 		}
 		
 		JLabel label = new JLabel(name);
-		label.setPreferredSize(new Dimension(80, 16));
+		label.setPreferredSize(new Dimension(90, 16));
 		
 		c.gridx = 0;
 		c.gridy = 0;
