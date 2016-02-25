@@ -32,7 +32,7 @@ import Functions.*;
 import HelperClasses.MacMenuChanges;
 import HelperClasses.Preferences;
 
-public class ChemHelper extends JFrame {		//Primary GUI class
+public class ChemHelper extends JFrame { //Primary GUI class
 	
 	//place where to save the preferences file -- use extension .prefs to make it harder to edit by hand
 	private static final String PREFS_FILE = "preferences.prefs"; 

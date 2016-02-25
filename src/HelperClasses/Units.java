@@ -32,7 +32,7 @@ public class Units
 		units.put("Volume", createGroup("L"));
 		units.put("Length", createGroup("m"));
 		units.put("Mass", createGroup("g"));
-		units.put("Frequency", new String[]{"1/s"});
+		units.put("Frequency", new String[]{"Hz"});
 		units.put("Energy", new String[]{"J"});
 		units.put("Velocity", new String[] {"m/s"});
 		units.put("Planck", new String[]{"J\u00B7s"});
