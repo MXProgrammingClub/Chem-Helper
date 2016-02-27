@@ -22,8 +22,8 @@ public class MacMenuChanges {
 	private class AboutWindow extends JFrame implements com.apple.eawt.AboutHandler {
 		public void handleAbout(com.apple.eawt.AppEvent.AboutEvent arg0) {
 			if(chelper.last != null) chelper.pane.remove(chelper.last);
-			chelper.lastFunc = chelper.funcs[24];
-			JPanel func = chelper.funcs[24].getPanel();
+			chelper.lastFunc = chelper.funcs[25];
+			JPanel func = chelper.funcs[25].getPanel();
 			chelper.pane.add(func, BorderLayout.WEST);
 			chelper.eqButtons.setVisible(chelper.lastFunc.equation());
 			chelper.numButtons.setVisible(chelper.lastFunc.number());
@@ -39,8 +39,8 @@ public class MacMenuChanges {
 	private class PreferenceWindow extends JFrame implements com.apple.eawt.PreferencesHandler {
 		public void handlePreferences(com.apple.eawt.AppEvent.PreferencesEvent arg0) {
 			if(chelper.last != null) chelper.pane.remove(chelper.last);
-			chelper.lastFunc = chelper.funcs[25];
-			JPanel func = chelper.funcs[25].getPanel();
+			chelper.lastFunc = chelper.funcs[26];
+			JPanel func = chelper.funcs[26].getPanel();
 			chelper.pane.add(func, BorderLayout.WEST);
 			chelper.eqButtons.setVisible(chelper.lastFunc.equation());
 			chelper.numButtons.setVisible(chelper.lastFunc.number());
