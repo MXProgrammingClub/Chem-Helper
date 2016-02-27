@@ -4,7 +4,7 @@
  * classes that need them.
  * 
  * Authors: Ted Pyne, Hyun Choi, Julia McClellan
- * Version: 2/21/2016
+ * Version: 2/27/2016
  */
 
 package Functions;
@@ -158,9 +158,15 @@ public abstract class Function {
 	{
 		if(sigFig == 0) return 0; //There is no point in calculating if they won't be used.
 		int sigFigs = numString.length();
-		if(numString.indexOf("-") != -1) sigFigs--;
-		if(numString.indexOf(".") != -1) sigFigs--;
-			//These characters lead the String to be longer than purely 
+		if(numString.indexOf("-") != -1) sigFigs--;	//These characters lead the String to be longer than the number of sig figs
+		if(numString.indexOf(".") != -1)
+		{
+			sigFigs--;
+			if(Math.abs(Double.parseDouble(numString)) < 1)
+			{
+				for(int index = numString.indexOf('.') + 1; index < numString.length() && numString.charAt(index) == '0'; sigFigs--, index++);
+			}
+		}
 		else for(int index = numString.length() -1; index >= 0 && numString.charAt(index) == '0'; index--) sigFigs--; 
 			//If a number does not contain a decimal point, for every 0 at the end of the number, subtract a sig fig.
 		return sigFigs;
