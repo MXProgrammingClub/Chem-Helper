@@ -1,9 +1,9 @@
 /*
- * Calculates the empirical formula of a compound given its percent composition with the option of finding the molecular formula if an amount of the compound
- * is given. Shows calculation steps
- * number() returns true- can save either the empirical or molecular molar mass, and use a saved number in moles or mass for molecular calculations.
+ * Calculates the empirical formula of a compound given its percent composition with the option of finding the molecular 
+ * formula if an amount of the compound is given. Shows calculation steps number() returns true- can save either the empirical 
+ * or molecular molar mass, and use a saved number in moles or mass for molecular calculations.
  * 
- * Author: Julia McClellan
+ * Author: Julia "Super Irish Looking" McClellan
  * Version: 2/21/2016
  */
 
@@ -11,11 +11,14 @@ package Functions;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -24,6 +27,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import Elements.Element;
+import HelperClasses.Units;
 
 public class Empirical extends Function
 {
@@ -49,16 +53,16 @@ public class Empirical extends Function
 			TableRow row = new TableRow();
 			rows.add(row);
 		}
-		JLabel element = new JLabel(" Element  ");
+		/*JLabel element = new JLabel(" Element  ");
 		element.setBorder(BorderFactory.createLineBorder(Color.black));
 		JLabel percent = new JLabel(" Percent  ");
 		percent.setBorder(BorderFactory.createLineBorder(Color.black));
 		JPanel topRow = new JPanel();
 		topRow.add(element);
 		topRow.add(percent);
-		topRow.add(new JLabel("              "));
+		topRow.add(new JLabel("              "));*/
 		rowBox = Box.createVerticalBox();
-		rowBox.add(topRow);
+		//rowBox.add(topRow);
 		for(TableRow row: rows) rowBox.add(row);
 		
 		addRow = new JButton("Add row");
@@ -93,30 +97,74 @@ public class Empirical extends Function
 		amounts.add(new JLabel("  Mass: "));
 		amounts.add(mass);
 		
-		Box box = Box.createVerticalBox();
-		box.add(new JLabel("If one percent is given as the remainder, enter \"R\""));
-		box.add(rowBox);
-		box.add(addRow);
-		box.add(Box.createVerticalStrut(10));
-		box.add(new JLabel("If known, enter the "));
-		box.add(amounts);
-		box.add(Box.createVerticalStrut(10));
-		box.add(calculate);
-		box.add(error);
-		box.add(Box.createVerticalStrut(10));
-		box.add(empirical);
-		box.add(mass1);
-		box.add(Box.createVerticalStrut(10));
-		box.add(molecular);
-		box.add(mass2);
+		JPanel subpanel = new JPanel(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.anchor = GridBagConstraints.WEST;
+		c.gridx = 0;
+		c.gridy = 0;
+		c.gridwidth = 2;
+		subpanel.add(new JLabel("Enter \"R\" in the percent box for a remainder."), c);
+		c.gridwidth = 1;
+		c.gridy++;
+		c.anchor = GridBagConstraints.CENTER;
+		subpanel.add(new TableHeader(), c);
+		c.gridx = 1;
+		c.gridx = 0;
+		c.gridy++;
+		subpanel.add(rowBox, c);
+		c.anchor = GridBagConstraints.WEST;
+		c.gridy++;
+		c.anchor = GridBagConstraints.CENTER;
+		subpanel.add(addRow, c);
+		c.gridy++;
+		subpanel.add(new JLabel(" "), c);
+		c.gridy++;
+		subpanel.add(new JLabel("If known, enter the "), c);
+		c.gridy++;
+		subpanel.add(amounts, c);
+		c.gridy++;
+		subpanel.add(new JLabel(" "), c);
+		c.gridy++;
+		subpanel.add(calculate, c);
+		c.gridy++;
+		subpanel.add(new JLabel(" "), c);
+		c.gridy++;
+		subpanel.add(empirical, c);
+		c.gridy++;
+		subpanel.add(mass1, c);
+		c.gridy++;
+		subpanel.add(new JLabel(" "), c);
+		c.gridy++;
+		subpanel.add(molecular, c);
+		c.gridy++;
+		subpanel.add(mass2, c);
 		
 		steps = Box.createVerticalBox();
 		
 		panel = new JPanel();
-		panel.add(box);
+		panel.add(subpanel);
 		panel.add(steps);
 		
 		toSave = new Double[2];
+	}
+	
+	private class TableHeader extends JPanel {
+		public TableHeader() {
+			this.setLayout(new GridBagLayout());
+			GridBagConstraints c = new GridBagConstraints();
+			c.gridx = 0;
+			c.gridy = 0;
+			c.anchor = GridBagConstraints.CENTER;
+			JLabel element = new JLabel("Element");
+			element.setFont(new Font(element.getFont().getName(), Font.BOLD, element.getFont().getSize()));
+			element.setPreferredSize(new Dimension(Units.ENTERFIELD_AMOUNT_WIDTH, Units.ENTERFIELD_AMOUNT_HEIGHT));
+			this.add(element, c);
+			c.gridx++;
+			JLabel percent = new JLabel("Percent");
+			percent.setFont(new Font(percent.getFont().getName(), Font.BOLD, percent.getFont().getSize()));
+			percent.setPreferredSize(new Dimension(Units.ENTERFIELD_AMOUNT_WIDTH, Units.ENTERFIELD_AMOUNT_HEIGHT));
+			this.add(percent, c);
+		}
 	}
 	
 	private class TableRow extends JPanel
@@ -126,14 +174,20 @@ public class Empirical extends Function
 		
 		public TableRow()
 		{
-			element = new JTextField(5);
-			element.setBorder(BorderFactory.createLineBorder(Color.black));
-			percent = new JTextField(5);
-			percent.setBorder(BorderFactory.createLineBorder(Color.black));
+			this.setLayout(new GridBagLayout());
+			GridBagConstraints c = new GridBagConstraints();
+			c.gridx = 0;
+			c.gridy = 0;
+			element = new JTextField(Units.ENTERFIELD_AMOUNT_COLUMNS);
+			element.setPreferredSize(new Dimension(Units.ENTERFIELD_AMOUNT_WIDTH, Units.ENTERFIELD_AMOUNT_HEIGHT));
+			this.add(element, c);
+			c.gridx++;
+			percent = new JTextField(Units.ENTERFIELD_AMOUNT_COLUMNS);
+			percent.setPreferredSize(new Dimension(Units.ENTERFIELD_AMOUNT_WIDTH, Units.ENTERFIELD_AMOUNT_HEIGHT));
+			this.add(percent, c);
+			c.gridx++;
 			remove = new RemoveButton(this);
-			add(element);
-			add(percent);
-			add(remove);
+			this.add(remove, c);
 		}
 		
 		public Element getElement()
@@ -164,6 +218,8 @@ public class Empirical extends Function
 		public RemoveButton(TableRow row1)
 		{
 			super("X");
+			this.setForeground(Color.RED);
+			this.setPreferredSize(new Dimension(40, (int) this.getPreferredSize().getHeight()));
 			this.row = row1;
 			addActionListener(new ActionListener()
 					{
@@ -264,7 +320,8 @@ public class Empirical extends Function
 			
 			steps.add(new JLabel("Multiply by " + times + " to round to an integer value:"));
 			int[] coefficients = new int[values.length];
-			String formula = "<html>Empirical formula: ", massString = "<html>Calculate molar mass by multiplying each element's mass by its coefficient:<br>";
+			String formula = "<html>Empirical formula: ";
+			String massString = "<html>Calculate molar mass by multiplying each element's mass by its coefficient:<br>";
 			double eMass = 0;
 			for(int index = 0; index < coefficients.length; index++)
 			{
@@ -302,7 +359,8 @@ public class Empirical extends Function
 						steps.add(new JLabel(step + mMass + " g/mol"));
 					}
 					int factor = (int)Math.round(mMass / eMass);
-					steps.add(new JLabel("Find ratio of masses and round to an integer: " + mMass + " / " + eMass + " \u2248 " + factor));
+					steps.add(new JLabel("Find ratio of masses and round to an integer: " + mMass + " / " + eMass + " \u2248 " 
+							+ factor));
 					steps.add(new JLabel("Multiply all of the coefficients by " + factor + ":"));
 					formula = "<html>Molecular formula: ";
 					for(int index = 0; index < coefficients.length; index++)
@@ -337,8 +395,8 @@ public class Empirical extends Function
 		{
 			if(toSave[1] != 0)
 			{
-				Object selected = JOptionPane.showInputDialog(panel, "Choose which number to save", "Choose Number", JOptionPane.PLAIN_MESSAGE, 
-						null, toSave, toSave[0]);
+				Object selected = JOptionPane.showInputDialog(panel, "Choose which number to save", "Choose Number", 
+						JOptionPane.PLAIN_MESSAGE, null, toSave, toSave[0]);
 				if(selected instanceof Double)
 				{
 					if(selected.equals(toSave[0])) return toSave[0];
@@ -353,8 +411,8 @@ public class Empirical extends Function
 	public void useSavedNumber(double num)
 	{
 		String[] options = {"Moles", "Mass"};
-		Object selected = JOptionPane.showInputDialog(panel, "Choose where to use the number", "Choose Number", JOptionPane.PLAIN_MESSAGE, 
-				null, options, "Moles");
+		Object selected = JOptionPane.showInputDialog(panel, "Choose where to use the number", "Choose Number", 
+				JOptionPane.PLAIN_MESSAGE, null, options, "Moles");
 		if(selected instanceof String)
 		{
 			if(selected.equals("Moles")) moles.setText("" + num);
