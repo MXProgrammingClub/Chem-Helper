@@ -128,7 +128,7 @@ public class ChemHelper extends JFrame { //Primary GUI class
 	private void createMenu()
 	{
 		funcs = new Function[27];
-		funcs[0] = new PeriodicTable(getIntPreference("Table_Style"), getBooleanPreference("State_Colors"));
+		funcs[0] = new PeriodicTable(getIntPreference("Table_Style"), getBooleanPreference("Table_State_Colors"));
 		funcs[1] = new ElectronShell();
 		funcs[2] = new CompoundStoichiometry();
 		funcs[3] = new Stoichiometry();
@@ -278,7 +278,7 @@ public class ChemHelper extends JFrame { //Primary GUI class
 	}
 	
 	public void refreshTable() {
-		funcs[0] = new PeriodicTable(this.getIntPreference("Table_Style"), this.getBooleanPreference("State_Colors"));
+		funcs[0] = new PeriodicTable(this.getIntPreference("Table_Style"), this.getBooleanPreference("Table_State_Colors"));
 		menu.getMenu(0).remove(0);
 		menu.getMenu(0).add(new FunctionMenuItem(funcs[0]), 0);
 	}
