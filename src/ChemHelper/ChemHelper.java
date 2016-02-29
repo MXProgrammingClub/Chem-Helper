@@ -27,6 +27,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import org.scilab.forge.jlatexmath.TeXConstants;
+import org.scilab.forge.jlatexmath.TeXFormula;
+
 import Equation.Equation;
 import Functions.*;
 import HelperClasses.MacMenuChanges;
@@ -49,6 +52,7 @@ public class ChemHelper extends JFrame { //Primary GUI class
 	
 	public ChemHelper() {
 		LoadingDialog ld = new LoadingDialog();
+		new TeXFormula("").createTeXIcon(TeXConstants.STYLE_DISPLAY, 20); //loads the latex package
 		
 		try {
 			preferences = new Preferences(PREFS_FILE);
