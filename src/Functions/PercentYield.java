@@ -269,6 +269,7 @@ public class PercentYield extends Function
 		Object selected = JOptionPane.showInputDialog(panel, "Choose where to use the number", "Choose Number", JOptionPane.PLAIN_MESSAGE, 
 				null, options, "Reactant");
 		reader.resetFocus();
+		if(selected == null) return;
 		if(selected.equals("Reactant") && fieldR != null) fieldR.setText("" + num);
 		else if(selected.equals("Product") && fieldP != null) fieldP.setText("" + num);
 	}

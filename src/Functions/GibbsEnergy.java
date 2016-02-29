@@ -110,6 +110,7 @@ public class GibbsEnergy extends Function
 	public void useSavedNumber(double num)
 	{
 		String s = (String)JOptionPane.showInputDialog(panel, "Choose where to use it.", "Choose Field", JOptionPane.PLAIN_MESSAGE, null, FIELDS, FIELDS[0]);
+		if(s == null) return;
 		if(s.equals(FIELDS[0])) fields[0].setText("" + num);
 		else if(s.equals(FIELDS[1])) fields[1].setText("" + num);
 		else fields[2].setText("" + num);

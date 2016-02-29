@@ -384,7 +384,10 @@ public class Solutions extends Function
 	{
 		String[] options = {"Solute Mass", "Solute Volume", "Solute Moles", "Solvent Mass", "Solvent Volume", "Solvent Moles", "Solution Mass", 
 				"Solution Volume", "Solution Moles", "Percent by Mass", "Percent by Volume", "Molarity", "Molality", "Mole Fraction"};
-		switch((String)JOptionPane.showInputDialog(panel, "Choose where to use number.", "Use Saved", JOptionPane.QUESTION_MESSAGE, null, options, options[0]))
+		String option = (String)JOptionPane.showInputDialog(panel, "Choose where to use number.", "Use Saved", JOptionPane.QUESTION_MESSAGE, null, 
+				options, options[0]);
+		if(option == null) return;
+		switch(option)
 		{
 			case "Solute Mass":
 				sol[0][0].setAmount(num);

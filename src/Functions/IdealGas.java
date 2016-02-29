@@ -97,6 +97,7 @@ public class IdealGas extends Function
 	{
 		String selected = (String)JOptionPane.showInputDialog(panel, "Choose where to use the number", "Choose Number", JOptionPane.PLAIN_MESSAGE, 
 				null, VALUES, "Pressure");
+		if(selected == null) return;
 		for(int index = 0; index < VALUES.length; index++)
 		{
 			if(VALUES[index].equals(selected))

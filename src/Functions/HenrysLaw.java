@@ -143,6 +143,7 @@ public class HenrysLaw extends Function
 		String[] options = {"Solubility - before", "Solubility - after", "Pressure - before", "Pressure - after"};
 		String result = (String)JOptionPane.showInputDialog(panel, "Choose where to use the number.", "Choose number", JOptionPane.PLAIN_MESSAGE, null, 
 				options, options[0]);
+		if(result == null) return;
 		if(result.equals(options[0])) solubility.setBeforeValue(num);
 		else if(result.equals(options[1])) solubility.setAfterValue(num);
 		else if(result.equals(options[2])) pressure.setBeforeValue(num);

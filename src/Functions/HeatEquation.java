@@ -105,6 +105,7 @@ public class HeatEquation extends Function {
 		String[] options = {"Heat Energy", "Specific Heat", "Mass", "\u0394t"};
 		String result = (String) JOptionPane.showInputDialog(panel, "Choose where to use the number", 
 				"Choose number", JOptionPane.PLAIN_MESSAGE, null, options, "Heat Energy");
+		if(result == null) return;
 		if(result.equals(options[0])) input[0].setAmount(num);
 		else if(result.equals(options[1])) input[1].setAmount(num);
 		else if(result.equals(options[2])) input[2].setAmount(num);
