@@ -147,7 +147,6 @@ public class Equation
 				left.get(index2).setNum(num2 * left.get(index2).getNum() * (index2 != index ? num1 : 1));
 			}
 		}
-		System.out.println(isBalanced());
 		if(isBalanced()) return 1;
 		else return 0;
 	}
