@@ -86,14 +86,19 @@ public class Equation
 		return right;
 	}
 	
-	public boolean balance() throws InvalidInputException {
-		if(isBalanced()) return true;
+	public int balance() throws InvalidInputException {
+		if(isBalanced()) return 1;
 		String[] equations = createEquations();
+		//for(String s: equations) System.out.println(s);
 		equations = subForA(equations);
+		//for(String s: equations) System.out.println(s);
 		Matrix m;
 		try{m = new Matrix(equations);}
 		catch(InvalidInputException e){throw e;}
+		System.out.println(m);
 		double[] solved = m.solve();
+		for(double d: solved)
+			if(("" + d).equals("NaN")) return 2;
 		//for(double n: solved) System.out.println(n);
 		double[] doubleCoeff = new double[solved.length + 1];
 		doubleCoeff[0] = 1; //setting a = 1
@@ -111,8 +116,44 @@ public class Equation
 			index++;
 		}
 		
-		return isBalanced();
+		if(isBalanced()) return 1;
+		else return 0;
 	}
+	
+	//Balances the equation if the right side is one compound and the left side compounds all contain exactly one element.
+	public int balance2() {
+		//Checks if the conditions are met first before using the method.
+		if(right.size() != 1) return 0;
+		for(Compound c: left) if(c.getIons().length != 1) return 0;
+		Compound rightCompound = right.get(0);
+		for(int index = 0; index < left.size(); index ++)
+		{
+			Ions leftIon = left.get(index).getIons()[0], rightIon = null;
+			for(Ions ion: rightCompound.getIons())
+			{
+				if(ion.getElement().equals(leftIon.getElement())) rightIon = ion;
+			}
+			if(rightIon == null) return 0;
+			int num1 = leftIon.getNum() * left.get(index).getNum(), num2 = rightCompound.getNum() * rightIon.getNum(), mult = num1 * num2, gcd = Function.gcd(num1, num2);
+			while(gcd != 1)
+			{
+				mult = mult / gcd;
+				num1 = num1 / gcd;
+				num2 = num2 / gcd;
+				gcd = Function.gcd(num1, num2);
+			}
+			int setRight = mult / rightIon.getNum(), setLeft = mult / leftIon.getNum();
+			rightCompound.setNum(rightCompound.getNum() * setRight);
+			left.get(index).setNum(left.get(index).getNum() * setLeft);
+			for(int index2 = 0; index2 <= index; index2++)
+			{
+				if(index != index2) left.get(index2).setNum(setRight * left.get(index2).getNum());
+			}
+		}
+		if(isBalanced()) return 1;
+		else return 0;
+	}
+
 	
 	//creates equations for each ion
 	private String[] createEquations() {
@@ -277,14 +318,14 @@ public class Equation
 		return ions;
 	}
 	
-	/*public static void main(String[] args) {
+	public static void main(String[] args) {
 		try {
-			Equation eq = parseEquation("AgNO<sub>3</sub>+MgCl<sub>2</sub>\u2192AgCl+Mg(NO<sub>3</sub>)<sub>2</sub>");
+			Equation eq = parseEquation("H<sub>2</sub>+O<sub>2</sub>+C<sub>4</sub>\u2192H<sub>2</sub>OC");
 			eq.balance();
 		}
 		catch (Throwable e) {
 			e.printStackTrace();
 		}
-	}*/
+	}
 	
 }

@@ -109,9 +109,12 @@ public class EquationReader extends Function
 			try
 			{
 				equation = Equation.parseEquation(input);
-				boolean isBalanced = equation.balance();
+				
+				int isBalanced = equation.balance();
+				if(isBalanced == 2) isBalanced = equation.balance2();
+				
 				result.setIcon(latex(equation).getIcon());
-				if(!isBalanced) balanced.setText("This equation could not be balanced");
+				if(isBalanced == 0) balanced.setText("This equation could not be balanced programmatically.");
 				if(use != null)
 				{
 					panel.setVisible(false);
