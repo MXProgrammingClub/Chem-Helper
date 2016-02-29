@@ -2,7 +2,7 @@
  * Represents a chemical equation. 
  * 
  * Authors: Luke Giacalone, Julia McClellan, Hyun Choi
- * Version: 2/23/2016
+ * Version: 2/29/2016
  */
 
 package Equation;
@@ -95,7 +95,7 @@ public class Equation
 		Matrix m;
 		try{m = new Matrix(equations);}
 		catch(InvalidInputException e){throw e;}
-		System.out.println(m);
+		//System.out.println(m);
 		double[] solved = m.solve();
 		for(double d: solved)
 			if(("" + d).equals("NaN")) return 2;
@@ -131,25 +131,23 @@ public class Equation
 			Ions leftIon = left.get(index).getIons()[0], rightIon = null;
 			for(Ions ion: rightCompound.getIons())
 			{
-				if(ion.getElement().equals(leftIon.getElement())) rightIon = ion;
+				if(ion.equals(leftIon))
+				{
+					rightIon = ion;
+					break;
+				}
 			}
 			if(rightIon == null) return 0;
-			int num1 = leftIon.getNum() * left.get(index).getNum(), num2 = rightCompound.getNum() * rightIon.getNum(), mult = num1 * num2, gcd = Function.gcd(num1, num2);
-			while(gcd != 1)
-			{
-				mult = mult / gcd;
-				num1 = num1 / gcd;
-				num2 = num2 / gcd;
-				gcd = Function.gcd(num1, num2);
-			}
-			int setRight = mult / rightIon.getNum(), setLeft = mult / leftIon.getNum();
-			rightCompound.setNum(rightCompound.getNum() * setRight);
-			left.get(index).setNum(left.get(index).getNum() * setLeft);
+			int num1 = leftIon.getNum() * left.get(index).getNum(), num2 = rightCompound.getNum() * rightIon.getNum(), gcd = Function.gcd(num1, num2);
+			num1 = num1 / gcd;
+			num2 = num2 / gcd;
+			rightCompound.setNum(rightCompound.getNum() * num1);
 			for(int index2 = 0; index2 <= index; index2++)
 			{
-				if(index != index2) left.get(index2).setNum(setRight * left.get(index2).getNum());
+				left.get(index2).setNum(num2 * left.get(index2).getNum() * (index2 != index ? num1 : 1));
 			}
 		}
+		System.out.println(isBalanced());
 		if(isBalanced()) return 1;
 		else return 0;
 	}
@@ -317,7 +315,7 @@ public class Equation
 		}
 		return ions;
 	}
-	
+/*	
 	public static void main(String[] args) {
 		try {
 			Equation eq = parseEquation("H<sub>2</sub>+O<sub>2</sub>+C<sub>4</sub>\u2192H<sub>2</sub>OC");
@@ -327,5 +325,5 @@ public class Equation
 			e.printStackTrace();
 		}
 	}
-	
+*/
 }

@@ -2,7 +2,7 @@
  * Represents a monatomic ion.
  * 
  * Author: Julia McClellan
- * Version: 2/19/2016
+ * Version: 2/29/2016
  */
 
 package Equation;
@@ -87,5 +87,10 @@ public class Monatomic extends Ions
 	public boolean equals(Monatomic other)
 	{
 		return other.getElement().equals(element);
+	}
+	
+	public boolean equals(Ions other)
+	{
+		return other instanceof Polyatomic ? false : equals((Monatomic)other);
 	}
 }
