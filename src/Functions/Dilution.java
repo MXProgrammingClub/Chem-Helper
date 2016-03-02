@@ -2,6 +2,7 @@
  * Uses the dilution equation to calculate the molarity or volume of the diluted solution.
  * 
  * Author: Julia McClellan
+ * Version: 3/1/16
  */
 
 package Functions;
@@ -69,7 +70,7 @@ public class Dilution extends Function
 						return;
 					}
 					
-					steps.add(new JLabel("<html>M<sub>1</sub> / V<sub>1</sub> = M<sub>2</sub> / V<sub>2</sub>"));
+					steps.add(new JLabel("<html>M<sub>1</sub> * V<sub>1</sub> = M<sub>2</sub> * V<sub>2</sub>"));
 					steps.add(new JLabel("<html>M<sub>1</sub> = " + values[0] + " mol / L"));
 					steps.add(new JLabel("<html>V<sub>1</sub> = " + values[2] + " L"));
 					int sigFigs = Math.min(molarity.getSigFigs(), volume.getSigFigs());
@@ -89,8 +90,8 @@ public class Dilution extends Function
 						steps.add(new JLabel("<html>M<sub>2</sub> = " + values[1] + " mol / L"));
 						steps.add(new JLabel("<html>V<sub>2</sub> = ? L"));
 						steps.add(Box.createVerticalStrut(10));
-						double amount = values[2] * values[1] / values[0];
-						steps.add(new JLabel("<html>V<sub>2</sub> = " + values[2] + " * " + values[1] + " / " + values[0] + " = " + amount));
+						double amount = values[2] * values[0] / values[1];
+						steps.add(new JLabel("<html>V<sub>2</sub> = " + values[2] + " * " + values[0] + " / " + values[1] + " = " + amount));
 						answer = volume.getBlankAmount(amount);
 						if(amount != answer) steps.add(new JLabel(amount + "L  = " + answer + " " + volume.getDesiredUnit()));
 						result.setText("<html>V<sub>2</sub> = " + Function.withSigFigs(answer, sigFigs) + " "  + volume.getDesiredUnit());
@@ -106,7 +107,7 @@ public class Dilution extends Function
 		result = new JLabel();
 			
 		Box box = Box.createVerticalBox();
-		box.add(new JLabel("<html>M<sub>1</sub> / V<sub>1</sub> = M<sub>2</sub> / V<sub>2</sub>"));
+		box.add(new JLabel("<html>M<sub>1</sub> * V<sub>1</sub> = M<sub>2</sub> * V<sub>2</sub>"));
 		box.add(Box.createVerticalStrut(10));
 		box.add(molarity);
 		box.add(volume);
