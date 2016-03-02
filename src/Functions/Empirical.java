@@ -219,7 +219,7 @@ public class Empirical extends Function
 		{
 			super("X");
 			this.setForeground(Color.RED);
-			this.setPreferredSize(new Dimension(40, (int) this.getPreferredSize().getHeight()));
+			this.setPreferredSize(new Dimension(45, (int) this.getPreferredSize().getHeight()));
 			this.row = row1;
 			addActionListener(new ActionListener()
 					{
