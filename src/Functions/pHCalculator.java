@@ -259,10 +259,13 @@ public class pHCalculator extends Function
 		{
 			case "<html>H<sup>+</sup></html>":
 				h.setAmount(num);
+				break;
 			case "<html>OH<sup>-</sup></html>":
 				oh.setAmount(num);
+				break;
 			case "pH":
 				ph.setAmount(num);
+				break;
 			default:
 				poh.setAmount(num);
 		}
