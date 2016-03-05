@@ -9,9 +9,9 @@ package Equation;
 
 public class Electron extends Ions
 {
-	public Electron(int num)
+	public Electron()
 	{
-		super(num, -1);
+		super(1, -1);
 	}
 	
 	public boolean equals(Ions other)

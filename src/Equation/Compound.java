@@ -20,15 +20,15 @@ public class Compound
 	private Ions[] ions;
 	private String state;
 	private int num;
-	
+
 	private static final Set<String> VALID_STATES = createSet();
-	
+
 	public Compound(Ions[] ions) {
 		this.ions = ions;
 		this.state = " ";
 		this.num = 1;
 	}
-	
+
 	public Compound(Ions[] ions, String state)
 	{
 		this.ions = ions;
@@ -36,14 +36,14 @@ public class Compound
 		else this.state = " ";
 		this.num = 1;
 	}
-	
+
 	public Compound(Ions[] ions, int num)
 	{
 		this.ions = ions;
 		this.state = " ";
 		this.num = num;
 	}
-	
+
 	public Compound(Ions[] ions, String state, int num)
 	{
 		this.ions = ions;
@@ -60,12 +60,12 @@ public class Compound
 		else this.state = state;
 		this.num = num;
 	}
-	
+
 	public String getState()
 	{
 		return state;
 	}
-	
+
 	public int getNum() 
 	{
 		return num;
@@ -80,7 +80,7 @@ public class Compound
 	{
 		return VALID_STATES;
 	}
-	
+
 	public Ions[] getIons()
 	{
 		return ions;
@@ -97,7 +97,7 @@ public class Compound
 		if(!state.equals(" ")) str += "(" + state + ")";
 		return str;
 	}
-	
+
 	public String withoutCharge()
 	{
 		String str = "";
@@ -109,7 +109,7 @@ public class Compound
 		if(!state.equals(" ")) str += "(" + state + ")";
 		return str;
 	}
-	
+
 	public String withoutNum()
 	{
 		String str = "";
@@ -120,7 +120,7 @@ public class Compound
 		if(!state.equals(" ")) str += "(" + state + ")";
 		return str;
 	}
-	
+
 	public double getMolarMass()
 	{
 		double total = 0;
@@ -130,7 +130,7 @@ public class Compound
 		}
 		return total;
 	}
-	
+
 	/*
 	 * Returns a String explaining how to find the molar mass of the compound.
 	 */
@@ -146,7 +146,7 @@ public class Compound
 		instruction = instruction.substring(0, instruction.length() - 3) + " = " + total + " g/mol";
 		return instruction;
 	}
-	
+
 	public boolean contains(Element e)
 	{
 		for(Ions thisOne: ions)
@@ -156,7 +156,7 @@ public class Compound
 		}
 		return false;
 	}
-	
+
 	public int indexOf(Element e)
 	{
 		for(int index = 0; index < ions.length; index++)
@@ -166,7 +166,7 @@ public class Compound
 		}
 		return -1;
 	}
-	
+
 	public Monatomic[] getNoPoly()
 	{
 		ArrayList<Monatomic> list = new ArrayList<Monatomic>();
@@ -186,9 +186,21 @@ public class Compound
 		Monatomic[] array = new Monatomic[list.size()];
 		return list.toArray(array);
 	}
-	
+
 	public static Compound parseCompound(String cmp) throws InvalidInputException
 	{
+		int index = 0, coefficient = 0;
+		for(; index < cmp.length() && Character.isDigit(cmp.charAt(index)); index++)
+		{
+			coefficient = 10 * coefficient + (char)Math.abs('0' - cmp.charAt(index));
+		}
+		if(coefficient == 0) coefficient = 1;
+
+		if(cmp.substring(index, cmp.length()).equals("e<sup>-</sup>"))
+		{
+			return new Compound(new Ions[]{new Electron()}, coefficient);
+		}
+		
 		String state = "";
 		if(cmp.charAt(cmp.length() - 1) == ')')
 		{
@@ -196,45 +208,39 @@ public class Compound
 			if(VALID_STATES.contains(state)) cmp = cmp.substring(0, cmp.lastIndexOf("("));
 			else state = "";
 		}
+		
 		ArrayList<Ions> ions = new ArrayList<Ions>();
-        String temp = "";
-        boolean mid = false;
-        int index = 0, coefficient = 0;
-        for(; index < cmp.length() && Character.isDigit(cmp.charAt(index)); index++)
-        {
-        	coefficient = 10 * coefficient + (char)Math.abs('0' - cmp.charAt(index));
-        }
-        if(coefficient == 0) coefficient = 1;
-        for(; index < cmp.length(); index++) 
-        {
-        	char ch = cmp.charAt(index);
-        	if(!mid)
-        	{
-        		
-        		if(Character.isUpperCase(ch))
-        		{
-        			if(temp.length() > 0) ions.add(Ions.parseIons(temp));
-        			temp = "" + ch;
-        		}
-        		else if(ch == '(')
-        		{
-        			if(!temp.equals("")) ions.add(Ions.parseIons(temp));
-        			temp = "(";
-        			mid = true;
-        		}
-        		else temp += ch;
-            }
-        	else
-        	{
-        		if(ch == ')') mid = false;
-        		temp += ch;
-        	}
-        }
-        ions.add(Ions.parseIons(temp));
-        Ions[] i = new Ions[ions.size()];
+		String temp = "";
+		boolean mid = false;
+		for(; index < cmp.length(); index++) 
+		{
+			char ch = cmp.charAt(index);
+			if(!mid)
+			{
+				if(Character.isUpperCase(ch))
+				{
+					if(temp.length() > 0) ions.add(Ions.parseIons(temp));
+					temp = "" + ch;
+				}
+				else if(ch == '(')
+				{
+					if(!temp.equals("")) ions.add(Ions.parseIons(temp));
+					temp = "(";
+					mid = true;
+				}
+				else temp += ch;
+			}
+			else
+			{
+				if(ch == ')') mid = false;
+				temp += ch;
+			}
+		}
+		ions.add(Ions.parseIons(temp));
+		Ions[] i = new Ions[ions.size()];
 		return new Compound(ions.toArray(i), state, coefficient);
 	}
-	
+
 	private static TreeSet<String> createSet()
 	{
 		TreeSet<String> set = new TreeSet<String>();
