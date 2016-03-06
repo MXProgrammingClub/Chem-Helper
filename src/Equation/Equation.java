@@ -2,7 +2,7 @@
  * Represents a chemical equation. 
  * 
  * Authors: Luke Giacalone, Julia McClellan, Hyun Choi
- * Version: 2/29/2016
+ * Version: 3/5/2016
  */
 
 package Equation;
@@ -51,9 +51,17 @@ public class Equation
 	{
 		ArrayList<Compound> compounds = new ArrayList<Compound>();
 		ArrayList<String> cStrings = new ArrayList<String>();
-		int index = 0;
-		for(int end = side.indexOf("+", index); end != -1; cStrings.add(side.substring(index, end)), index = end + 1, end = side.indexOf("+", index));
-		cStrings.add(side.substring(index));
+		int start = 0;
+		for(int index = start, end = side.indexOf("+", index); end != -1; index = end + 1, end = side.indexOf("+", index))
+		{
+			//In case the plus is from the charge of an ion
+			if(end < 5 || !side.substring(end - 5, end).equals("<sup>"))
+			{
+				cStrings.add(side.substring(start, end));
+				start = end + 1;
+			}
+		}
+		cStrings.add(side.substring(start));
 		for(String compound: cStrings)
 		{
 			compounds.add(Compound.parseCompound(compound.trim()));

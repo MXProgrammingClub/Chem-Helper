@@ -2,7 +2,7 @@
  * Represents a monatomic ion.
  * 
  * Author: Julia McClellan
- * Version: 2/29/2016
+ * Version: 3/5/2016
  */
 
 package Equation;
@@ -60,7 +60,10 @@ public class Monatomic extends Ions
 	{
 		String ion = element.getSymbol();
 		if(getNum() != 1) ion += "<sub>" + getNum() + "</sub>"; 
-		if(getCharge() != 0) ion += "<sup>" + getCharge() + "</sup>";
+		if(getCharge() > 1) ion += "<sup>+" + getCharge() + "</sup>";
+		else if(getCharge() == 1) ion += "<sup>+</sup>";
+		else if(getCharge() == -1) ion += "<sup>-</sup>";
+		else if(getCharge() < -1) ion += "<sup>" + getCharge() + "</sup>";
 		return ion;
 	}
 	
