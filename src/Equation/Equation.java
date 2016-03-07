@@ -77,12 +77,12 @@ public class Equation
 		{
 			equation += compound + " + ";
 		}
-		equation = equation.substring(0, equation.length() - 2) + "\u2192";
+		equation = equation.substring(0, equation.length() - 2) + "\u2192 ";
 		for(Compound compound: right)
 		{
 			equation += compound + " + ";
 		}
-		equation = equation.substring(0, equation.length() - 2);
+		equation = equation.substring(0, equation.length() - 3);
 		return equation;
 	}
 	

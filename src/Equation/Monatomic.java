@@ -60,10 +60,10 @@ public class Monatomic extends Ions
 	{
 		String ion = element.getSymbol();
 		if(getNum() != 1) ion += "<sub>" + getNum() + "</sub>"; 
-		if(getCharge() > 1) ion += "<sup>+" + getCharge() + "</sup>";
+		if(getCharge() > 1) ion += "<sup>" + getCharge() + "+</sup>";
 		else if(getCharge() == 1) ion += "<sup>+</sup>";
 		else if(getCharge() == -1) ion += "<sup>-</sup>";
-		else if(getCharge() < -1) ion += "<sup>" + getCharge() + "</sup>";
+		else if(getCharge() < -1) ion += "<sup>" + (-getCharge()) + "-</sup>";
 		return ion;
 	}
 	

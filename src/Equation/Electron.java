@@ -31,7 +31,7 @@ public class Electron extends Ions
 	
 	public String toString()
 	{
-		return getNum() == 1 ? "" : getNum() + "e<sub>-</sub>";
+		return (getNum() == 1 ? "" : getNum()) + "e<sub>-</sub>";
 	}
 	
 	public double getMolarMass()
