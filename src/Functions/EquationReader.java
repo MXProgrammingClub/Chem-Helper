@@ -109,7 +109,7 @@ public class EquationReader extends Function
 			try
 			{
 				equation = Equation.parseEquation(input);
-				
+				//System.out.println(equation);
 				int isBalanced = equation.balance();
 				if(isBalanced == 2) isBalanced = equation.balance2();
 				
@@ -124,6 +124,7 @@ public class EquationReader extends Function
 			}
 			catch(Throwable e)
 			{
+				//e.printStackTrace();
 				if(!(e instanceof InvalidInputException)) e = new InvalidInputException(-1);
 				String output = e.getMessage();
 				result.setText(output);

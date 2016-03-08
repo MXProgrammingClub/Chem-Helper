@@ -2,7 +2,7 @@
  * Represents a chemical equation. 
  * 
  * Authors: Luke Giacalone, Julia McClellan, Hyun Choi
- * Version: 3/5/2016
+ * Version: 3/7/2016
  */
 
 package Equation;
@@ -55,12 +55,13 @@ public class Equation
 		for(int index = start, end = side.indexOf("+", index); end != -1; index = end + 1, end = side.indexOf("+", index))
 		{
 			//In case the plus is from the charge of an ion
-			if(end < 5 || !side.substring(end - 5, end).equals("<sup>"))
+			if((end < 5 || !side.substring(end - 5, end).equals("<sup>") && (end > side.length() - 6 || !side.substring(end + 1, end + 7).equals("</sup>"))))
 			{
 				cStrings.add(side.substring(start, end));
 				start = end + 1;
 			}
 		}
+		
 		cStrings.add(side.substring(start));
 		for(String compound: cStrings)
 		{
@@ -322,11 +323,12 @@ public class Equation
 		}
 		return ions;
 	}
-/*	
+/*
 	public static void main(String[] args) {
 		try {
-			Equation eq = parseEquation("H<sub>2</sub>+O<sub>2</sub>+C<sub>4</sub>\u2192H<sub>2</sub>OC");
+			Equation eq = parseEquation("HIO<sub>3</sub>+FeI<sub>2</sub>+HCl\u2192FeCl<sub>3</sub>+ICl+H<sub>2</sub>O");//"H<sub>2</sub>+O<sub>2</sub>+C<sub>4</sub>\u2192H<sub>2</sub>OC+O");
 			eq.balance();
+			System.out.println(eq);
 		}
 		catch (Throwable e) {
 			e.printStackTrace();
