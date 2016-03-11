@@ -112,6 +112,12 @@ public class TextField extends JPanel
 		//else current = current.substring(0, last) + enter + current.substring(last);
 		index += enter.length();
 		label.setText(current);
+		
+		if(label.getPreferredSize().getWidth() > getWidth())
+		{
+			this.setPreferredSize(new Dimension(getWidth() + 50, 28));
+		}
+		
 	}
 	
 	private class Key implements KeyListener
