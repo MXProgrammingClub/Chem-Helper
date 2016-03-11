@@ -23,7 +23,7 @@ import javax.swing.JTextField;
 
 public class TextField extends JPanel
 {
-	public static final int EQUATION = 200, COMPOUND = 68;
+	public static final int EQUATION = 300, COMPOUND = 68;
 	
 	private int index;
 	private JLabel label;
@@ -33,7 +33,7 @@ public class TextField extends JPanel
 	public TextField(int length)
 	{
 		this.setLayout(new GridLayout());
-		this.setPreferredSize(new Dimension(length, 26));
+		this.setPreferredSize(new Dimension(length, 28));
 		current = "<html></html>";
 		index = 6;
 		label = new JLabel(current);
