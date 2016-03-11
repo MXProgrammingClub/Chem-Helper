@@ -83,7 +83,7 @@ public class Redox extends Function
 		c.gridx = 0;
 		redox.add(new JLabel("<html>In solution: " + halves.get(0).getRight().get(0) + "</html>"), c);
 		c.gridx += 2;
-		redox.add(new JLabel("<html>In solution: " + halves.get(1).getLeft().get(1) + "</html>"), c);
+		redox.add(new JLabel("<html>In solution: " + halves.get(1).getLeft().get(0) + "</html>"), c);
 		
 		cell.setVisible(false);
 		cell.removeAll();
