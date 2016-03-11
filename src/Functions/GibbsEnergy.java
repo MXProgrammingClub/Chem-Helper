@@ -8,6 +8,8 @@
 
 package Functions;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -33,13 +35,20 @@ public class GibbsEnergy extends Function
 	public GibbsEnergy()
 	{
 		super("Gibbs Free Energy");
-		Box box = Box.createVerticalBox();
-		box.add(new JLabel("\u0394G = \u0394H - T\u0394S"));		
+		JPanel box = new JPanel(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridy = 0;
+		c.anchor = GridBagConstraints.WEST;
+		box.add(new JLabel("\u0394G = \u0394H - T\u0394S"), c);		
 		fields = new EnterField[3];
-		fields[0] = new EnterField("\u0394H");
+		fields[0] = new EnterField("\u0394H", "Energy");
 		fields[1] = new EnterField("T", "Temperature");
-		fields[2] = new EnterField("\u0394S");
-		for(EnterField field: fields) box.add(field);
+		fields[2] = new EnterField("\u0394S", "Energy", "Temperature");
+		for(EnterField field: fields)
+		{
+			c.gridy++;
+			box.add(field, c);
+		}
 		
 		calculate = new JButton("Calculate");
 		calculate.addActionListener(new ActionListener()
@@ -48,6 +57,7 @@ public class GibbsEnergy extends Function
 					{
 						steps.removeAll();
 						answer.setText("");
+						spontaneous.setText("");
 						double dH = fields[0].getAmount(), t = fields[1].getAmount(), dS = fields[2].getAmount();
 						if(dH == Units.ERROR_VALUE || dH == Units.UNKNOWN_VALUE || t == Units.ERROR_VALUE 
 								|| dS == Units.ERROR_VALUE || dS == Units.UNKNOWN_VALUE)
@@ -58,12 +68,16 @@ public class GibbsEnergy extends Function
 						}
 						int sigFigs = Math.min(fields[0].getSigFigs(), fields[2].getSigFigs());
 						
+						//Base unit for calculations is kJ, not J
+						dH /= 1000;
+						dS /= 1000;
+						
 						if(t == Units.UNKNOWN_VALUE)
 						{
 							steps.add(new JLabel("\u0394G = \u0394H - T\u0394S"));
 							steps.add(Box.createVerticalStrut(5));
-							steps.add(new JLabel("\u0394H = " + dH));
-							steps.add(new JLabel("\u0394S = " + dS));
+							steps.add(new JLabel("\u0394H = " + dH + " kJ"));
+							steps.add(new JLabel("\u0394S = " + dS + " kJ"));
 							steps.add(Box.createVerticalStrut(5));
 							steps.add(new JLabel("For spontaneous reactions, \u0394H - T\u0394S < 0"));
 							steps.add(new JLabel("\u0394H < T\u0394S"));
@@ -105,9 +119,9 @@ public class GibbsEnergy extends Function
 						
 							steps.add(new JLabel("\u0394G = \u0394H - T\u0394S"));
 							steps.add(Box.createVerticalStrut(5));
-							steps.add(new JLabel("\u0394H = " + dH));
+							steps.add(new JLabel("\u0394H = " + dH + " kJ"));
 							steps.add(new JLabel("T = " + t + " K"));
-							steps.add(new JLabel("\0394S = " + dS));
+							steps.add(new JLabel("\u0394S = " + dS + " kJ"));
 							steps.add(Box.createVerticalStrut(5));
 							steps.add(new JLabel("\u0394G = " + dH + " - " + t + " * " + dS + " = " + dG));
 						
@@ -130,18 +144,29 @@ public class GibbsEnergy extends Function
 						}
 					}
 				});
-		box.add(calculate);
+		c.gridy++;
+		box.add(calculate, c);
 		
 		answer = new JLabel();
-		box.add(answer);
+		c.gridy++;
+		box.add(answer, c);
 		spontaneous = new JLabel();
-		box.add(spontaneous);
+		c.gridy++;
+		box.add(spontaneous, c);
+		
+		JPanel subpanel = new JPanel(new GridBagLayout());
+		c.gridy = 0;
+		c.gridx = 0;
+		c.anchor = GridBagConstraints.NORTH;
+		subpanel.add(box, c);
+		c.gridx++;
+		subpanel.add(Box.createHorizontalStrut(10), c);
+		steps = Box.createVerticalBox();
+		c.gridx++;
+		subpanel.add(steps, c);
 		
 		panel = new JPanel();
-		panel.add(box);
-		panel.add(Box.createHorizontalStrut(10));
-		steps = Box.createVerticalBox();
-		panel.add(steps);
+		panel.add(subpanel);
 	}
 	
 	public boolean number()
