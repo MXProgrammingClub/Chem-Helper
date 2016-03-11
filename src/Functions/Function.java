@@ -95,6 +95,8 @@ public abstract class Function {
 						if (sub.getNum()>1) {
 							str+= "_{" + sub.getNum() + "}";
 						}
+						int charge = sub.getCharge();
+						if(charge != 0) str += "^{" + (Math.abs(charge) == 1 ? "" : Math.abs(charge)) + (charge > 0 ? '+' : '-') + "}"; 
 					}
 					if(ion instanceof Polyatomic)
 					{
