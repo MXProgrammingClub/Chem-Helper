@@ -2,7 +2,7 @@
  * Represents a chemical equation. 
  * 
  * Authors: Luke Giacalone, Julia McClellan, Hyun Choi
- * Version: 3/10/2016
+ * Version: 3/11/2016
  */
 
 package Equation;
@@ -72,7 +72,7 @@ public class Equation
 			}
 		}
 		
-		cStrings.add(side.substring(start));
+		if(!side.substring(start).trim().equals("")) cStrings.add(side.substring(start));
 		for(String compound: cStrings)
 		{
 			compounds.add(Compound.parseCompound(compound.trim()));
@@ -263,10 +263,10 @@ public class Equation
 		if(counts[0] > 0) e.addToLeft(new Compound(new Monatomic[]{new Monatomic(new Hydrogen(), 2), new Monatomic(new Oxygen())}, counts[0]));
 		if(acidic && counts[1] > 0) e.addToLeft(new Compound(new Monatomic[]{new Monatomic(new Hydrogen(), 1, 1)}, counts[1]));
 		if(!acidic && counts[1] > 0) e.addToLeft(new Compound(new Monatomic[]{new Monatomic(new Oxygen()), new Monatomic(new Hydrogen(), -1)}, counts[1]));
+		e.addToLeft(new Compound(half.getLeft().get(0).getIons(), half.getLeft().get(0).getState()));
 		if(counts[2] > 0) e.addToLeft(new Compound(new Ions[]{new Electron()}, counts[2]));
-		e.addToLeft(new Compound(half.getLeft().get(0).getIons()));
 		
-		e.addToRight(new Compound(half.getRight().get(0).getIons()));
+		e.addToRight(new Compound(half.getRight().get(0).getIons(), half.getRight().get(0).getState()));
 		if(counts[0] < 0) e.addToRight(new Compound(new Monatomic[]{new Monatomic(new Hydrogen(), 2), new Monatomic(new Oxygen())}, -counts[0]));
 		if(acidic && counts[1] < 0) e.addToRight(new Compound(new Monatomic[]{new Monatomic(new Hydrogen(), 1, 1)}, -counts[1]));
 		if(!acidic && counts[1] < 0) e.addToRight(new Compound(new Monatomic[]{new Monatomic(new Oxygen()), new Monatomic(new Hydrogen(), -1)}, -counts[1]));
