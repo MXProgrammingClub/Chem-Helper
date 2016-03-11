@@ -2,9 +2,8 @@
  * Represents a monatomic ion.
  * 
  * Author: Julia McClellan
- * Version: 3/5/2016
+ * Version: 3/10/2016
  */
-
 package Equation;
 
 import Elements.Element;
@@ -12,7 +11,6 @@ import Elements.Element;
 public class Monatomic extends Ions
 {
 	private Element element;
-	
 	public Monatomic(Element element)
 	{
 		super(1, 0);
@@ -60,10 +58,7 @@ public class Monatomic extends Ions
 	{
 		String ion = element.getSymbol();
 		if(getNum() != 1) ion += "<sub>" + getNum() + "</sub>"; 
-		if(getCharge() > 1) ion += "<sup>" + getCharge() + "+</sup>";
-		else if(getCharge() == 1) ion += "<sup>+</sup>";
-		else if(getCharge() == -1) ion += "<sup>-</sup>";
-		else if(getCharge() < -1) ion += "<sup>" + (-getCharge()) + "-</sup>";
+		if(getCharge() != 0) ion += "<sup>" + (Math.abs(getCharge()) == 1 ? "" : Math.abs(getCharge())) + (getCharge() > 0 ? "+" : "-") + "</sup>";
 		return ion;
 	}
 	
@@ -95,5 +90,10 @@ public class Monatomic extends Ions
 	public boolean equals(Ions other)
 	{
 		return other instanceof Polyatomic ? false : equals((Monatomic)other);
+	}
+
+	public int numberOf(Element e)
+	{
+		return e.equals(element) ? getNum() : 0;
 	}
 }

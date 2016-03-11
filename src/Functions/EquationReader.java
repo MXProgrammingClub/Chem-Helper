@@ -3,7 +3,7 @@
  * equation() returns true- saves latest balanced equation and can display a saved one.
  * 
  * Author: Julia McClellan, Hyun Choi, Luke Giacalone
- * Version: 2/29/2016
+ * Version: 3/10/2016
  */
 
 package Functions;
@@ -13,10 +13,12 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 
 import ChemHelper.InvalidInputException;
 import Equation.Equation;
@@ -29,13 +31,21 @@ public class EquationReader extends Function
 	private JLabel instructions, result, balanced;
 	private JButton button, help, use;
 	private Equation equation;
+	private boolean redox;
+	private Function f;
+	private JRadioButton acid, base;
 	
 	public EquationReader()
 	{
-		this(null);
+		this(null, false);
 	}
 	
-	public EquationReader(final Function f)
+	public EquationReader(Function f)
+	{
+		this(f, false);
+	}
+	
+	public EquationReader(Function f, boolean redox)
 	{
 		super("Equation Balancer");
 		
@@ -44,9 +54,20 @@ public class EquationReader extends Function
 		result = new JLabel();
 		balanced = new JLabel();
 		
+		if(redox)
+		{
+			acid = new JRadioButton("Acidic", true);
+			base = new JRadioButton("Basic");
+			ButtonGroup g = new ButtonGroup();
+			g.add(acid);
+			g.add(base);
+			JPanel buttons = new JPanel();
+			buttons.add(acid);
+			buttons.add(base);
+		}
+		
 		button = new JButton("Balance");
 		button.addActionListener(new BListener());
-		help = new JButton("Help");
 		help = new JButton("Help");
 		help.addActionListener(new ActionListener()
 				{
@@ -63,6 +84,7 @@ public class EquationReader extends Function
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridx = 0;
 		c.gridy = 0;
+		c.anchor = GridBagConstraints.WEST;
 		box.add(instructions, c);
 		c.gridy = 1;
 		box.add(enter, c);
@@ -74,9 +96,12 @@ public class EquationReader extends Function
 		c.gridy = 4;
 		box.add(balanced, c);
 		
+		this.f = f;
+		this.redox = redox;
 		if(f != null)
 		{
-			use = new JButton("Use");
+			if(f instanceof Redox) use = new JButton("Create Electrochemcial Cell");
+			else use = new JButton("Use");
 			use.addActionListener(new ActionListener()
 				{
 					public void actionPerformed(ActionEvent arg0)
@@ -110,12 +135,17 @@ public class EquationReader extends Function
 			{
 				equation = Equation.parseEquation(input);
 				//System.out.println(equation);
-				int isBalanced = equation.balance();
-				if(isBalanced == 2) isBalanced = equation.balance2();
+				int isBalanced;
+				if(!redox)
+				{
+					isBalanced = equation.balance();
+					if(isBalanced == 2) isBalanced = equation.balance2();
+				}
+				else isBalanced = equation.balanceRedox(acid.isSelected(), ((Redox)f).getArrays());
 				
 				result.setIcon(latex(equation).getIcon());
 				if(isBalanced == 0) balanced.setText("This equation could not be balanced programmatically.");
-				if(use != null)
+				if(use != null && (!redox || (equation.getLeft().size() == 2 && equation.getRight().size() == 2)))
 				{
 					panel.setVisible(false);
 					use.setVisible(true);

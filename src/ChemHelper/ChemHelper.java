@@ -131,7 +131,7 @@ public class ChemHelper extends JFrame { //Primary GUI class
 
 	private void createMenu()
 	{
-		funcs = new Function[28];
+		funcs = new Function[29];
 		funcs[0] = new PeriodicTable(getIntPreference("Table_Style"), getBooleanPreference("Table_State_Colors"));
 		funcs[1] = new ElectronShell();
 		funcs[2] = new CompoundStoichiometry();
@@ -144,26 +144,27 @@ public class ChemHelper extends JFrame { //Primary GUI class
 		funcs[9] = new EquationReader();
 		funcs[10] = new Combustion();
 		funcs[11] = new Nuclear();
-		funcs[12] = new GibbsEnergy();
-		funcs[13] = new HeatEquation();
-		funcs[14] = new RateLaw();
-		funcs[15] = new ReactionEnthalpy();
-		funcs[16] = new Solutions();
-		funcs[17] = new StateChangeTemp();
-		funcs[18] = new HenrysLaw();
-		funcs[19] = new Dilution();
-		funcs[20] = new Empirical();
-		funcs[21] = new Density();
-		funcs[22] = new Waves();
-		funcs[23] = new OxidationNumber();
-		funcs[24] = new pHCalculator();
-		funcs[25] = new Neutralization();
-		funcs[26] = new About();
-		funcs[27] = new Prefs(this);
+		funcs[12] = new Redox();
+		funcs[13] = new GibbsEnergy();
+		funcs[14] = new HeatEquation();
+		funcs[15] = new RateLaw();
+		funcs[16] = new ReactionEnthalpy();
+		funcs[17] = new Solutions();
+		funcs[18] = new StateChangeTemp();
+		funcs[19] = new HenrysLaw();
+		funcs[20] = new Dilution();
+		funcs[21] = new Empirical();
+		funcs[22] = new Density();
+		funcs[23] = new Waves();
+		funcs[24] = new OxidationNumber();
+		funcs[25] = new pHCalculator();
+		funcs[26] = new Neutralization();
+		funcs[27] = new About();
+		funcs[28] = new Prefs(this);
 		
 		String[] menuNames = {"General", "Stoichiometry", "Gas Laws", "Reactions", "Reaction Energy", "Solutions", "Other", "Help"};
 			//Lists the names of the different menus on the menu bar.
-		int[] menuCutoffs = {0, 2, 6, 9, 12, 16, 20, 26}; //Specifies the indices where a new menu would start from funcs
+		int[] menuCutoffs = {0, 2, 6, 9, 13, 17, 21, 27}; //Specifies the indices where a new menu would start from funcs
 		
 		menu = new JMenuBar();
 		for(int menuNum = 0; menuNum < menuCutoffs.length; menuNum++)

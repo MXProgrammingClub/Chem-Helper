@@ -76,6 +76,13 @@ public class Compound
 		this.num = num;
 	}
 
+	public int getCharge()
+	{
+		int charge = 0;
+		for(Ions i: ions) charge += i.getCharge();
+		return charge;
+	}
+	
 	public static Set<String> getValidstates() 
 	{
 		return VALID_STATES;
@@ -166,6 +173,16 @@ public class Compound
 		}
 		return -1;
 	}
+	
+	public int numberOf(Element e)
+	{
+		int count = 0;
+		for(Ions i: ions)
+		{
+			count += i.numberOf(e);
+		}
+		return count;
+	}
 
 	public Monatomic[] getNoPoly()
 	{
@@ -206,7 +223,7 @@ public class Compound
 		{
 			state = cmp.substring(cmp.lastIndexOf('(') + 1, cmp.length() - 1);
 			if(VALID_STATES.contains(state)) cmp = cmp.substring(0, cmp.lastIndexOf("("));
-			else state = "";
+			else state = " ";
 		}
 		
 		ArrayList<Ions> ions = new ArrayList<Ions>();

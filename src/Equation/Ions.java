@@ -2,7 +2,7 @@
  * Represents a collection of ions of the same type and charge. The two implementations are Polyatomic and Monatomic.
  * 
  * Author: Julia McClellan
- * Version: 3/7/2016
+ * Version: 3/10/2016
  */
 
 package Equation;
@@ -57,6 +57,8 @@ public abstract class Ions
 	
 	public abstract String withoutCharge();
 	
+	public abstract int numberOf(Element e);
+	
 	public static Ions parseIons(String ions) throws InvalidInputException
 	{
 		Ions ion;
@@ -107,7 +109,9 @@ public abstract class Ions
 		{
 			try
 			{
-				String ch = ions.substring(ions.indexOf("<sup>") + 5, ions.indexOf("</sup>"));
+				int end = ions.indexOf("</sup>");
+				if(end == -1) end = ions.length();
+				String ch = ions.substring(ions.indexOf("<sup>") + 5, end);
 				int mult = 1;
 				if(ch.charAt(ch.length() - 1) == '+') ch = ch.substring(0, ch.length() - 1);
 				else if (ch.charAt(ch.length() - 1) == '-') 

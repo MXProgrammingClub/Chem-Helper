@@ -2,7 +2,7 @@
  * Represents a chemical equation. 
  * 
  * Authors: Luke Giacalone, Julia McClellan, Hyun Choi
- * Version: 3/7/2016
+ * Version: 3/10/2016
  */
 
 package Equation;
@@ -11,7 +11,9 @@ import java.util.ArrayList;
 
 import ChemHelper.InvalidInputException;
 import Functions.Function;
-
+import Elements.Element;
+import Elements.Hydrogen;
+import Elements.Oxygen;
 
 public class Equation
 {
@@ -41,6 +43,14 @@ public class Equation
 		right.add(c);
 	}
 	
+	public Equation reverse()
+	{
+		Equation eq = new Equation();
+		for(Compound c: left) eq.addToRight(c);
+		for(Compound c : right) eq.addToLeft(c);
+		return eq;
+	}
+	
 	public static Equation parseEquation(String eq) throws InvalidInputException
 	{
 		String left = eq.substring(0, eq.indexOf("\u2192")), right = eq.substring(eq.indexOf("\u2192") + 1);
@@ -55,7 +65,7 @@ public class Equation
 		for(int index = start, end = side.indexOf("+", index); end != -1; index = end + 1, end = side.indexOf("+", index))
 		{
 			//In case the plus is from the charge of an ion
-			if((end < 5 || !side.substring(end - 5, end).equals("<sup>") && (end > side.length() - 6 || !side.substring(end + 1, end + 7).equals("</sup>"))))
+			if((end < 5 || !side.substring(end - 5, end).equals("<sup>") && (end > side.length() - 7 || !side.substring(end + 1, end + 7).equals("</sup>"))))
 			{
 				cStrings.add(side.substring(start, end));
 				start = end + 1;
@@ -160,6 +170,109 @@ public class Equation
 		else return 0;
 	}
 
+	public int balanceRedox(boolean acidic, ArrayList<Equation> halves)
+	{
+		if(left.size() != 2 || right.size() != 2) return 0; //Case to be dealt with: one compound used in both half reactions
+		
+		//Separate into half reactions
+		Equation r1 = new Equation(), r2 = new Equation();
+		r1.addToLeft(left.get(0));
+		Element e1 = left.get(0).getIons()[0].getElements()[0].getElement(), e2 = left.get(1).getIons()[0].getElements()[0].getElement();
+		boolean contains = right.get(0).contains(e1);
+		r1.addToRight(contains ? right.get(0) : right.get(1)); //Case to be dealt with: compound with multiple relevant (not oxygen) ions		
+		r2.addToLeft(left.get(1));
+		r2.addToRight(contains ? right.get(1) : right.get(0));
+		
+		//Balance non-oxygen elements in half reactions
+		int num1 = r1.getLeft().get(0).numberOf(e1), num2 = r1.getRight().get(0).numberOf(e1);
+		if(num1 != num2)
+		{
+			r1.getLeft().get(0).setNum(num2);
+			r1.getRight().get(0).setNum(num1);
+		}
+		
+		num1 = r2.getLeft().get(0).numberOf(e2);
+		num2 = r2.getRight().get(0).numberOf(e2);
+		if(num1 != num2)
+		{
+			r2.getLeft().get(0).setNum(num2);
+			r2.getRight().get(0).setNum(num1);
+		}
+		
+		//Balance oxygen and hydrogen in half reactions
+		int[] count1 = getCounts(r1, acidic), count2 = getCounts(r2, acidic);
+		if(halves != null)
+		{
+			//Adds the oxidation reaction and then the reduction reaction
+			if(count1[2] < 0) halves.add(createHalf(r1, count1, acidic));
+			halves.add(createHalf(r2, count2, acidic));
+			if(count1[2] > 0) halves.add(createHalf(r1, count1, acidic));
+		}
+		
+		//Multiply through by electron coefficients
+		count1[2] = Math.abs(count1[2]);
+		count2[2] = Math.abs(count2[2]);
+		
+		count1[0] *= count2[2];
+		count1[1] *= count2[2];
+		for(Compound c: r1.getLeft()) c.setNum(c.getNum() * count2[2]);
+		for(Compound c: r1.getRight()) c.setNum(c.getNum() * count2[2]);
+		
+		count2[0] *= count1[2];
+		count2[1] *= count1[2];
+		for(Compound c: r2.getLeft()) c.setNum(c.getNum() * count1[2]);
+		for(Compound c: r2.getRight()) c.setNum(c.getNum() * count1[2]);
+		
+		//Add in H2O and H+/OH-
+		int[] counts = {count1[0] + count2[0], count1[1] + count2[1]};
+		if(acidic && counts[1] > 0) left.add(0, new Compound(new Monatomic[]{new Monatomic(new Hydrogen(), 1, 1)}, counts[1]));
+		if(!acidic && counts[1] > 0) left.add(0, new Compound(new Monatomic[]{new Monatomic(new Oxygen()), new Monatomic(new Hydrogen(), -1)}, counts[1]));
+		if(counts[0] > 0) left.add(0, new Compound(new Monatomic[]{new Monatomic(new Hydrogen(), 2), new Monatomic(new Oxygen())}, counts[0]));
+		
+		if(acidic && counts[1] < 0) right.add(0, new Compound(new Monatomic[]{new Monatomic(new Hydrogen(), 1, 1)}, -counts[1]));
+		if(!acidic && counts[1] < 0) right.add(0, new Compound(new Monatomic[]{new Monatomic(new Oxygen()), new Monatomic(new Hydrogen(), -1)}, -counts[1]));
+		if(counts[0] < 0) right.add(0, new Compound(new Monatomic[]{new Monatomic(new Hydrogen(), 2), new Monatomic(new Oxygen())}, -counts[0]));
+		
+		if(isBalanced()) return 1;
+		return 0;
+	}
+	
+	private int[] getCounts(Equation half, boolean acidic)
+	{
+		Oxygen o = new Oxygen();
+		int[] counts = {-(half.getLeft().get(0).numberOf(o) - half.getRight().get(0).numberOf(o)), 0, 0}; //{H2O, H+/OH-, e-}
+		counts[1] = counts[0] * -2;
+		
+		if(!acidic) //changes middle element to OH- instead of H+
+		{
+			counts[0] += counts[1];
+			counts[1] *= -1;
+		}
+		
+		int charge = acidic ? counts[1] : -counts[1];
+		for(Compound c: half.getLeft()) charge += c.getCharge() * c.getNum();
+		for(Compound c: half.getRight()) charge -= c.getCharge() * c.getNum();
+		counts[2] = charge;
+		return counts;
+	}
+	
+	private Equation createHalf(Equation half, int[] counts, boolean acidic)
+	{
+		Equation e = new Equation();
+		
+		if(counts[0] > 0) e.addToLeft(new Compound(new Monatomic[]{new Monatomic(new Hydrogen(), 2), new Monatomic(new Oxygen())}, counts[0]));
+		if(acidic && counts[1] > 0) e.addToLeft(new Compound(new Monatomic[]{new Monatomic(new Hydrogen(), 1, 1)}, counts[1]));
+		if(!acidic && counts[1] > 0) e.addToLeft(new Compound(new Monatomic[]{new Monatomic(new Oxygen()), new Monatomic(new Hydrogen(), -1)}, counts[1]));
+		if(counts[2] > 0) e.addToLeft(new Compound(new Ions[]{new Electron()}, counts[2]));
+		e.addToLeft(new Compound(half.getLeft().get(0).getIons()));
+		
+		e.addToRight(new Compound(half.getRight().get(0).getIons()));
+		if(counts[0] < 0) e.addToRight(new Compound(new Monatomic[]{new Monatomic(new Hydrogen(), 2), new Monatomic(new Oxygen())}, -counts[0]));
+		if(acidic && counts[1] < 0) e.addToRight(new Compound(new Monatomic[]{new Monatomic(new Hydrogen(), 1, 1)}, -counts[1]));
+		if(!acidic && counts[1] < 0) e.addToRight(new Compound(new Monatomic[]{new Monatomic(new Oxygen()), new Monatomic(new Hydrogen(), -1)}, -counts[1]));
+		if(counts[2] < 0) e.addToRight(new Compound(new Ions[]{new Electron()}, -counts[2]));
+		return e;
+	}
 	
 	//creates equations for each ion
 	private String[] createEquations() {
@@ -323,6 +436,24 @@ public class Equation
 		}
 		return ions;
 	}
+
+	/*
+	public static void main(String[] args)
+	{
+		try
+		{
+			Equation eq = parseEquation("Cu(s)+NO<sub>3</sub><sup>-</sup>(aq)\u2192Cu<sup>2+</sup>(aq)+NO(g)");
+			ArrayList<Equation> halves = new ArrayList<Equation>();
+			eq.balanceRedox(true, halves);
+			System.out.println(eq);
+			System.out.println(halves);
+		}
+		catch(Throwable e)
+		{
+			e.printStackTrace();
+		}
+	}
+	*/
 /*
 	public static void main(String[] args) {
 		try {
