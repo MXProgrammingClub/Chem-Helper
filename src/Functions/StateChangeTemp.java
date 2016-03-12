@@ -28,6 +28,7 @@ import HelperClasses.Units;
 public class StateChangeTemp extends Function {
 	
 	private JPanel panel, inputPanel;
+	private Box steps;
 	private JRadioButton togetherI, seperatedI;
 	private EnterField deltaT, i, iIon, iSolute, k, m;
 	private JButton calculate;
@@ -89,8 +90,11 @@ public class StateChangeTemp extends Function {
 		c.gridy = 3;
 		subpanel.add(result, c);
 		
+		steps = Box.createVerticalBox();
+		
 		panel = new JPanel();
 		panel.add(subpanel);
+		panel.add(steps);
 		
 		togetherI.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -122,6 +126,11 @@ public class StateChangeTemp extends Function {
 		public void actionPerformed(ActionEvent e) {
 			double[] values = new double[4];
 			values[0] = Units.toKelvin(deltaT.getAmount(), deltaT.getUnit());
+			if(deltaT.getUnit() == 1) //if celcius
+				steps.add(new JLabel(values[0] + " K = " + deltaT.getAmount() + "\u2103 - 273.15"));
+			else if(deltaT.getUnit() == 2)
+				steps.add(new JLabel(values[0] + " K = (" + deltaT.getAmount() + "\u2109 + 459.67) * 5 / 9"));
+			
 			if(togetherI.isSelected())
 				values[1] = i.getAmount();
 			else
@@ -149,28 +158,41 @@ public class StateChangeTemp extends Function {
 				}
 			}
 			
-			if(blank == -1)
+			steps.setVisible(false);
+			steps.removeAll();
+			
+			if(blank != 1 && seperatedI.isSelected()) 
+				steps.add(new JLabel("<html><i>i</i> = " + iIon + " / " + iSolute + " = " + values[1] + "</html>"));
+			
+			if(blank == -1) {
 				result.setText("Leave one value blank");
-			else if(blank == 0)
-			{
-				number = Units.toOriginalTemp(values[1] * values[2] * values[3], deltaT.getUnit());
-				result.setText("\u0394t = " +  number + " " + deltaT.getUnitName());
+				steps.removeAll();
 			}
-			else if(blank == 1)
-			{
+			else if(blank == 0) {
+				number = Units.toOriginalTemp(values[1] * values[2] * values[3], deltaT.getUnit());
+				steps.add(new JLabel("\u0394t = " + values[1] + " * " + values[2] + " * " + values[3] + " mol/g = "
+						+ number + " " + deltaT.getUnitName()));
+				result.setText("\u0394t = " + number + " " + deltaT.getUnitName());
+			}
+			else if(blank == 1) {
 				number = values[0] / values[2] / values[3];
+				steps.add(new JLabel("<html><i>i</i> = " + values[0] + " K / " + values[2] + " / " + values[3] 
+						+ " mol/g = " + number + "</html>"));
 				result.setText("<html><i>i</i></html> = " + number);
 			}
-			else if(blank == 2)
-			{
+			else if(blank == 2) {
 				number = values[0] / values[1] / values[3];
+				steps.add(new JLabel("k = " + values[0] + " K / " + values[1] + " / " + values[3] + " mol/g = " + number));
 				result.setText("k = " + number);
 			}
-			else if (blank == 3) 
-			{
+			else if (blank == 3) {
 				number = Units.toBaseUnit(values[0] / values[1] / values[2], m.getUnit2()); //toBasUnit because g is in the denom
+				steps.add(new JLabel("m = " + values[0] + " K / " + values[2] + " / " + values[3] + " / " + number + " = mol/" 
+						+ m.getUnit2Name()));
 				result.setText("m = " + number + " mol/" + m.getUnit2Name());
 			}
+			
+			steps.setVisible(true);
 		}
 	}
 	
