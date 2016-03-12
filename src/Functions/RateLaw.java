@@ -3,7 +3,7 @@
  * equation() returns true- has an EquationReader as an instance variable.
  * 
  * Author: Julia McClellan
- * Version: 2/5/2015
+ * Version: 3/12/2015
  */
 
 package Functions;
@@ -13,6 +13,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -31,7 +32,7 @@ public class RateLaw extends Function
 	private EquationReader reader;
 	private JButton calculate, reset, add;
 	private ArrayList<TableRow> rows;
-	private Box table, box2, box3, box4;
+	private Box table, box2, box3, box4, steps;
 	private JLabel errorMessage, displayEquation, law, kValue;
 	private ArrayList<Compound> compounds;
 	
@@ -81,8 +82,11 @@ public class RateLaw extends Function
 		box3.add(tablePanel);
 		box3.add(resultPanel);
 		
+		steps = Box.createVerticalBox();
+		
 		panel.add(reader.getPanel());
 		panel.add(box3);
+		panel.add(steps);
 	}
 	
 	private class TableRow extends JPanel
@@ -95,12 +99,12 @@ public class RateLaw extends Function
 		public TableRow(int num)
 		{
 			concentrations = new JTextField[compounds.size()];
-			numLabel = new JLabel("" + num);
+			numLabel = new JLabel("" + (num + 1));
 			numLabel.setBorder(BorderFactory.createLineBorder(Color.black));
 			numLabel.setPreferredSize(new Dimension(30, 20));
 			box = Box.createHorizontalBox();
 			box.add(numLabel);
-			for(int index = compounds.size() - 1; index >= 0; index--)
+			for(int index = 0; index < compounds.size(); index++)
 			{
 				JTextField field = new JTextField(5);
 				field.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -179,115 +183,163 @@ public class RateLaw extends Function
 		public void actionPerformed(ActionEvent arg0)
 		{
 			box4.remove(errorMessage);
-			int[] orders = new int[compounds.size()];
+			steps.removeAll();
+			steps.setVisible(false);
+			resultPanel.setVisible(false);
+			//Converts the values stored in rows into a 2d array of doubles
+			double[][] table = new double[rows.size()][compounds.size() + 1];
 			int sigFigs = Integer.MAX_VALUE;
-			for(int order = 0; order < orders.length; order++)
+			for(int i = 0; i < table.length; i++)
 			{
-				int row1 = 0, row2 = 0;
-				boolean found = false;
-				for(; row1 < rows.size(); row1++)
+				for(int j = 0; j < table[0].length - 1; j++)
 				{
-					for(; row2 < rows.size(); row2++)
+					try
 					{
-						if(row2 != row1)
-						{
-							double c1, c2;
-							try
-							{
-								c1 = Double.parseDouble(rows.get(row1).getConcentration(order));
-								c2 = Double.parseDouble(rows.get(row2).getConcentration(order));
-							}
-							catch(Throwable e)
-							{
-								errorMessage.setText("There was a problem with your input.");
-								box4.add(errorMessage);
-								return;
-							}
-							if(Function.sigFigs(rows.get(row1).getConcentration(order)) < sigFigs)
-							{
-								sigFigs = Function.sigFigs(rows.get(row1).getConcentration(order));
-							}
-							if(Function.sigFigs(rows.get(row2).getConcentration(order)) < sigFigs)
-							{
-								sigFigs = Function.sigFigs(rows.get(row1).getConcentration(order));
-							}
-							if(c1 != c2)
-							{
-								boolean equal = true;
-								{
-									for(int check = 0; equal && check < orders.length; check++)
-									{
-										try
-										{
-											c1 = Double.parseDouble(rows.get(row1).getConcentration(check));
-											c2 = Double.parseDouble(rows.get(row2).getConcentration(check));
-										}
-										catch(Throwable e)
-										{
-											errorMessage.setText("There was a problem with your input.");
-											box4.add(errorMessage);
-											return;
-										}
-										if(Function.sigFigs(rows.get(row1).getConcentration(check)) < sigFigs)
-										{
-											sigFigs = Function.sigFigs(rows.get(row1).getConcentration(check));
-										}
-										if(Function.sigFigs(rows.get(row2).getConcentration(check)) < sigFigs)
-										{
-											sigFigs = Function.sigFigs(rows.get(row1).getConcentration(check));
-										}
-										if(check != order && c1 != c2) equal = false;
-									}
-								}
-								if(equal) found = true;
-							}
-						}
-						if(found) break;
+						String concentration = rows.get(i).getConcentration(j);
+						table[i][j] = Double.parseDouble(concentration);
+						sigFigs = Math.min(sigFigs, Function.sigFigs(concentration));
 					}
-					if(found) break;
+					catch(Throwable e)
+					{
+						errorMessage.setText("There was a problem with your input.");
+						box4.add(errorMessage);
+						box4.setVisible(true);
+						return;
+					}					
 				}
-				if(!found)
-				{
-					errorMessage.setText("These values are not sufficient to calculate the rate law.");
-					box4.add(errorMessage);
-					return;
-				}
-				double toOrder = Double.parseDouble(rows.get(row1).getConcentration(order)) / Double.parseDouble(rows.get(row2).getConcentration(order)), 
-						rateRatio; 
 				try
 				{
-					double rate1 = Double.parseDouble(rows.get(row1).getRate()), rate2 = Double.parseDouble(rows.get(row2).getRate()); 
-					rateRatio = rate1 / rate2;
+					String rate = rows.get(i).getRate();
+					table[i][table[0].length - 1] = Double.parseDouble(rate);
+					sigFigs = Math.min(sigFigs, Function.sigFigs(rate));
 				}
 				catch(Throwable e)
 				{
 					errorMessage.setText("There was a problem with your input.");
 					box4.add(errorMessage);
+					box4.setVisible(true);
 					return;
-				}		
-				int testOrder = 1;
-				for(; Math.abs(Math.pow(toOrder, testOrder) - rateRatio) < .01; testOrder++);
-				orders[order] = testOrder;
+				}
 			}
-			String rateLaw = "<html>Rate = k";
-			double withoutK = 1;
-			int sumOrders = 0;
-			for(int index = 0; index < orders.length; index ++)
+			
+			ArrayList<String> stepList = new ArrayList<String>(); //For steps to be stored in during calculations
+			double[] k = new double[1]; //Will hold the value of k once calculated
+			int[] values = calculate(table, compounds.size(), k, stepList);
+			
+			String rate = "<html>Rate = k";
+			for(int index = 0; index < values.length; index++) 
 			{
-				String cString = compounds.get(index).toString();
-				if(compounds.get(index).getNum() != 1) cString = cString.substring(1);
-				cString = "[" + cString + "]";
-				rateLaw += cString;
-				if(orders[index] != 1) rateLaw += "<sup>" + orders[index] + "</sup>";
-				withoutK *= Math.pow(Double.parseDouble(rows.get(0).getConcentration(index)), orders[index]);
-				sumOrders += orders[index];
+				rate += "[" + compounds.get(index).withoutNum() + "]<sup>" + values[index] + "</sup>";
 			}
-			law.setText(rateLaw);
-			double k = Double.parseDouble(rows.get(0).getRate()) / withoutK;
-			String unit = "L<sup>" + (sumOrders - 1) + "</sup>/mol<sup>" + (sumOrders - 1) + "</sup>*s";
-			kValue.setText("<html>k = " + Function.withSigFigs(k, sigFigs) + " " + unit + "<html>");
+			law.setText(rate);
+			kValue.setText("<html>k = " + Function.withSigFigs(k[0], sigFigs) + " " + stepList.remove(stepList.size() - 1));
+			for(String step: stepList)
+			{
+				if(step.equals("")) steps.add(Box.createVerticalStrut(10));
+				else steps.add(new JLabel(step));
+			}
 			resultPanel.setVisible(true);
+			steps.setVisible(true);
 		}
+	}
+	
+	public static int[] calculate(double[][] table, int compounds, double[] k, ArrayList<String> steps)
+	{
+		int[] values = new int[compounds];
+		for(int index  = 0; index < values.length; index++)
+		{
+			values[index] = -1; //Sets all initial values to -1 so it can test if all are solved later.
+		}
+		
+		for(int i = 0; i < table.length; i++)
+		{
+			boolean found = false;
+			for(int j = 0; j < table.length; j++)
+			{
+				if(i != j)
+				{
+					String step = "<html>Trials " + (i + 1) + " and " + (j + 1) + ":<br>" + Arrays.toString(table[i]) + "<br>" + Arrays.toString(table[j]);
+					String product = "<html>";
+					int changed = -1;
+					double value = table[j][table[0].length - 1];
+					for(int index = 0; index < values.length; index++)
+					{
+						if(table[i][index] != table[j][index])
+						{
+							if(values[index] != -1)
+							{
+								//The value for another can still be calculated if the rate is adjusted to provide for the other changed values
+								value /= Math.pow(table[j][index] / table[i][index], values[index]); 
+								product += "(" + table[j][index] + " / " + table[i][index] + ")<sup>" + values[index] + "</sup>";
+							}
+							else if(changed == -1)
+							{
+								changed = index;
+								product += "(" + table[j][index] + " / " + table[i][index] + ")<sup>x</sup> * ";
+							}
+							else
+							{
+								changed = -1;
+								break;
+							}
+						}
+					}
+					
+					if(changed != -1)
+					{
+						steps.add(step);
+						product = product.substring(0, product.length() - 3) + " = " + table[j][table[0].length - 1] + " / " + table[i][table[0].length - 1];
+						steps.add(product);
+						double left = table[j][changed] / table[i][changed], right = value / table[i][table[0].length - 1];
+						steps.add("<html>" + left + "<sup>x</sup> = " + right);
+						values[changed] = (int)Math.round((Math.log(right) / Math.log(left))); // Equivalent to the log base left of right-> a^x=b, x=log(a)b
+						steps.add("x = " + values[changed]);
+						steps.add(""); //To create an extra line between trials.
+					}
+					
+					//Checks if all values are solved and breaks if they are
+					boolean solved = true;
+					for(int val: values)
+					{
+						if(val == -1)
+						{
+							solved = false;
+							break;
+						}
+					}
+					if(solved)
+					{
+						found = true;
+						break;
+					}
+				}
+			}
+			if(found) break;
+		}
+		
+		//Calculates the value of k
+		String kStep = "<html>k * ";
+		double value = 1;
+		for(int index = 0; index < values.length; index++)
+		{
+			value *= Math.pow(table[0][index], values[index]);
+			kStep += "(" + table[0][index] + ")<sup>" + values[index] + "</sup> * ";
+		}
+		kStep = kStep.substring(0, kStep.length() - 3) + " = " + table[0][table[0].length - 1] + "</html>";
+		steps.add(kStep);
+		steps.add("k * " + value + " = " + table[0][table[0].length - 1]);
+		k[0] = table[0][table[0].length - 1] / value;
+		steps.add("k = " + table[0][table[0].length - 1] + " / " + value + " = " + k[0]);
+		
+		//Finds the unit of k
+		int sum = 0;
+		for(int num: values) sum += num;
+		sum -= 1;
+		String unit = "L<sup>" + sum + "</sup> / (mol<sup>" + sum + "</sup> * s)";
+		steps.add("<html>k = " + k[0] + " " + unit);
+		steps.add(unit); //So the value an be used later
+		
+		return values;
 	}
 	
 	private class Reset implements ActionListener
