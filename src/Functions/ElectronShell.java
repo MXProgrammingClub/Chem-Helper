@@ -2,7 +2,7 @@
  * Displays with latex an element's electron shell configuration given its atomic number, name, or symbol.
  * 
  * Authors: Julia McClellan, Luke Giacalone, Hyun Choi, Ted Pyne
- * Version: 2/25/2016
+ * Version: 3/12/2016
  */
 
 package Functions;
@@ -32,7 +32,7 @@ public class ElectronShell extends Function
 {
 	private JRadioButton num, sym, name;
 	private JPanel buttons, panel, enterPanel;
-	private JLabel info, results;
+	private JLabel info, results, nobleGas;
 	private JButton calc;
 	private JTextField enter;
 	private ButtonGroup options;
@@ -78,6 +78,9 @@ public class ElectronShell extends Function
 		c.gridy = 2;
 		c.gridwidth = 3;
 		subpanel.add(results, c);
+		c.gridy++;
+		nobleGas = new JLabel();
+		subpanel.add(nobleGas, c);
 		
 		//adds the subpanel to the real panel so that the contents will be at the top, not the center, of the screen
 		panel.setLayout(new BorderLayout());
@@ -93,30 +96,32 @@ public class ElectronShell extends Function
 	{
 		public void actionPerformed(ActionEvent arg0) 
 		{
-			String input = enter.getText();
-			Element[] table = PeriodicTable.TABLE;
-			String output = "";
+			nobleGas.setIcon(null);
+			results.setIcon(null);
+			results.setText("");
+			String input = enter.getText(), output = "";
+			Element[] table = PeriodicTable.TABLE; 
 			boolean done = false;
+			int index = 0;
+			
 			if(num.isSelected())
 			{
 				try
 				{
-					int atomicNum = Integer.parseInt(input);
-					if(atomicNum < 1 || table.length < atomicNum)
+					index = Integer.parseInt(input);
+					if(index < 1 || table.length < index)
 					{
-						results.setIcon(null);
-						results.setText(atomicNum + " is not a valid atomic number.");
+						results.setText(index + " is not a valid atomic number.");
 					}
 					else
 					{
-						output += table[atomicNum - 1].getEShell();
+						output += table[index - 1].getEShell();
 						done = true;
 						//results.setText(table[atomicNum - 1].getEShell());
 					}
 				}
 				catch(NumberFormatException e)
 				{
-					results.setIcon(null);
 					results.setText("Please enter a number.");
 				}
 				
@@ -128,16 +133,16 @@ public class ElectronShell extends Function
 				{
 					if(table[element].getSymbol().equals(input))
 					{
+						index = element;
 						output += table[element].getEShell();
 						done = true;
 						//results.setText(table[element].getEShell());
 						found = true;
 					}
-					if(!found)
-					{
-						results.setIcon(null);
-						results.setText(input + " is not a valid symbol.");
-					}
+				}
+				if(!found)
+				{
+					results.setText(input + " is not a valid symbol.");
 				}
 			}
 			if(name.isSelected())
@@ -147,16 +152,16 @@ public class ElectronShell extends Function
 				{
 					if(table[element].getName().equals(input))
 					{
+						index = element;
 						output += table[element].getEShell();
 						done = true;
 						//results.setText(table[element].getEShell());
 						found = true;
 					}
-					if(!found)
-					{
-						results.setIcon(null);
-						results.setText(input + " is not a valid element.");
-					}
+				}
+				if(!found)
+				{
+					results.setText(input + " is not a valid element.");
 				}
 			}
 			
@@ -168,8 +173,26 @@ public class ElectronShell extends Function
 				icon.paintIcon(new JLabel(), image.getGraphics(), 0, 0);
 				
 				results.setIcon(icon);
+				
+				//Noble gas form:
+				String form;
+				if(index <= 2) return;
+				else if(index < 10) form = "[He]";
+				else if(index < 18) form = "[Ne]";
+				else if(index < 36) form = "[Ar]";
+				else if(index < 54) form = "[Kr]";
+				else if(index < 96) form = "[Xe]";
+				else form = "[Rn]";
+				form += output.substring(output.lastIndexOf("s") - 1);
+				
+				TeXFormula formula2 = new TeXFormula (form);
+				TeXIcon icon2 = formula2.createTeXIcon(TeXConstants.STYLE_DISPLAY, 20);
+						
+				BufferedImage image2 = new BufferedImage(icon2.getIconWidth(), icon2.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+				icon2.paintIcon(new JLabel(), image2.getGraphics(), 0, 0);
+				
+				nobleGas.setIcon(icon2);
 			}
-			
 		}
 	}
 }
