@@ -165,6 +165,15 @@ public class Polyatomic extends Ions
 		return count;
 	}
 	
+	public static int findCharge(Polyatomic ion)
+	{
+		for(Ions test: POLYATOMIC_IONS)
+		{
+			if(test.equals(ion)) return test.getCharge();
+		}
+		return 0;
+	}
+	
 	//Commonly used polyatomic ions:
 	public static final Polyatomic[] POLYATOMIC_IONS = {new Polyatomic(new Monatomic[]{new Monatomic(new Nitrogen()), 
 			new Monatomic(new Hydrogen(), 4)}, 1, "Ammonium"), new Polyatomic(new Monatomic[]{new Monatomic(new Carbon()), 
