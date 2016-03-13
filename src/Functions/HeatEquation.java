@@ -108,8 +108,11 @@ public class HeatEquation extends Function {
 	private class Calculate implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			int blank = -1;
-			if(!input[4].isEmpty() && !input[5].isEmpty() && input[3].isEmpty())
-				input[3].setAmount(input[5].getAmount() - input[4].getAmount());
+			if(!input[4].isEmpty() && !input[5].isEmpty() && input[3].isEmpty()) {
+				input[3].setAmount(Units.toKelvin(input[5].getAmount(), input[5].getUnit()) 
+						- Units.toKelvin(input[4].getAmount(), input[4].getUnit()));
+				input[3].setUnit(0);
+			}
 			for(int i = 0; i < 4; i++) { //dont traverse the seperated temp
 				if(input[i].isEmpty()) 
 					if(blank == -1)
