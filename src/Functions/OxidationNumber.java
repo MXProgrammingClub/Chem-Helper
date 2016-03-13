@@ -2,7 +2,7 @@
  * Finds the oxidation numbers for the ions in a compound.
  * 
  * Author: Ted Pyne, Julia McClellan
- * Version: 3/12/2016
+ * Version: 3/13/2016
  */
 
 package Functions;
@@ -89,10 +89,12 @@ public class OxidationNumber extends Function{	//Oxidation number in compound
 						Monatomic[] elements = ions[index].getElements();
 						for(int i = 0; i < elements.length; i++)
 						{
-							result.add(new JLabel("<html>" + elements[i].getElement().getSymbol() + ": " + numbers[index][i] + "</html>"));
+							result.add(new JLabel("<html>" + elements[i].getElement().getSymbol() + ": " + (numbers[index][i] > 0 ? '+' : "")
+									+ numbers[index][i] + "</html>"));
 						}
 					}
-					else result.add(new JLabel("<html>" + ((Monatomic)ions[index]).getElement().getSymbol() + ": " + numbers[index][0] + "</html>"));
+					else result.add(new JLabel("<html>" + ((Monatomic)ions[index]).getElement().getSymbol() + ": " + (numbers[index][0] > 0 ? '+' : "") 
+							+ numbers[index][0] + "</html>"));
 				}
 				result.setVisible(true);
 			} 
@@ -133,7 +135,7 @@ public class OxidationNumber extends Function{	//Oxidation number in compound
 						}
 						
 						//Rule: groups 1 and 2 have oxidation numbers of 1 and 2 respectively
-						if(e.getGroup() <= 2 && e.getGroup() > 0)
+						if(e.getNum() != 1 && e.getGroup() <= 2 && e.getGroup() > 0)
 						{
 							numbers[index][0] = e.getGroup();
 							total += e.getGroup() * ions[index].getNum();
@@ -172,7 +174,7 @@ public class OxidationNumber extends Function{	//Oxidation number in compound
 						else if(num == 1)
 						{
 							//Rule: unless it's part of hydride, hydrogen's number is +1
-							if(numbers.length == 2 && numbers[-(index - 1)][0] == 1)
+							if(numbers.length == 2 && total == 1)
 							{
 								numbers[index][0] = -1;
 								total += -ions[index].getNum();
