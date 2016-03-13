@@ -1,3 +1,12 @@
+/*
+ * File: HeatEquation.java
+ * 
+ * Represents the q=mc(dT) equation.
+ * 
+ * Author: Luke Giacalone
+ * Version: 03/12/2016
+ */
+
 package Functions;
 
 import java.awt.GridBagConstraints;
@@ -9,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 
 import HelperClasses.EnterField;
 import HelperClasses.Units;
@@ -16,6 +26,7 @@ import HelperClasses.Units;
 public class HeatEquation extends Function {
 	
 	private JPanel panel;
+	private JRadioButton togetherTemp, seperatedTemp;
 	private EnterField[] input;
 	private JButton calculate;
 	private JLabel result;
@@ -27,18 +38,31 @@ public class HeatEquation extends Function {
 		JPanel subpanel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		
-		input = new EnterField[4];
+		input = new EnterField[6];
 		input[0] = new EnterField("Heat Energy", "Energy");
 		input[1] = new EnterField("Specific Heat", "Energy", "Mass*Temp");
 		input[2] = new EnterField("Mass", "Mass");
 		input[2].setUnit(6);
-		input[3] = new EnterField("\u0394t", "Time");
+		input[3] = new EnterField("\u0394T", "Temperature");
+		input[4] = new EnterField("Start Temp", "Temperature");
+		input[4].setVisible(false);
+		input[5] = new EnterField("End Temp", "Temperature");
+		input[5].setVisible(false);
 		
-		c.anchor = GridBagConstraints.WEST;
 		c.gridx = 0;
 		c.gridy = 0;
+		togetherTemp = new JRadioButton("\u0394T as One Value");
+		togetherTemp.setSelected(true);
+		seperatedTemp = new JRadioButton("\u0394T as Start/End");
+		subpanel.add(togetherTemp, c);
+		c.gridx = 1;
+		subpanel.add(seperatedTemp, c);
+		
+		c.anchor = GridBagConstraints.WEST;
+		c.gridwidth = 2;
+		c.gridx = 0;
 		for(int i = 0; i < input.length; i++) {
-			c.gridy = i;
+			c.gridy++;
 			subpanel.add(input[i], c);
 		}
 		
@@ -54,12 +78,39 @@ public class HeatEquation extends Function {
 		
 		panel = new JPanel();
 		panel.add(subpanel);
+		
+		togetherTemp.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(seperatedTemp.isSelected()) {
+					seperatedTemp.setSelected(false);
+					input[3].setVisible(true);
+					input[4].setVisible(false);
+					input[5].setVisible(false);
+				}
+				else
+					togetherTemp.setSelected(true);
+			}
+		});
+		seperatedTemp.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(togetherTemp.isSelected()) {
+					togetherTemp.setSelected(false);
+					input[3].setVisible(false);
+					input[4].setVisible(true);
+					input[5].setVisible(true);
+				}
+				else
+					seperatedTemp.setSelected(true);
+			}
+		});
 	}
 	
 	private class Calculate implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			int blank = -1;
-			for(int i = 0; i < input.length; i++) {
+			if(!input[4].isEmpty() && !input[5].isEmpty() && input[3].isEmpty())
+				input[3].setAmount(input[5].getAmount() - input[4].getAmount());
+			for(int i = 0; i < 4; i++) { //dont traverse the seperated temp
 				if(input[i].isEmpty()) 
 					if(blank == -1)
 						blank = i;
@@ -69,7 +120,7 @@ public class HeatEquation extends Function {
 					}
 			}
 			if(!input[2].isEmpty()) input[2].setAmount(Units.toBaseUnit(input[2].getAmount(), input[2].getUnit()));
-			if(!input[3].isEmpty()) input[3].setAmount(Units.toSeconds(input[3].getAmount(), input[3].getUnit()));
+			if(!input[3].isEmpty()) input[3].setAmount(Units.toKelvin(input[3].getAmount(), input[3].getUnit()));
 			if(blank == 0) {
 				answer = input[1].getAmount() * input[2].getAmount() * input[3].getAmount();
 				result.setText("q = " + answer + " J");
@@ -86,10 +137,10 @@ public class HeatEquation extends Function {
 			else if(blank == 3) {
 				answer = input[0].getAmount() / input[1].getAmount() / input[2].getAmount();
 				answer = Units.toOriginalTime(answer, input[3].getUnit());
-				result.setText("\u0394t = " + answer + " " + input[3].getUnit());
+				result.setText("\u0394T = " + answer + " " + input[3].getUnit());
 			}
 			if(!input[2].isEmpty()) input[2].setAmount(Units.fromBaseUnit(input[2].getAmount(), input[2].getUnit()));
-			if(!input[3].isEmpty()) input[3].setAmount(Units.toOriginalTime(input[3].getAmount(), input[3].getUnit()));
+			if(!input[3].isEmpty()) input[3].setAmount(Units.toOriginalTemp(input[3].getAmount(), input[3].getUnit()));
 		}
 	}
 	
