@@ -45,7 +45,7 @@ public class EquationReader extends Function
 		this(f, false);
 	}
 	
-	public EquationReader(Function f, boolean redox)
+	public EquationReader(Function func, boolean redox)
 	{
 		super("Equation Balancer");
 		
@@ -96,7 +96,7 @@ public class EquationReader extends Function
 		c.gridy = 4;
 		box.add(balanced, c);
 		
-		this.f = f;
+		f = func;
 		this.redox = redox;
 		if(f != null)
 		{
