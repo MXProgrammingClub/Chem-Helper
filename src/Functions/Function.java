@@ -112,7 +112,8 @@ public abstract class Function {
 			}
 			str = str.substring(0, str.length()-1);
 			
-			str+= "\\textbf{\\longrightarrow}";
+			if(eq.atEquilibrium()) str += "\\textbf{\\rightleftharpoons}";
+			else str+= "\\textbf{\\longrightarrow}";
 		}
 		str = str.substring(0,str.length()-25);//remove last rightarrow
 		

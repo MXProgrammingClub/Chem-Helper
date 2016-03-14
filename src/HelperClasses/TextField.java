@@ -2,7 +2,7 @@
  * Text field for entering equations and compounds.
  * 
  * Author: Julia McClellan and Luke Giacalone
- * Version: 2/14/2016
+ * Version: 3/14/2016
  */
 
 package HelperClasses;
@@ -112,7 +112,6 @@ public class TextField extends JPanel
 		//else current = current.substring(0, last) + enter + current.substring(last);
 		index += enter.length();
 		label.setText(current);
-		
 		if(label.getPreferredSize().getWidth() > getWidth())
 		{
 			this.setPreferredSize(new Dimension(getWidth() + 50, 28));
@@ -135,7 +134,8 @@ public class TextField extends JPanel
 					else if(current.substring(index - goBack, index).equals("<sub>")) sub.turnOff();
 					else sup.turnOff();
 				}
-				else if(goBack != 1 && !current.substring(index - goBack, index).equals("\u2192"))
+				else if(goBack == 6 && !current.substring(index - goBack, index).equals("\u2192") && 
+						!current.substring(index - goBack, index).equals("\u21C6"))
 				{
 					int start = current.lastIndexOf(">", index - goBack);
 					current = current.substring(0, start - 4) + current.substring(start + 1);
@@ -156,7 +156,8 @@ public class TextField extends JPanel
 					else if(current.substring(index + 1, index + 1 + goAhead).equals("<sub>")) sub.turnOff();
 					else sup.turnOff();
 				}
-				else if(!current.substring(index + 1, index + 1 + goAhead).equals("\u2192"))
+				else if(goAhead == 6 && !current.substring(index + 1, index + 1 + goAhead).equals("\u2192") && 
+						!current.substring(index + 1, index + 1 + goAhead).equals("\u21C6"))
 				{
 					int end = current.lastIndexOf("<s", index);
 					if(end != -1)
@@ -211,12 +212,22 @@ public class TextField extends JPanel
 			{
 				if(ch == '^' && !sub.isOn()) sup.toggle();
 				else if(ch == '_' && !sup.isOn()) sub.toggle();
-				else if(ch == '>' && current.charAt(index - 1) == '-') 
+				else if(ch == '>'&& current.charAt(index - 1) == '-') 
 				{
-					current = current.substring(0, index - 1) + current.substring(index);
-					index--;
-					enter("\u2192");
+					if(current.substring(index - 5, index - 1).equals("&#60"))
+					{
+						current = current.substring(0, index - 5) + current.substring(index);
+						index -= 5;
+						enter("\u21C6");
+					}
+					else
+					{
+						current = current.substring(0, index - 1) + current.substring(index);
+						index--;
+						enter("\u2192");
+					}
 				}
+				else if(ch == '<') enter("&#60"); //doesn't show up due to html formatting
 				else if(ch != '^' && ch != '_') enter(ch + "");
 			}
 		}
@@ -225,22 +236,24 @@ public class TextField extends JPanel
 		private int checkAhead()
 		{
 			if(index == current.length() - 8) return 0;
-			if(current.substring(index + 1, index + 7).equals("\u2192")) return 6;
+			if(current.substring(index + 1, index + 7).equals("\u2192") || current.substring(index + 1, index + 7).equals("\u21C6")) return 6;
 			if(current.substring(index + 1, index + 6).equals("<sup>")) return 5;
 			if(current.substring(index + 1, index + 6).equals("<sub>")) return 5;
 			if(current.substring(index + 1, index + 7).equals("</sup>")) return 6;
 			if(current.substring(index + 1, index + 7).equals("</sub>")) return 6;
+			if(current.substring(index + 1, index + 5).equals("&#60")) return 4;
 			return 1;
 		}
 		
 		private int checkBack()
 		{
 			if(index == 6) return 0;
-			if(current.substring(index - 6, index).equals("\u2192")) return 6;
+			if(current.substring(index - 6, index).equals("\u2192") || current.substring(index - 6, index).equals("\u21C6")) return 6;
 			if(current.substring(index - 5, index).equals("<sup>")) return 5;
 			if(current.substring(index - 5, index).equals("<sub>")) return 5;
 			if(current.substring(index - 6, index).equals("</sup>")) return 6;
 			if(current.substring(index - 6, index).equals("</sub>")) return 6;
+			if(current.substring(index - 4, index).equals("&#60")) return 4;
 			return 1;
 		}
 	}
@@ -296,6 +309,7 @@ public class TextField extends JPanel
 	public static String getHelp()
 	{
 		return "<b>Help with textfields:</b><br>To add superscripts, type \"^\", and to add subscripts, type \"_\".<br>To exit, type the same character or" 
-				+ " press the right arrow.<br>To add an arrow, enter \"->\".<br>Use the arrow keys to move the cursor.";
+				+ " press the right arrow.<br>To add an arrow, enter \"->\".<br>To enter an equilibrium arrow, enter \"&#60->\"<br>Use the arrow keys to move"
+				+ " the cursor.";
 	}
 }

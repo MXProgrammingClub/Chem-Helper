@@ -2,7 +2,7 @@
  * Represents a chemical equation. 
  * 
  * Authors: Luke Giacalone, Julia McClellan, Hyun Choi
- * Version: 3/11/2016
+ * Version: 3/14/2016
  */
 
 package Equation;
@@ -20,6 +20,7 @@ public class Equation
 	
 	private static final String alphabet = "abcdefghijklmnopqrstuvwxyz";
 	private ArrayList<Compound> left, right;
+	private boolean equilibrium;
 	
 	public Equation()
 	{
@@ -31,6 +32,23 @@ public class Equation
 	{
 		this.left = left;
 		this.right = right;
+	}
+	
+	public Equation(ArrayList<Compound> left, ArrayList<Compound> right, boolean equilibrium)
+	{
+		this.left = left;
+		this.right = right;
+		this.equilibrium = equilibrium;
+	}
+	
+	public boolean atEquilibrium()
+	{
+		return equilibrium;
+	}
+	
+	public void setEquilibrium(boolean equilibrium)
+	{
+		this.equilibrium = equilibrium;
 	}
 	
 	public void addToLeft(Compound c)
@@ -53,8 +71,15 @@ public class Equation
 	
 	public static Equation parseEquation(String eq) throws InvalidInputException
 	{
-		String left = eq.substring(0, eq.indexOf("\u2192")), right = eq.substring(eq.indexOf("\u2192") + 1);
-		return new Equation(parseSide(left), parseSide(right));
+		int index = eq.indexOf("\u2192");
+		boolean equilibrium = false;
+		if(index == -1)
+		{
+			index = eq.indexOf("\u21C6");
+			equilibrium = true;
+		}
+		String left = eq.substring(0, index), right = eq.substring(index + 1);
+		return new Equation(parseSide(left), parseSide(right), equilibrium);
 	}
 	
 	private static ArrayList<Compound> parseSide(String side) throws InvalidInputException
@@ -88,7 +113,8 @@ public class Equation
 		{
 			equation += compound + " + ";
 		}
-		equation = equation.substring(0, equation.length() - 2) + "\u2192 ";
+		if(equilibrium)equation = equation.substring(0, equation.length() - 2) + "\u21C6 ";
+		else equation = equation.substring(0, equation.length() - 2) + "\u2192 ";
 		for(Compound compound: right)
 		{
 			equation += compound + " + ";
