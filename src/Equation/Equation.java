@@ -131,6 +131,38 @@ public class Equation
 		return right;
 	}
 	
+	public String getEquilibrium(ArrayList<Compound> relevant, ArrayList<Compound> irrelevant)
+	{
+		String expression = "\\frac{";
+		for(Compound c: right)
+		{
+			if(c.getState().equals("aq") || c.getState().equals("g"))
+			{
+				expression += "[";
+				for(Ions ion: c.getIons()) expression += Function.latex(ion);
+				expression += "]";
+				if(c.getNum() != 1) expression += "^{" + c.getNum() + "}";
+				relevant.add(c);
+			}
+			else irrelevant.add(c);
+		}
+		expression += "}{";
+		for(Compound c: left)
+		{
+			if(c.getState().equals("aq") || c.getState().equals("g"))
+			{
+				expression += "[";
+				for(Ions ion: c.getIons()) expression += Function.latex(ion);
+				expression += "]";
+				if(c.getNum() != 1) expression += "^{" + c.getNum() + "}";
+				relevant.add(c);
+			}
+			else irrelevant.add(c);
+		}
+		expression += "}";
+		return expression;
+	}
+	
 	public int balance() throws InvalidInputException {
 		if(isBalanced()) return 1;
 		String[] equations = createEquations();

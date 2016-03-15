@@ -68,6 +68,30 @@ public abstract class Function {
 		return panel;
 	}
 	
+	public static String latex(Ions ion)
+	{
+		String str = "";
+		if(ion instanceof Polyatomic) str += "(";
+		
+		for(Monatomic sub: ion.getElements(false))
+		{
+			str += "\\text{" + sub.getElement().getSymbol() + "}";
+		
+			if (sub.getNum()>1) {
+				str+= "_{" + sub.getNum() + "}";
+			}
+			int charge = sub.getCharge();
+			if(charge != 0) str += "^{" + (Math.abs(charge) == 1 ? "" : Math.abs(charge)) + (charge > 0 ? '+' : '-') + "}"; 
+		}
+		if(ion instanceof Polyatomic)
+		{
+			str += ")";
+			if (ion.getNum()>1) str+= "_{" + ion.getNum() + "}";
+			
+		}
+		return str;
+	}
+	
 	public static JLabel latex(Equation eq) { //only for equations at this point
 		JLabel label = new JLabel();
 		
@@ -85,26 +109,8 @@ public abstract class Function {
 			for (Compound comp: side) {
 				if(comp.getNum() != 1) str += comp.getNum();
 				
-				for (Ions ion: comp.getIons()) {
-					if(ion instanceof Polyatomic) str += "(";
-					
-					for(Monatomic sub: ion.getElements(false))
-					{
-						str += "\\text{" + sub.getElement().getSymbol() + "}";
-					
-						if (sub.getNum()>1) {
-							str+= "_{" + sub.getNum() + "}";
-						}
-						int charge = sub.getCharge();
-						if(charge != 0) str += "^{" + (Math.abs(charge) == 1 ? "" : Math.abs(charge)) + (charge > 0 ? '+' : '-') + "}"; 
-					}
-					if(ion instanceof Polyatomic)
-					{
-						str += ")";
-						if (ion.getNum()>1) str+= "_{" + ion.getNum() + "}";
-						
-					}
-				}
+				for (Ions ion: comp.getIons()) str += latex(ion);
+				
 				if(!comp.getState().equals(" ")) str += "\\text{(" + comp.getState() + ")}";
 				str += "+";
 				
@@ -115,7 +121,7 @@ public abstract class Function {
 			if(eq.atEquilibrium()) str += "\\textbf{\\rightleftharpoons}";
 			else str+= "\\textbf{\\longrightarrow}";
 		}
-		str = str.substring(0,str.length()-25);//remove last rightarrow
+		str = str.substring(0, str.lastIndexOf("\\text"));//remove last rightarrow
 		
 		
 		
