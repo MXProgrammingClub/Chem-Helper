@@ -3,7 +3,7 @@
  * equation() returns true- saves latest balanced equation and can display a saved one.
  * 
  * Author: Julia McClellan, Hyun Choi, Luke Giacalone
- * Version: 3/10/2016
+ * Version: 3/15/2016
  */
 
 package Functions;
@@ -12,7 +12,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
+import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -34,6 +36,7 @@ public class EquationReader extends Function
 	private boolean redox;
 	private Function f;
 	private JRadioButton acid, base;
+	private Box box;
 	
 	public EquationReader()
 	{
@@ -114,8 +117,19 @@ public class EquationReader extends Function
 			box.add(use, c);
 		}
 		
+		JPanel subpanel = new JPanel(new GridBagLayout());
+		c.gridy = 0;
+		c.gridx = 0;
+		c.anchor = GridBagConstraints.NORTH;
+		subpanel.add(box, c);
+		c.gridx++;
+		subpanel.add(Box.createHorizontalStrut(20), c);
+		c.gridx++;
+		this.box = Box.createVerticalBox();
+		subpanel.add(this.box, c);
+		
 		panel = new JPanel();
-		panel.add(box);
+		panel.add(subpanel);
 		equation = null;
 	}
 	
@@ -128,6 +142,8 @@ public class EquationReader extends Function
 	{
 		public void actionPerformed(ActionEvent arg0) 
 		{
+			box.setVisible(false);
+			box.removeAll();
 			result.setIcon(null);
 			balanced.setText("");
 			String input = enter.getText();
@@ -141,7 +157,13 @@ public class EquationReader extends Function
 					isBalanced = equation.balance();
 					if(isBalanced == 2) isBalanced = equation.balance2();
 				}
-				else isBalanced = equation.balanceRedox(acid.isSelected(), ((Redox)f).getArrays());
+				else
+				{
+					ArrayList<String> steps = new ArrayList<String>();
+					isBalanced = equation.balanceRedox(acid.isSelected(), ((Redox)f).getArrays(), steps);
+					for(String step: steps) box.add(new JLabel(step));
+					box.setVisible(true);
+				}
 				
 				result.setIcon(latex(equation).getIcon());
 				if(isBalanced == 0) balanced.setText("This equation could not be balanced programmatically.");

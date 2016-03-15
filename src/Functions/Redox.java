@@ -2,13 +2,14 @@
  * Balances redox reactions and if possible finds information about the electrochemical cell it would create.
  * 
  * Author: Julia McClellan
- * Version: 3/10/2016
+ * Version: 3/15/2016
  */
 
 package Functions;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
@@ -92,7 +93,7 @@ public class Redox extends Function
 		cell.add(redox);
 		c.gridy++;
 		
-		Compound c1 = halves.get(1).getLeft().get(1), c2 = halves.get(0).getRight().get(0);
+		Compound c1 = halves.get(1).getLeft().get(0), c2 = halves.get(0).getRight().get(1);
 		String salt = "";
 		if(c1.contains(new Sodium()) || c2.contains(new Sodium())) salt += "K";
 		else salt += "Na";
@@ -145,6 +146,7 @@ public class Redox extends Function
 		
 		if(red != null && ox != null)
 		{
+			DecimalFormat format = new DecimalFormat("0.000");
 			cell.add(new JLabel("<html>Cell potential: E<sub>cell</sub> = E<sub>red</sub> - E<sub>ox</sub>"), c);
 			c.gridy++;
 			cell.add(new JLabel("<html>E<sub>red</sub> = " + red), c);
@@ -152,7 +154,7 @@ public class Redox extends Function
 			cell.add(new JLabel("<html>E<sub>ox</sub> = " + ox), c);
 			c.gridy++;
 			potential = red - ox;
-			cell.add(new JLabel("<html>E<sub>cell</sub> = " + red + " - " + ox + " = " + potential), c);
+			cell.add(new JLabel("<html>E<sub>cell</sub> = " + red + " - " + ox + " = " + format.format(potential)), c);
 			c.gridy++;
 			if(potential > 0) cell.add(new JLabel("Voltaic"), c);
 			else cell.add(new JLabel("Electrolytic"), c);
