@@ -131,10 +131,21 @@ public class Equation
 		return right;
 	}
 	
-	public String getEquilibrium(ArrayList<Compound> relevant, ArrayList<Compound> irrelevant)
+	public String getEquilibrium(ArrayList<Compound> relevant, ArrayList<Compound> irrelevant, int[] index)
 	{
-		String expression = "\\frac{";
-		for(Compound c: right)
+		String num = getHalf(right, relevant, irrelevant);
+		index[0] = relevant.size();
+		String denom = getHalf(left, relevant, irrelevant);
+		
+		if(num.length() == 0) return "\\frac{1}{" + denom + "}";
+		if(denom.length() == 0) return num;
+		return "\\frac{" + num + "}{" + denom + "}";
+	}
+	
+	private String getHalf(ArrayList<Compound> compounds, ArrayList<Compound> relevant, ArrayList<Compound> irrelevant)
+	{
+		String expression = "";
+		for(Compound c: compounds)
 		{
 			if(c.getState().equals("aq") || c.getState().equals("g"))
 			{
@@ -146,20 +157,6 @@ public class Equation
 			}
 			else irrelevant.add(c);
 		}
-		expression += "}{";
-		for(Compound c: left)
-		{
-			if(c.getState().equals("aq") || c.getState().equals("g"))
-			{
-				expression += "[";
-				for(Ions ion: c.getIons()) expression += Function.latex(ion);
-				expression += "]";
-				if(c.getNum() != 1) expression += "^{" + c.getNum() + "}";
-				relevant.add(c);
-			}
-			else irrelevant.add(c);
-		}
-		expression += "}";
 		return expression;
 	}
 	
