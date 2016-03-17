@@ -57,8 +57,14 @@ public class IdealGas extends Function
 						{
 							values[0].setAmount(Units.STANDARD_PRESSURE);
 							values[0].setUnit(0);
+							values[0].setEnabled(false);
 							values[3].setAmount(Units.STANDARD_TEMPERATURE);
 							values[3].setUnit(0);
+							values[3].setEnabled(false);
+						}
+						else {
+							values[0].setEnabled(true);
+							values[3].setEnabled(true);
 						}
 					}
 				});

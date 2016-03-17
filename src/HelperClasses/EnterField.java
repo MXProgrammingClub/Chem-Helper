@@ -222,4 +222,18 @@ public class EnterField extends JPanel
 		}
 		return unitName;
 	}
+	
+	//sets whether the enterfield can be edited
+	public void setEnabled(boolean status) {
+		if(status) {
+			if(amount instanceof JTextField) ((JTextField) amount).setEditable(true);
+			if(unit != null) unit.setEnabled(true);
+			if(unit2 != null) unit2.setEnabled(true);
+		}
+		else {
+			if(amount instanceof JTextField) ((JTextField) amount).setEditable(false);
+			if(unit != null) unit.setEnabled(false);
+			if(unit2 != null) unit2.setEnabled(false);
+		}
+	}
 }
