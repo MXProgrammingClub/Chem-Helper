@@ -178,7 +178,7 @@ public class StateChangeTemp extends Function {
 				number = values[0] / values[2] / values[3];
 				steps.add(new JLabel("<html><i>i</i> = " + values[0] + " K / " + values[2] + " / " + values[3] 
 						+ " mol/g = " + number + "</html>"));
-				result.setText("<html><i>i</i></html> = " + number);
+				result.setText("<html><i>i</i> = " + number + "</html>");
 			}
 			else if(blank == 2) {
 				number = values[0] / values[1] / values[3];
@@ -187,7 +187,7 @@ public class StateChangeTemp extends Function {
 			}
 			else if (blank == 3) {
 				number = Units.toBaseUnit(values[0] / values[1] / values[2], m.getUnit2()); //toBasUnit because g is in the denom
-				steps.add(new JLabel("m = " + values[0] + " K / " + values[2] + " / " + values[3] + " / " + number + " = mol/" 
+				steps.add(new JLabel("m = " + values[0] + " K / " + values[2] + " / " + values[3] + " = " + number + " mol/" 
 						+ m.getUnit2Name()));
 				result.setText("m = " + number + " mol/" + m.getUnit2Name());
 			}
