@@ -2,7 +2,7 @@
  * Performs various calculations for functions at equilibrium.
  * 
  * Author: Julia McClellan
- * Version: 3/15/2016
+ * Version: 3/18/2016
  */
 
 package Functions;
@@ -44,7 +44,7 @@ public class Equilibrium extends Function
 	private JRadioButton before;
 	private ArrayList<Double> saved;
 	private ArrayList<Compound> relevant;
-	private int i;
+	private ArrayList<Integer> powers;
 	
 	public Equilibrium()
 	{
@@ -86,6 +86,7 @@ public class Equilibrium extends Function
 					results.setVisible(false);
 					steps.removeAll();
 					steps.setVisible(false);
+					saved = new ArrayList<Double>();
 					
 					double[] values = new double[compounds.length + 1];
 					int sigFigs = Integer.MAX_VALUE;
@@ -121,29 +122,70 @@ public class Equilibrium extends Function
 						sigFigs = Math.min(sigFigs, k.getSigFigs());
 					}
 					steps.add(Box.createVerticalStrut(5));
+					steps.add(new JLabel(expression.getIcon()));
 					
 					if(before.isSelected())
 					{
-						if(values[compounds.length] == Units.UNKNOWN_VALUE)
+						if(values[compounds.length] == Units.UNKNOWN_VALUE) //K is unknown
 						{
 							results.add(new JLabel("Insufficient information- K needs to be specified if reaction is not at equilibrium."));
 							results.setVisible(true);
 							return;
 						}
-						else
+						else //K is known
 						{
 							
 						}
 					}
-					else
+					else //if after is selected
 					{
-						if(values[compounds.length] == Units.UNKNOWN_VALUE)
+						if(values[compounds.length] == Units.UNKNOWN_VALUE) //K is unknown
 						{
+							LinkedList<String> stepList = new LinkedList<String>();
+							double result = calculateK(values, stepList, powers);
 							
+							for(String step: stepList) steps.add(new JLabel(step));
+							saved.add(result);
+							results.add(new JLabel("K = " + Function.withSigFigs(result, sigFigs)));
 						}
-						else
+						else //K is known
 						{
+							int unknown = -1;
+							for(int index = 0; index < compounds.length; index++)
+							{
+								if(values[index] == Units.UNKNOWN_VALUE)
+								{
+									if(unknown == -1) unknown = index;
+									else
+									{
+										unknown = Integer.MAX_VALUE;
+										break;
+									}
+								}
+							}
 							
+							if(unknown == -1)
+							{
+								results.add(new JLabel("Leave a value blank."));
+								results.setVisible(true);
+								return;
+							}
+							else if(unknown == Integer.MAX_VALUE)
+							{
+								
+							}
+							else
+							{
+								LinkedList<String> stepList = new LinkedList<String>();
+								double result = calculateConcentration(values, stepList, powers, unknown);
+								
+								for(String step: stepList) steps.add(new JLabel(step));
+								saved.add(compounds[unknown].getBlankAmount(result));
+								if(result != saved.get(0)) steps.add(new JLabel("x = " + saved.get(0) + " " + compounds[unknown].getUnitName() + " / "  
+										+ compounds[unknown].getUnit2Name()));
+								results.add(new JLabel("<html>[" + relevant.get(unknown).withoutNumState() + "] = " + 
+										Function.withSigFigs(saved.get(0), sigFigs)));
+							}
 						}
 					}
 					
@@ -151,13 +193,7 @@ public class Equilibrium extends Function
 					results.setVisible(true);
 				}
 			});
-		enterPanel.add(calculate, c);
 		
-		c.gridy++;
-		results = Box.createVerticalBox();
-		enterPanel.add(results, c);
-		
-		c.gridy++;
 		reset = new JButton("Reset");
 		reset.addActionListener(new ActionListener()
 			{
@@ -166,7 +202,14 @@ public class Equilibrium extends Function
 					setPanel();
 				}
 			});
-		enterPanel.add(reset, c);
+		JPanel buttons2 = new JPanel();
+		buttons2.add(calculate);
+		buttons2.add(reset);
+		enterPanel.add(buttons2, c);
+		
+		c.gridy++;
+		results = Box.createVerticalBox();
+		enterPanel.add(results, c);
 		enterPanel.setVisible(false);
 		
 		JPanel subpanel = new JPanel(new GridBagLayout());
@@ -200,6 +243,61 @@ public class Equilibrium extends Function
 		panel.add(reader.getPanel());
 	}
 	
+	/*
+	 * Calculates the value of K given the concentrations of the relevant compounds.
+	 */
+	private static double calculateK(double[] values, LinkedList<String> steps, ArrayList<Integer> powers)
+	{
+		double value = 1;
+		String step1 = "<html>K = ", step2 = "<html>K = "; //Step 1 shows multiplication before raising to powers, step 2 shows after
+		for(int index = 0; index < values.length - 1; index++)
+		{
+			step1 += "(" + values[index] + ")<sup>" + powers.get(index) + "</sup> * ";
+			double num = Math.pow(values[index], powers.get(index));
+			step2 += num + " * ";
+			value *= num;
+		}
+		step1 = step1.substring(0, step1.length() - 3);
+		step2 = step2.substring(0, step2.length() - 3);
+		steps.add(step1);
+		steps.add(step2);
+		steps.add("K = " + value);
+		return value;
+	}
+	
+	/*
+	 * Calculates one concentration given all the others and K.
+	 */
+	public static double calculateConcentration(double[] values, LinkedList<String> steps, ArrayList<Integer> powers, int unknown)
+	{
+		double value = 1;
+		String step1 = "<html>" + values[values.length - 1] + " = ", step2 = "<html>" + values[values.length - 1] + " = ";
+		for(int index = 0; index < values.length - 1; index++)
+		{
+			if(index != unknown)
+			{
+				step1 += "(" + values[index] + ")<sup>" + powers.get(index) + "</sup> * ";
+				double num = Math.pow(values[index], powers.get(index));
+				step2 += num + " * ";
+				value *= num;
+			}
+			else
+			{
+				step1 += "x<sup>" + powers.get(index) + "</sup> * ";
+				step2 += "x<sup>" + powers.get(index) + "</sup> * ";
+			}
+		}
+		step1 = step1.substring(0, step1.length() - 3);
+		step2 = step2.substring(0, step2.length() - 3);
+		steps.add(step1);
+		steps.add(step2);
+		value = values[values.length - 1] / value;
+		steps.add("<html>x<sup>" + powers.get(unknown) + "</sup> = " + value);
+		value = Math.pow(value, 1 / powers.get(unknown));
+		steps.add("x = " + value + " mol / L");
+		return value;
+	}
+	
 	public boolean equation()
 	{
 		return true;
@@ -218,9 +316,8 @@ public class Equilibrium extends Function
 		panel.remove(reader.getPanel());
 		relevant = new ArrayList<Compound>();
 		ArrayList<Compound> irrelevant = new ArrayList<Compound>();
-		int[] switchIndex = new int[1];
-		String ex = equation.getEquilibrium(relevant, irrelevant, switchIndex);
-		i = switchIndex[0];
+		powers = new ArrayList<Integer>();
+		String ex = equation.getEquilibrium(relevant, irrelevant, powers);
 		
 		TeXFormula formula = new TeXFormula(ex);
 		TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, 20);
@@ -234,7 +331,7 @@ public class Equilibrium extends Function
 		c.anchor = GridBagConstraints.WEST;
 		for(int index = 0; index < compounds.length; index++)
 		{
-			EnterField field = new EnterField("<html>" + relevant.get(index).withoutNum() + "</html>", "Amount", "Volume");
+			EnterField field = new EnterField("<html>[" + relevant.get(index).withoutNumState() + "]</html>", "Amount", "Volume");
 			compounds[index] = field;
 			fields.add(field, c);
 			c.gridy++;

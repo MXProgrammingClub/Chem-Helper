@@ -127,6 +127,16 @@ public class Compound
 		if(!state.equals(" ")) str += "(" + state + ")";
 		return str;
 	}
+	
+	public String withoutNumState()
+	{
+		String str = "";
+		for(Ions ion: ions)
+		{
+			str += ion;
+		}
+		return str;
+	}
 
 	public double getMolarMass()
 	{

@@ -2,7 +2,7 @@
  * Represents a chemical equation. 
  * 
  * Authors: Luke Giacalone, Julia McClellan, Hyun Choi
- * Version: 3/15/2016
+ * Version: 3/18/2016
  */
 
 package Equation;
@@ -131,20 +131,20 @@ public class Equation
 		return right;
 	}
 	
-	public String getEquilibrium(ArrayList<Compound> relevant, ArrayList<Compound> irrelevant, int[] index)
+	public String getEquilibrium(ArrayList<Compound> relevant, ArrayList<Compound> irrelevant, ArrayList<Integer> powers)
 	{
-		String num = getHalf(right, relevant, irrelevant);
-		index[0] = relevant.size();
-		String denom = getHalf(left, relevant, irrelevant);
+		String num = getHalf(right, relevant, irrelevant, powers);
+		String denom = getHalf(left, relevant, irrelevant, powers);
 		
 		if(num.length() == 0) return "\\frac{1}{" + denom + "}";
 		if(denom.length() == 0) return num;
 		return "\\frac{" + num + "}{" + denom + "}";
 	}
 	
-	private String getHalf(ArrayList<Compound> compounds, ArrayList<Compound> relevant, ArrayList<Compound> irrelevant)
+	private String getHalf(ArrayList<Compound> compounds, ArrayList<Compound> relevant, ArrayList<Compound> irrelevant, ArrayList<Integer> powers)
 	{
 		String expression = "";
+		int factor = powers.size() == 0 ? 1 : -1; //Determines if the compounds are on the left or right to determine whether the power should be negative
 		for(Compound c: compounds)
 		{
 			if(c.getState().equals("aq") || c.getState().equals("g"))
@@ -154,6 +154,7 @@ public class Equation
 				expression += "]";
 				if(c.getNum() != 1) expression += "^{" + c.getNum() + "}";
 				relevant.add(c);
+				powers.add(c.getNum() * factor);
 			}
 			else irrelevant.add(c);
 		}
