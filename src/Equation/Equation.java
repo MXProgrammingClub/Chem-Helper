@@ -2,7 +2,7 @@
  * Represents a chemical equation. 
  * 
  * Authors: Luke Giacalone, Julia McClellan, Hyun Choi
- * Version: 3/18/2016
+ * Version: 3/19/2016
  */
 
 package Equation;
@@ -303,7 +303,7 @@ public class Equation
 		if(counts[0] > 0) left.add(0, new Compound(new Monatomic[]{new Monatomic(new Hydrogen(), 2), new Monatomic(new Oxygen())}, counts[0]));
 		
 		if(acidic && counts[1] < 0) right.add(0, new Compound(new Monatomic[]{new Monatomic(new Hydrogen(), 1, 1)}, -counts[1]));
-		if(!acidic && counts[1] < 0) right.add(0, new Compound(new Monatomic[]{new Monatomic(new Oxygen()), new Monatomic(new Hydrogen(), -1)}, -counts[1]));
+		if(!acidic && counts[1] < 0) right.add(0, new Compound(new Monatomic[]{new Monatomic(new Oxygen()), new Monatomic(new Hydrogen(), 1,-1)}, -counts[1]));
 		if(counts[0] < 0) right.add(0, new Compound(new Monatomic[]{new Monatomic(new Hydrogen(), 2), new Monatomic(new Oxygen())}, -counts[0]));
 		
 		steps.add("Add reactions together:");
@@ -339,14 +339,16 @@ public class Equation
 		
 		if(counts[0] > 0) e.addToLeft(new Compound(new Monatomic[]{new Monatomic(new Hydrogen(), 2), new Monatomic(new Oxygen())}, "l", counts[0]));
 		if(acidic && counts[1] > 0) e.addToLeft(new Compound(new Monatomic[]{new Monatomic(new Hydrogen(), 1, 1)}, "aq", counts[1]));
-		if(!acidic && counts[1] > 0) e.addToLeft(new Compound(new Monatomic[]{new Monatomic(new Oxygen()), new Monatomic(new Hydrogen(), -1)},"aq",counts[1]));
+		if(!acidic && counts[1] > 0) e.addToLeft(new Compound(new Monatomic[]{new Monatomic(new Oxygen()), new Monatomic(new Hydrogen(), 1, -1)}, "aq", 
+				counts[1]));
 		e.addToLeft(new Compound(half.getLeft().get(0).getIons(), half.getLeft().get(0).getState(), half.getLeft().get(0).getNum()));
 		if(counts[2] > 0) e.addToLeft(new Compound(new Ions[]{new Electron()}, counts[2]));
 		
 		e.addToRight(new Compound(half.getRight().get(0).getIons(), half.getRight().get(0).getState(), half.getRight().get(0).getNum()));
 		if(counts[0] < 0) e.addToRight(new Compound(new Monatomic[]{new Monatomic(new Hydrogen(), 2), new Monatomic(new Oxygen())}, "l", -counts[0]));
 		if(acidic && counts[1] < 0) e.addToRight(new Compound(new Monatomic[]{new Monatomic(new Hydrogen(), 1, 1)}, "aq", -counts[1]));
-		if(!acidic && counts[1] < 0)e.addToRight(new Compound(new Monatomic[]{new Monatomic(new Oxygen()), new Monatomic(new Hydrogen(),-1)},"aq",-counts[1]));
+		if(!acidic && counts[1] < 0) e.addToRight(new Compound(new Monatomic[]{new Monatomic(new Oxygen()), new Monatomic(new Hydrogen(), 1, -1)}, "aq", 
+				-counts[1]));
 		if(counts[2] < 0) e.addToRight(new Compound(new Ions[]{new Electron()}, -counts[2]));
 		return e;
 	}
