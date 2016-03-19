@@ -4,7 +4,7 @@
  * classes that need them.
  * 
  * Authors: Ted Pyne, Hyun Choi, Julia McClellan
- * Version: 2/27/2016
+ * Version: 3/18/2016
  */
 
 package Functions;
@@ -166,6 +166,7 @@ public abstract class Function {
 	public static int sigFigs(String numString)
 	{
 		if(sigFig == 0) return 0; //There is no point in calculating if they won't be used.
+		if(numString.indexOf('E') != -1) numString = numString.substring(0, numString.indexOf('E'));
 		int sigFigs = numString.length();
 		if(numString.indexOf("-") != -1) sigFigs--;	//These characters lead the String to be longer than the number of sig figs
 		if(numString.indexOf(".") != -1)
