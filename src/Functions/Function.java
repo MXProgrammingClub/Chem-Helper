@@ -4,7 +4,7 @@
  * classes that need them.
  * 
  * Authors: Ted Pyne, Hyun Choi, Julia McClellan
- * Version: 3/18/2016
+ * Version: 3/19/2016
  */
 
 package Functions;
@@ -195,6 +195,7 @@ public abstract class Function {
 			boolean neg = num < 0, no = false; //neg for whether to add a negative sign later, no for if it needs to be in scientific notation
 			num = Math.abs(num);
 			String original = "" + num, numString = "";
+			if(original.indexOf('E') != -1) neg = true; //If it's already in scientific notation
 			int index;
 			if(num > 1)
 			{
@@ -216,22 +217,25 @@ public abstract class Function {
 					}
 				}
 				index = count + 1;
+				numString += '.';
 			}
 			else 
 			{
-				numString = "0";
+				numString = "0.";
 				index = 2;
+				for(; index < original.length() && original.charAt(index) == '0'; numString += '0', index++); //For numbers < 1, 0 after . doesn't factor into
+					//significant figures
 			}
 			if(!no)
 			{
-				numString += '.';
 				for(; index < original.length() && count < sigFigs;  numString += original.charAt(index), count++, index++);
 				if(count == sigFigs && index < original.length() && original.charAt(index) >= '5') 
 				{
 					numString = roundUp(numString);
 				}
 				for(; count < sigFigs; count++, numString += '0');
-				if(numString.length() == sigFigs + 1)
+				
+				if(num < 1 || numString.length() == sigFigs + 1)
 				{
 					if(neg) numString = '-' + numString;
 					return numString;
