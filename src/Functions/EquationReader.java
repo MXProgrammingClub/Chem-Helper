@@ -169,7 +169,7 @@ public class EquationReader extends Function
 				
 				result.setIcon(latex(equation).getIcon());
 				if(isBalanced == 0) balanced.setText("This equation could not be balanced programmatically.");
-				if(use != null && (!redox || (equation.getLeft().size() == 2 && equation.getRight().size() == 2)))
+				else if(use != null && (!redox || (equation.getLeft().size() == 2 && equation.getRight().size() == 2)))
 				{
 					panel.setVisible(false);
 					use.setVisible(true);
