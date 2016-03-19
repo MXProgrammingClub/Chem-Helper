@@ -3,7 +3,7 @@
  * equation() returns true- saves latest balanced equation and can display a saved one.
  * 
  * Author: Julia McClellan, Hyun Choi, Luke Giacalone
- * Version: 3/15/2016
+ * Version: 3/19/2016
  */
 
 package Functions;
@@ -57,16 +57,16 @@ public class EquationReader extends Function
 		result = new JLabel();
 		balanced = new JLabel();
 		
+		JPanel buttons1 = new JPanel();
 		if(redox)
 		{
 			acid = new JRadioButton("Acidic", true);
 			base = new JRadioButton("Basic");
 			ButtonGroup g = new ButtonGroup();
 			g.add(acid);
-			g.add(base);
-			JPanel buttons = new JPanel();
-			buttons.add(acid);
-			buttons.add(base);
+			g.add(base);	
+			buttons1.add(acid);
+			buttons1.add(base);
 		}
 		
 		button = new JButton("Balance");
@@ -92,11 +92,13 @@ public class EquationReader extends Function
 		c.gridy = 1;
 		box.add(enter, c);
 		c.gridy = 2;
-		box.add(buttons, c);
+		box.add(buttons1, c);
 		c.gridy = 3;
+		box.add(buttons, c);
+		c.gridy = 4;
 		c.gridwidth = 2;
 		box.add(result, c);
-		c.gridy = 4;
+		c.gridy = 5;
 		box.add(balanced, c);
 		
 		f = func;
