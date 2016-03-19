@@ -72,7 +72,6 @@ public class Equilibrium extends Function
 		enterPanel.add(buttons, c);
 		c.gridy++;
 		
-		
 		fields = new JPanel(new GridBagLayout());
 		enterPanel.add(fields, c);
 		c.gridy++;
@@ -172,7 +171,22 @@ public class Equilibrium extends Function
 							}
 							else if(unknown == Integer.MAX_VALUE)
 							{
+								LinkedList<String> stepList = new LinkedList<String>();
+								LinkedList<Integer> changed = calculateValues(values, stepList, powers, relevant);
+								if(changed == null)
+								{
+									results.add(new JLabel(stepList.getLast()));
+									results.setVisible(false);
+									return;
+								}
+								for(String step: stepList) steps.add(new JLabel(step));
 								
+								for(Integer index: changed)
+								{
+									double val = compounds[index].getBlankAmount(values[index]);
+									saved.add(val);
+									results.add(new JLabel("<html>[" + relevant.get(index).withoutNumState() + "] = " + Function.withSigFigs(val, sigFigs)));
+								}
 							}
 							else
 							{
@@ -296,6 +310,72 @@ public class Equilibrium extends Function
 		value = Math.pow(value, 1 / powers.get(unknown));
 		steps.add("x = " + value + " mol / L");
 		return value;
+	}
+	
+	/*
+	 * Calculates all unknown concentrations given the others and K and returns the indices in values which have been changed, or null if there is insufficient
+	 * information for the calculations.
+	 */
+	public static LinkedList<Integer> calculateValues(double[] values, LinkedList<String> steps, ArrayList<Integer> powers, ArrayList<Compound> compounds)
+	{
+		double newK = values[values.length - 1]; //Will divide K by all known concentrations
+		String stepK = "<html>" + newK + " / ";
+		LinkedList<Integer> changed = new LinkedList<Integer>(); //To put in relevant indices
+		for(int index = 0; index < compounds.size(); index++)
+		{
+			if(values[index] == Units.UNKNOWN_VALUE)
+			{
+				if(powers.get(index) < 0) //If K is dependent on compounds on the left, the ratios can't be used for concentrations
+				{
+					steps.add("Insufficient information for calculations.");
+					return null;
+				}
+				else
+				{
+					steps.add("<html>[" + compounds.get(index).withoutNumState() + "] = " + (powers.get(index) == 1 ? "" : powers.get(index)) + "x");
+					changed.add(index);
+				}
+			}
+			else
+			{
+				newK /= Math.pow(values[index], powers.get(index));
+				stepK += "(" + values[index] + ")<sup>" + powers.get(index) + " / ";
+			}
+		}
+		if(newK != values[values.length - 1])
+		{
+			steps.add("Divide K by known concentrations:");
+			steps.add(stepK.substring(0, stepK.length() - 3) + " = " + newK); //Gets rid of last / before adding equals
+		}
+		
+		String step = "<html>" + newK + " = ";
+		int value = 1, sum = 0;
+		for(int index = 0; index < values.length - 1; index++)
+		{
+			int power = powers.get(index);
+			value *= Math.pow(power, power);
+			sum += power;
+			step += "(" + (power == 1 ? "" : power) + "x)<sup>" + power + "</sup> * ";
+		}
+		steps.add(step.substring(0, step.length() - 3)); //Removes last *
+		if(value != 1)
+		{
+			steps.add("<html>" + newK + " = " + (value == 1 ? "" : value + " * ") + "x<sup>" + sum + "</sup><html>");
+			newK /= value;
+		}
+		steps.add("<html>" + newK + " = x<sup>" + sum + "</sup><html>");
+		
+		double x = Math.pow(newK, (1 / (double)sum));
+		steps.add("x = " + x);
+			
+		for(Integer index: changed)
+		{
+			int power = powers.get(index);
+			values[index] = x * power;
+			steps.add("<html>[" + compounds.get(index).withoutNumState() + "] = " + (power == 1 ? "" : power) + "x = " + values[index] + " mol / L</html>");
+		}
+		
+		return changed;
 	}
 	
 	public boolean equation()
