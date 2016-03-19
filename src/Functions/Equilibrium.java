@@ -2,7 +2,7 @@
  * Performs various calculations for functions at equilibrium.
  * 
  * Author: Julia McClellan
- * Version: 3/18/2016
+ * Version: 3/19/2016
  */
 
 package Functions;
@@ -313,6 +313,18 @@ public class Equilibrium extends Function
 	 */
 	public void useSaved(Equation equation)
 	{
+		//States of matter are necessary to make an equilibrium expression
+		{
+			for(Compound c: equation.getLeft())
+			{
+				if(c.getState().equals(" ") && !getState(c)) return;
+			}
+			for(Compound c: equation.getRight())
+			{
+				if(c.getState().equals(" ") && !getState(c)) return;
+			}
+		}
+		
 		panel.remove(reader.getPanel());
 		relevant = new ArrayList<Compound>();
 		ArrayList<Compound> irrelevant = new ArrayList<Compound>();
@@ -339,6 +351,18 @@ public class Equilibrium extends Function
 		k = new EnterField("K");
 		fields.add(k, c);
 		enterPanel.setVisible(true);
+	}
+	
+	/*
+	 * Prompts the user to choose a state for the compound. If they do, returns true, returns false otherwise.
+	 */
+	private boolean getState(Compound c)
+	{
+		Object obj = JOptionPane.showInputDialog(panel, "<html>Please enter the state of matter of " + c + "</html>", "State", JOptionPane.QUESTION_MESSAGE, 
+				null, Compound.getValidstates().toArray(), "aq");
+		if(obj == null) return false;
+		c.setState((String)obj);
+		return true;
 	}
 	
 	public boolean number()

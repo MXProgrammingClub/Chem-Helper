@@ -66,6 +66,12 @@ public class Compound
 		return state;
 	}
 
+	public void setState(String newState)
+	{
+		if(VALID_STATES.contains(newState)) state = newState;
+		else state = " "; //If it can't be the parameter, it should at least not be what it was before.
+	}
+	
 	public int getNum() 
 	{
 		return num;
