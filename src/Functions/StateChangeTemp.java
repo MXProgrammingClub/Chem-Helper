@@ -5,7 +5,7 @@
  * (boiling point elevation and freezing point depression)
  * 
  * Author: Luke Giacalone and Julia McClellan
- * Version: 02/5/2016
+ * Version: 3/18/2016
  */
 
 package Functions;
@@ -36,7 +36,7 @@ public class StateChangeTemp extends Function {
 	private double number;
 	
 	public StateChangeTemp() {
-		super("State Change Temperature");
+		super("Colligative Properties");
 		
 		Box iBox = Box.createHorizontalBox();
 		togetherI = new JRadioButton("<html><i>i</i> as One Value</html>");
@@ -54,7 +54,7 @@ public class StateChangeTemp extends Function {
 		iIon = new EnterField("Ions", "Amount");
 		iSolute = new EnterField("Solute", "Amount");
 		k = new EnterField("k");
-		m = new EnterField("molality", "Amount", "Mass");
+		m = new EnterField("Molality", "Amount", "Mass");
 		c.gridx = 0;
 		c.gridy = 0;
 		inputPanel.add(deltaT, c);
@@ -124,23 +124,43 @@ public class StateChangeTemp extends Function {
 	
 	private class Calculate implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
+			steps.setVisible(false);
+			steps.removeAll();
 			double[] values = new double[4];
-			values[0] = Units.toKelvin(deltaT.getAmount(), deltaT.getUnit());
-			if(deltaT.getUnit() == 1) //if celcius
-				steps.add(new JLabel(values[0] + " K = " + deltaT.getAmount() + "\u2103 - 273.15"));
-			else if(deltaT.getUnit() == 2)
-				steps.add(new JLabel(values[0] + " K = (" + deltaT.getAmount() + "\u2109 + 459.67) * 5 / 9"));
+			int sigFigs = Integer.MAX_VALUE;
+			
+			values[0] = deltaT.getAmount();
+			steps.add(new JLabel("\u0394t = " + (values[0] == Units.UNKNOWN_VALUE ? "?" : values[0]) + " K"));
+			if(values[0] != Units.UNKNOWN_VALUE) sigFigs = deltaT.getSigFigs();
 			
 			if(togetherI.isSelected())
+			{
 				values[1] = i.getAmount();
+				if(values[1] != Units.UNKNOWN_VALUE) sigFigs = Math.min(sigFigs, i.getSigFigs());
+			}
 			else
 				if(iIon.getAmount() == Units.UNKNOWN_VALUE || iSolute.getAmount() == Units.UNKNOWN_VALUE)
 					values[1] = Units.UNKNOWN_VALUE;
 				else
+				{
 					values[1] = iIon.getAmount() / iSolute.getAmount();
-			values[2] = k.getAmount();
-			values[3] = Units.fromBaseUnit(m.getAmount(), m.getUnit2()); //fromBaseUnit because g is in the denominator
+					sigFigs = Math.min(Math.min(iIon.getSigFigs(), iSolute.getSigFigs()), sigFigs);
+				}
+			steps.add(new JLabel("<html><i>i</i> = " + (values[1] == Units.UNKNOWN_VALUE ? "?" : values[1]) + "</html>"));	
 			
+			values[2] = k.getAmount();
+			steps.add(new JLabel("k = " + (values[2] == Units.UNKNOWN_VALUE ? "?" : values[2])));
+			if(values[2] != Units.UNKNOWN_VALUE) sigFigs = Math.min(sigFigs, k.getSigFigs());
+			
+			values[3] = m.getAmount(); 
+			if(values[3] != Units.UNKNOWN_VALUE)
+			{
+				values[3] *= 1000; //Conversion from base of mol / g to desired of mol / kg
+				sigFigs = Math.min(sigFigs, m.getSigFigs());
+			}
+			steps.add(new JLabel("m = " + (values[3] == Units.UNKNOWN_VALUE ? "?" : values[3]) + " mol / kg"));
+			
+			steps.add(new JLabel("<html>\u0394t = <i>i</i> * k * m</html>"));
 			int blank = -1;
 			
 			for(int index = 0; index < values.length; index++) {
@@ -158,38 +178,31 @@ public class StateChangeTemp extends Function {
 				}
 			}
 			
-			steps.setVisible(false);
-			steps.removeAll();
-			
-			if(blank != 1 && seperatedI.isSelected()) 
-				steps.add(new JLabel("<html><i>i</i> = " + iIon + " / " + iSolute + " = " + values[1] + "</html>"));
-			
-			if(blank == -1) {
-				result.setText("Leave one value blank");
-				steps.removeAll();
-			}
+			if(blank == -1) result.setText("Leave one value blank");
 			else if(blank == 0) {
-				number = Units.toOriginalTemp(values[1] * values[2] * values[3], deltaT.getUnit());
-				steps.add(new JLabel("\u0394t = " + values[1] + " * " + values[2] + " * " + values[3] + " mol/g = "
-						+ number + " " + deltaT.getUnitName()));
-				result.setText("\u0394t = " + number + " " + deltaT.getUnitName());
+				number = values[1] * values[2] * values[3];
+				steps.add(new JLabel("\u0394t = " + values[1] + " * " + values[2] + " * " + values[3] + " = " + number + " K"));
+				number = deltaT.getBlankAmount(number);
+				steps.add(new JLabel("\u0394t = " + number + " " + deltaT.getUnitName()));
+				result.setText("\u0394t = " + Function.withSigFigs(number, sigFigs) + " " + deltaT.getUnitName());
 			}
 			else if(blank == 1) {
 				number = values[0] / values[2] / values[3];
-				steps.add(new JLabel("<html><i>i</i> = " + values[0] + " K / " + values[2] + " / " + values[3] 
-						+ " mol/g = " + number + "</html>"));
-				result.setText("<html><i>i</i> = " + number + "</html>");
+				steps.add(new JLabel("<html><i>i</i> = " + values[0] + " / " + values[2] + " / " + values[3] + " = " + number + "</html>"));
+				result.setText("<html><i>i</i> = " + Function.withSigFigs(number, sigFigs) + "</html>");
 			}
 			else if(blank == 2) {
 				number = values[0] / values[1] / values[3];
-				steps.add(new JLabel("k = " + values[0] + " K / " + values[1] + " / " + values[3] + " mol/g = " + number));
-				result.setText("k = " + number);
+				steps.add(new JLabel("k = " + values[0] + " / " + values[1] + " / " + values[3] + " = " + number));
+				result.setText("k = " + Function.withSigFigs(number, sigFigs));
 			}
 			else if (blank == 3) {
-				number = Units.toBaseUnit(values[0] / values[1] / values[2], m.getUnit2()); //toBasUnit because g is in the denom
-				steps.add(new JLabel("m = " + values[0] + " K / " + values[2] + " / " + values[3] + " = " + number + " mol/" 
-						+ m.getUnit2Name()));
-				result.setText("m = " + number + " mol/" + m.getUnit2Name());
+				number = values[0] / values[1] / values[2];
+				steps.add(new JLabel("m = " + values[0] + " / " + values[1] + " / " + values[2] + " = " + number + " mol / kg"));
+				number /= 1000; //Converting from mol / kg to base of mol / g
+				number = m.getBlankAmount(number);
+				steps.add(new JLabel("m = " + number + " mol / " + m.getUnit2Name()));
+				result.setText("m = " + Function.withSigFigs(number, sigFigs) + " mol / " + m.getUnit2Name());
 			}
 			
 			steps.setVisible(true);
