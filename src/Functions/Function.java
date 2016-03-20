@@ -195,7 +195,7 @@ public abstract class Function {
 			boolean neg = num < 0, no = false; //neg for whether to add a negative sign later, no for if it needs to be in scientific notation
 			num = Math.abs(num);
 			String original = "" + num, numString = "";
-			if(original.indexOf('E') != -1) neg = true; //If it's already in scientific notation
+			if(original.indexOf('E') != -1) no = true; //If it's already in scientific notation
 			int index;
 			if(num > 1)
 			{
