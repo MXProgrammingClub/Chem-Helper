@@ -2,13 +2,16 @@
  * Performs various calculations for functions at equilibrium.
  * 
  * Author: Julia McClellan
- * Version: 3/19/2016
+ * Version: 3/20/2016
  */
 
 package Functions;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -19,9 +22,11 @@ import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import org.scilab.forge.jlatexmath.TeXIcon;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JOptionPane;
@@ -133,7 +138,63 @@ public class Equilibrium extends Function
 						}
 						else //K is known
 						{
+							//Creates the ICE table
+							JLabel[][] labels = new JLabel[4][values.length];
+							labels[0][0] = new JLabel();
+							labels[1][0] = new JLabel("Initial");
+							labels[2][0] = new JLabel("Change");
+							labels[3][0] = new JLabel("Equilibrium");
 							
+							String equation = "<html>" + values[values.length - 1] + " = ";
+							int col = 1;
+							for(int index = 0; index < relevant.size(); index++)
+							{
+								if(values[index] == Units.UNKNOWN_VALUE) values[index] = 0;
+								labels[0][col] = new JLabel("<html>[" + relevant.get(index).withoutNumState() + "]</html>");
+								labels[1][col] = new JLabel(values[index] + "");
+								labels[2][col] = new JLabel((powers.get(index) == 1 ? "" : powers.get(index)) + "x");
+								labels[3][col] = new JLabel((values[index] == 0 ? "" : values[index] + " + ") + (powers.get(index) == 1 ? "" : 
+									powers.get(index)) + "x");
+								equation += "(" + labels[3][col].getText() + ")<sup>" + powers.get(index) + "</sup> * ";
+								col++;
+							}
+							JPanel table = new JPanel(new GridLayout(4, values.length));
+							for(JLabel[] row: labels)
+							{
+								for(JLabel label: row)
+								{
+									label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+									table.add(label);
+								}
+							}
+							steps.add(table);
+							steps.add(new JLabel(equation.substring(0, equation.length() - 3) + "</html>"));
+							
+							//If powers are too high, solves approximately
+							int sum = 0, index = 0;
+							boolean zero = true;
+							for(; index < powers.size() && powers.get(index) > 0; sum += powers.get(index), index++)
+							{
+								if(values[index] != 0) zero = false;
+							}
+							if(sum > 2) //and thus can't be solved as a quadratic
+							{
+								if(zero)
+								{
+									
+								}
+								else 
+								{
+									results.add(new JLabel("ChemHelper cannot solve this equation."));
+								}
+							}
+							else
+							{
+								
+							}
+							
+							//Things were aligning really weirdly
+							for(Component c: steps.getComponents()) ((JComponent)c).setAlignmentX(Component.LEFT_ALIGNMENT);
 						}
 					}
 					else //if after is selected
