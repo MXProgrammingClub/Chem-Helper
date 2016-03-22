@@ -2,7 +2,7 @@
  * Performs various calculations for functions at equilibrium.
  * 
  * Author: Julia McClellan
- * Version: 3/20/2016
+ * Version: 3/21/2016
  */
 
 package Functions;
@@ -146,15 +146,17 @@ public class Equilibrium extends Function
 							labels[3][0] = new JLabel("Equilibrium");
 							
 							String equation = "<html>" + values[values.length - 1] + " = ";
+							String[] expressions = new String[values.length - 1];
 							int col = 1;
 							for(int index = 0; index < relevant.size(); index++)
 							{
 								if(values[index] == Units.UNKNOWN_VALUE) values[index] = 0;
-								labels[0][col] = new JLabel("<html>[" + relevant.get(index).withoutNumState() + "]</html>");
+								labels[0][col] = new JLabel("<html>[" + relevant.get(index).withoutNumState() + "]");
 								labels[1][col] = new JLabel(values[index] + "");
 								labels[2][col] = new JLabel((powers.get(index) == 1 ? "" : powers.get(index)) + "x");
 								labels[3][col] = new JLabel((values[index] == 0 ? "" : values[index] + " + ") + (powers.get(index) == 1 ? "" : 
 									powers.get(index)) + "x");
+								expressions[index] = labels[0][col].getText() + " = " + labels[3][col].getText();
 								equation += "(" + labels[3][col].getText() + ")<sup>" + powers.get(index) + "</sup> * ";
 								col++;
 							}
@@ -172,16 +174,26 @@ public class Equilibrium extends Function
 							
 							//If powers are too high, solves approximately
 							int sum = 0, index = 0;
+							double product = 1;
 							boolean zero = true;
 							for(; index < powers.size() && powers.get(index) > 0; sum += powers.get(index), index++)
 							{
 								if(values[index] != 0) zero = false;
+								else product *= Math.pow(powers.get(index), powers.get(index));
 							}
 							if(sum > 2) //and thus can't be solved as a quadratic
 							{
 								if(zero)
 								{
-									
+									LinkedList<String> stepList = new LinkedList<String>();
+									double[] concentrations = solveApprox(values, product, sum, index, powers, stepList, expressions);
+									for(String step: stepList) steps.add(new JLabel(step));
+									for(int i = 0; i < concentrations.length; i++)
+									{
+										double val = compounds[i].getBlankAmount(concentrations[i]);
+										saved.add(val);
+										results.add(new JLabel("<html>[" + relevant.get(i).withoutNumState() + "] = " + Function.withSigFigs(val, sigFigs)));
+									}
 								}
 								else 
 								{
@@ -400,7 +412,7 @@ public class Equilibrium extends Function
 			else
 			{
 				newK /= Math.pow(values[index], powers.get(index));
-				stepK += "(" + values[index] + ")<sup>" + powers.get(index) + " / ";
+				stepK += "(" + values[index] + ")<sup>" + powers.get(index) + "</sup> / ";
 			}
 		}
 		if(newK != values[values.length - 1])
@@ -437,6 +449,34 @@ public class Equilibrium extends Function
 		}
 		
 		return changed;
+	}
+	
+	/*
+	 * Solves the ICE table approximately by assuming that in the denominator x does not matter.
+	 */
+	public static double[] solveApprox(double[] original, double product, int sum, int index, ArrayList<Integer> powers, LinkedList<String> steps, String[] ex)
+	{
+		double denom = 1;
+		String fraction = "<html>" + original[original.length - 1] + " = " + product + "x<sup>" + sum + "</sup> / (";
+		for(; index < powers.size(); index++)
+		{
+			steps.add("Assume " + original[index] + " - " + (powers.get(index) == -1 ? "" : -powers.get(index)) + "x \u2245 " + original[index]);
+			fraction += original[index] + "<sup>" + -powers.get(index) + "</sup> * ";
+			denom *= Math.pow(original[index], -powers.get(index));
+		}
+		steps.add(fraction.substring(0, fraction.length() - 3) + ")</html>");
+		double x = original[original.length - 1] * denom / product;
+		steps.add("<html>" + x + " = x<sup>" + sum + "</sup></html>");
+		x = Math.pow(x, 1.0 / sum);
+		steps.add("x = " + x);
+		
+		double[] results = new double[original.length - 1];
+		for(int i = 0; i < powers.size(); i++)
+		{
+			results[i] = original[i] + powers.get(i) * x;
+			steps.add(ex[i] + " = " + results[i] + " M");
+		}
+		return results;
 	}
 	
 	public boolean equation()
