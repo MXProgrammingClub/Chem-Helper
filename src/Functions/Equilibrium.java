@@ -2,7 +2,7 @@
  * Performs various calculations for functions at equilibrium.
  * 
  * Author: Julia McClellan
- * Version: 3/22/2016
+ * Version: 3/23/2016
  */
 
 package Functions;
@@ -490,7 +490,7 @@ public class Equilibrium extends Function
 	/*
 	 * Solves the ICE table with quadratic equations. Returns null if it cannot be solved.
 	 */
-	public double[] solveICE(double[] original, ArrayList<Integer> powers, LinkedList<String> stepList, String[] expressions)
+	public static double[] solveICE(double[] original, ArrayList<Integer> powers, LinkedList<String> steps, String[] expressions)
 	{
 		double[][] num = new double[2][2], denom = new double[2][2]; //Will hold the linear expressions to be multiplied
 		int index = 0;
@@ -527,17 +527,62 @@ public class Equilibrium extends Function
 		}
 		
 		double[] top = foil(num), bottom = foil(denom);
+		steps.add("<html>" + original[original.length - 1] + " = (" + displayQuadratic(top) + ") / (" + displayQuadratic(bottom) + ")</html>");
 		
-		return null;
+		for(int i = 0; i < bottom.length; i++)
+		{
+			bottom[i] *= original[original.length - 1];
+		}
+		steps.add("<html>" + displayQuadratic(bottom) + " = " + displayQuadratic(top) + "</html>");
+		
+		for(int i = 0; i < bottom.length; i++)
+		{
+			top[i] -= bottom[i];
+		}
+		steps.add("<html>0 = " + displayQuadratic(top) + "</html>");
+		
+		double x = (-top[1] + Math.sqrt(top[1] * top[1] - 4 * top[0] * top[2])) / (2 * top[0]); //Uses higher root only
+		steps.add("x = " + x);
+		
+		double[] results = new double[original.length - 1];
+		for(int i = 0; i < powers.size(); i++)
+		{
+			results[i] = original[i] + powers.get(i) * x;
+			steps.add(expressions[i] + " = " + results[i] + " M");
+		}
+		return results;
 	}
 	
-	private double[] foil(double[][] factors)
+	private static double[] foil(double[][] factors)
 	{
 		double[] expression = new double[3];
 		expression[0] = factors[0][0] * factors[1][0];
 		expression[1] = factors[0][0] * factors[1][1] + factors[1][0] * factors[0][1];
 		expression[2] = factors[0][1] * factors[1][1];
 		return expression;
+	}
+	
+	private static String displayQuadratic(double[] expression)
+	{
+		String str = "";
+		if(expression[0] == -1) str += "-";
+		else if(expression[0] != 1 && expression[0] != 0) str += expression[0];
+		if(expression[0] != 0) str += "x<sup>2</sup>";
+		
+		if(expression[1] != 0)
+		{
+			if(str.length() != 0) str += expression[1] > 0 ? " + " : " - ";
+			if(expression[1] != 1 && expression[1] != -1) str += Math.abs(expression[1]);
+			str += "x";
+		}
+		
+		if(expression[2] != 0)
+		{
+			if(str.length() != 0) str += expression[2] > 0 ? " + " : " - ";
+			if(expression[2] != 1 && expression[2] != -1) str += Math.abs(expression[2]);
+		}
+		
+		return str;
 	}
 	
 	public boolean equation()
