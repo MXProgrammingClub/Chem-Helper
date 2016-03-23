@@ -2,7 +2,7 @@
  * Performs various calculations for functions at equilibrium.
  * 
  * Author: Julia McClellan
- * Version: 3/21/2016
+ * Version: 3/22/2016
  */
 
 package Functions;
@@ -202,7 +202,15 @@ public class Equilibrium extends Function
 							}
 							else
 							{
-								
+								LinkedList<String> stepList = new LinkedList<String>();
+								double[] concentrations = solveICE(values, powers, stepList, expressions);
+								for(String step: stepList) steps.add(new JLabel(step));
+								for(int i = 0; i < concentrations.length; i++)
+								{
+									double val = compounds[i].getBlankAmount(concentrations[i]);
+									saved.add(val);
+									results.add(new JLabel("<html>[" + relevant.get(i).withoutNumState() + "] = " + Function.withSigFigs(val, sigFigs)));
+								}
 							}
 							
 							//Things were aligning really weirdly
@@ -477,6 +485,59 @@ public class Equilibrium extends Function
 			steps.add(ex[i] + " = " + results[i] + " M");
 		}
 		return results;
+	}
+	
+	/*
+	 * Solves the ICE table with quadratic equations. Returns null if it cannot be solved.
+	 */
+	public double[] solveICE(double[] original, ArrayList<Integer> powers, LinkedList<String> stepList, String[] expressions)
+	{
+		double[][] num = new double[2][2], denom = new double[2][2]; //Will hold the linear expressions to be multiplied
+		int index = 0;
+		num[0][0] = powers.get(index);
+		num[0][1] = original[index];
+		if(powers.get(index) == 2)
+		{
+			num[1][0] = powers.get(index);
+			num[1][1] = original[index];
+			index++;
+		}
+		else
+		{
+			index++;
+			num[1][0] = powers.get(index);
+			num[1][1] = original[index];
+			index++;
+		}
+		
+		denom[0][0] = powers.get(index);
+		denom[0][1] = original[index];
+		if(powers.get(index) == 2)
+		{
+			denom[1][0] = powers.get(index);
+			denom[1][1] = original[index];
+			index++;
+		}
+		else
+		{
+			index++;
+			denom[1][0] = powers.get(index);
+			denom[1][1] = original[index];
+			index++;
+		}
+		
+		double[] top = foil(num), bottom = foil(denom);
+		
+		return null;
+	}
+	
+	private double[] foil(double[][] factors)
+	{
+		double[] expression = new double[3];
+		expression[0] = factors[0][0] * factors[1][0];
+		expression[1] = factors[0][0] * factors[1][1] + factors[1][0] * factors[0][1];
+		expression[2] = factors[0][1] * factors[1][1];
+		return expression;
 	}
 	
 	public boolean equation()
