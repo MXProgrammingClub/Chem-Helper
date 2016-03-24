@@ -185,7 +185,7 @@ public class Polyatomic extends Ions
 			new Polyatomic(new Monatomic[]{new Monatomic(new Hydrogen()), new Monatomic(new Carbon()), new Monatomic(new Oxygen(), 3)}, -1,
 			"Hydrogen carbonate"), new Polyatomic(new Monatomic[]{new Monatomic(new Sulfur()), new Monatomic(new Oxygen(), 3)}, -2, 
 			"Sulfite"), new Polyatomic(new Monatomic[]{new Monatomic(new Sulfur()), new Monatomic(new Oxygen(), 4)}, -2, "Sulfate"), 
-			new Polyatomic(new Monatomic[]{new Monatomic(new Hydrogen()), new Monatomic(new Sulfur()), new Monatomic(new Oxygen(), 4)}, -2, 
+			new Polyatomic(new Monatomic[]{new Monatomic(new Hydrogen()), new Monatomic(new Sulfur()), new Monatomic(new Oxygen(), 4)}, -1, 
 			"Hydrogen sulfate"), new Polyatomic(new Monatomic[]{new Monatomic(new Manganese()), new Monatomic(new Oxygen(), 4)}, -1, 
 			"Permanganate"), new Polyatomic(new Monatomic[]{new Monatomic(new Phosphorus()), new Monatomic(new Oxygen(), 4)}, -3, 
 			"Phosphate"), new Polyatomic(new Monatomic[]{new Monatomic(new Hydrogen()), new Monatomic(new Phosphorus()), 
