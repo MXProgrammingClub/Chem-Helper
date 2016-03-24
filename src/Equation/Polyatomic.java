@@ -190,7 +190,7 @@ public class Polyatomic extends Ions
 			"Permanganate"), new Polyatomic(new Monatomic[]{new Monatomic(new Phosphorus()), new Monatomic(new Oxygen(), 4)}, -3, 
 			"Phosphate"), new Polyatomic(new Monatomic[]{new Monatomic(new Hydrogen()), new Monatomic(new Phosphorus()), 
 			new Monatomic(new Oxygen(), 4)}, -2, "Hydrogen phosphate"), new Polyatomic(new Monatomic[]{new Monatomic(new Hydrogen(), 2), 
-			new Monatomic(new Phosphorus()), new Monatomic(new Oxygen(), 4)}, -2, "Dihydrogen phosphate"), 
+			new Monatomic(new Phosphorus()), new Monatomic(new Oxygen(), 4)}, -1, "Dihydrogen phosphate"), 
 			new Polyatomic(new Monatomic[]{new Monatomic(new Chlorine()), new Monatomic(new Oxygen())}, -1, "Hypochlorite"),
 			new Polyatomic(new Monatomic[]{new Monatomic(new Chlorine()), new Monatomic(new Oxygen(), 2)}, -1, "Chlorite"),
 			new Polyatomic(new Monatomic[]{new Monatomic(new Chlorine()), new Monatomic(new Oxygen(), 3)}, -1, "Chlorate"),
