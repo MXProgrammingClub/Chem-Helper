@@ -10,6 +10,7 @@ package Equation;
 
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.Stack;
 import java.util.TreeSet;
 
 import ChemHelper.InvalidInputException;
@@ -218,6 +219,76 @@ public class Compound
 		}
 		Monatomic[] array = new Monatomic[list.size()];
 		return list.toArray(array);
+	}
+	
+	/*
+	 * Attempts to identify polyatomic ions in the compound.
+	 */
+	public void checkForPoly()
+	{
+		Stack<Ions> newIons = new Stack<Ions>();
+		for(int index = ions.length - 1; index >= 0; index--)
+		{
+			boolean added = false;
+			if(!(ions[index] instanceof Polyatomic))
+			{
+				int eNum = ((Monatomic)ions[index]).getElement().getNum();
+				if(eNum == 8) //Oxygen
+				{
+					if(index != 0 && ions[index - 1] instanceof Monatomic) //Only ion for index = 0 is peroxide, which does not need to be separated out
+					{
+						Ions i = null;
+						if(index > 1 && ions[index - 2] instanceof Monatomic && ((Monatomic)ions[index - 2]).getElement().getNum() == 1)
+						{
+							if(index > 2 && ions[index].getNum() == 2 && ((Monatomic)ions[index - 1]).getElement().getNum() == 6 && ions[index - 1].getNum()
+									== 1 &&ions[index - 2].getNum() == 3 && ions[index - 3] instanceof Monatomic && ions[index - 3].getNum() == 1 &&
+									((Monatomic)ions[index - 3]).getElement().getNum() == 6) //acetate
+							{
+								newIons.push(new Polyatomic(Polyatomic.POLYATOMIC_IONS[1])); //copies the acetate ion
+								added = true;
+								index -= 3;
+							}
+							else i = Polyatomic.findIon((Monatomic)ions[index - 1], ions[index].getNum(), ions[index - 2].getNum());
+						}
+						else i = Polyatomic.findIon((Monatomic)ions[index - 1], ions[index].getNum(), 0);
+						
+						if(i != null)
+						{
+							newIons.push(i);
+							added = true;
+							index -= i.getElements().length - 1;
+						}
+					}
+				}
+				else if(index > 0) //NH4+ and CN- are the only polyatomic ions used which don't end in oxygen
+				{
+					if(eNum == 1 && ions[index].getNum() == 4 && ions[index - 1] instanceof Monatomic && ((Monatomic)ions[index - 1]).getElement().getNum()
+							== 7 && ions[index - 1].getNum() == 1) //ammonia
+					{
+						newIons.push(new Polyatomic(Polyatomic.POLYATOMIC_IONS[0])); //copies the ammonia ion
+						added = true;
+						index--;
+					}
+					else if(eNum == 7 && ions[index].getNum() == 1 && ions[index - 1] instanceof Monatomic && ((Monatomic)ions[index -1]).getElement().getNum()
+							== 6 && ions[index - 1].getNum() == 1) //cyanide
+					{
+						newIons.push(new Polyatomic(Polyatomic.POLYATOMIC_IONS[2])); //copies the cyanide ion
+						added = true;
+						index--;
+					}
+				}
+			}
+			if(!added) newIons.push(ions[index]);
+		}
+		int length = newIons.size();
+		if(length != ions.length) //If it does, then there are no polyatomic ions in the compound
+		{
+			ions = new Ions[length];
+			for(int index = 0; index < length; index++)
+			{
+				ions[index] = newIons.pop();
+			}
+		}
 	}
 
 	public static Compound parseCompound(String cmp) throws InvalidInputException

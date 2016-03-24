@@ -2,7 +2,7 @@
  * Represents a polyatomic ion and has a public array of common polyatomic ions.
  * 
  * Author: Julia McClellan
- * Version: 3/10/2016
+ * Version: 3/24/2016
  */
 
 package Equation;
@@ -70,6 +70,20 @@ public class Polyatomic extends Ions
 		super(1, charge);
 		this.elements = elements;
 		this.name = name;
+	}
+	
+	/*
+	 * Copy constructor.
+	 */
+	public Polyatomic(Polyatomic copy)
+	{
+		super(copy.getNum(), copy.getNum());
+		Monatomic[] copyE = copy.getElements();
+		elements = new Monatomic[copyE.length];
+		for(int index = 0; index < elements.length; index++)
+		{
+			elements[index] = new Monatomic(copyE[index]);
+		}
 	}
 
 	public Monatomic[] getElements()
@@ -172,6 +186,35 @@ public class Polyatomic extends Ions
 			if(test.equals(ion)) return test.getCharge();
 		}
 		return 0;
+	}
+	
+	/*
+	 * Finds and copies the polyatomic ion of the form H(numH) m O(numO). Returns null if one cannot be found.
+	 */
+	public static Polyatomic findIon(Monatomic m, int numO, int numH)
+	{
+		Polyatomic p = null;
+		int[][] elements = {{7, 6, 16, 25, 15, 17, 24}, {3, 5, 7, 10, 11, 14, 18, 20}}; //First array holds element numbers, second hold starting indices
+			//of those elements in POLYATOMIC_IONS
+		int eNum = m.getElement().getNum();
+		for(int i = 0; i < elements[0].length; i++)
+		{
+			if(eNum == elements[0][i])
+			{
+				for(int j = elements[1][i]; j < elements[1][i + 1]; j++)
+				{
+					Monatomic[] ions = POLYATOMIC_IONS[j].getElements();
+					if(m.getNum() == ions[ions.length - 2].getNum() && (ions.length != 3 || numH == ions[0].getNum()) && numO == 
+							ions[ions.length - 1].getNum())
+					{
+						p = new Polyatomic(POLYATOMIC_IONS[j]);
+						break;
+					}
+				}
+				break;
+			}
+		}
+		return p;
 	}
 	
 	//Commonly used polyatomic ions:
