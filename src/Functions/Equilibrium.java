@@ -155,7 +155,7 @@ public class Equilibrium extends Function
 								labels[1][col] = new JLabel(values[index] + "");
 								labels[2][col] = new JLabel((powers.get(index) == 1 ? "" : powers.get(index)) + "x");
 								labels[3][col] = new JLabel((values[index] == 0 ? "" : values[index] + " + ") + (powers.get(index) == 1 ? "" : 
-									powers.get(index)) + "x");
+									(powers.get(index) == -1 ? "-" : powers.get(index))) + "x");
 								expressions[index] = labels[0][col].getText() + " = " + labels[3][col].getText();
 								equation += "(" + labels[3][col].getText() + ")<sup>" + powers.get(index) + "</sup> * ";
 								col++;
