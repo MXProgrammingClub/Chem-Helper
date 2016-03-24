@@ -106,7 +106,8 @@ public class Compound
 		if(num != 1) str += num;
 		for(Ions ion: ions)
 		{
-			str += ion;
+			if(ion instanceof Polyatomic && ions.length != 1) str += ion.withoutCharge(); //Generally in compounds you don't want to see the charge
+			else str += ion;
 		}
 		if(!state.equals(" ")) str += "(" + state + ")";
 		return str;
@@ -118,7 +119,8 @@ public class Compound
 		if(num != 1) str += num;
 		for(Ions ion: ions)
 		{
-			str += ion.withoutCharge();
+			if(ion instanceof Polyatomic && ions.length != 1) str += ion.withoutCharge(); //Generally in compounds you don't want to see the charge
+			else str += ion.withoutCharge();
 		}
 		if(!state.equals(" ")) str += "(" + state + ")";
 		return str;
@@ -129,7 +131,8 @@ public class Compound
 		String str = "";
 		for(Ions ion: ions)
 		{
-			str += ion;
+			if(ion instanceof Polyatomic && ions.length != 1) str += ion.withoutCharge(); //Generally in compounds you don't want to see the charge
+			else str += ion;
 		}
 		if(!state.equals(" ")) str += "(" + state + ")";
 		return str;
@@ -140,7 +143,8 @@ public class Compound
 		String str = "";
 		for(Ions ion: ions)
 		{
-			str += ion;
+			if(ion instanceof Polyatomic && ions.length != 1) str += ion.withoutCharge(); //Generally in compounds you don't want to see the charge
+			else str += ion;
 		}
 		return str;
 	}

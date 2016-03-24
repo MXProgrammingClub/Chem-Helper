@@ -114,12 +114,12 @@ public class Polyatomic extends Ions
 	
 	public String toString() 
 	{
-		String ion = "(";
+		String ion = getNum() == 1 ? "" : "(";
 		for(Monatomic e: elements)
 		{
 			ion += e;
 		}
-		ion += ")";
+		ion += getNum() == 1 ? "" : ")";
 		if(getNum() != 1) ion += "<sub>" + getNum() + "</sub>";
 		if(getCharge() != 0) ion += "<sup>" + getCharge() + "</sup>";
 		return ion;
@@ -127,12 +127,12 @@ public class Polyatomic extends Ions
 	
 	public String withoutCharge()
 	{
-		String ion = "";
+		String ion = getNum() == 1 ? "" : "(";
 		for(Monatomic e: elements)
 		{
-			ion += e.getElement().getSymbol() + "<sub>" + e.getNum() + "</sub>";
+			ion += e.withoutCharge();
 		}
-		ion += "<sub>" + getNum() + "</sub>";
+		if(getNum() != 1) ion += ")<sub>" + getNum() + "</sub>";
 		return ion;
 	}
 	

@@ -4,7 +4,7 @@
  * classes that need them.
  * 
  * Authors: Ted Pyne, Hyun Choi, Julia McClellan
- * Version: 3/19/2016
+ * Version: 3/24/2016
  */
 
 package Functions;
@@ -71,7 +71,7 @@ public abstract class Function {
 	public static String latex(Ions ion)
 	{
 		String str = "";
-		if(ion instanceof Polyatomic) str += "(";
+		if(ion instanceof Polyatomic && ion.getNum() != 1) str += "(";
 		
 		for(Monatomic sub: ion.getElements(false))
 		{
@@ -83,12 +83,8 @@ public abstract class Function {
 			int charge = sub.getCharge();
 			if(charge != 0) str += "^{" + (Math.abs(charge) == 1 ? "" : Math.abs(charge)) + (charge > 0 ? '+' : '-') + "}"; 
 		}
-		if(ion instanceof Polyatomic)
-		{
-			str += ")";
-			if (ion.getNum()>1) str+= "_{" + ion.getNum() + "}";
-			
-		}
+		if(ion instanceof Polyatomic && ion.getNum() > 1) str+= ")_{" + ion.getNum() + "}";
+		
 		return str;
 	}
 	
