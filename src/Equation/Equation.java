@@ -2,7 +2,7 @@
  * Represents a chemical equation. 
  * 
  * Authors: Luke Giacalone, Julia McClellan, Hyun Choi
- * Version: 3/19/2016
+ * Version: 3/25/2016
  */
 
 package Equation;
@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import ChemHelper.InvalidInputException;
 import Functions.Function;
+import Functions.OxidationNumber;
 import Elements.Element;
 import Elements.Hydrogen;
 import Elements.Oxygen;
@@ -159,6 +160,80 @@ public class Equation
 			else irrelevant.add(c);
 		}
 		return expression;
+	}
+	
+	/*
+	 * Returns if the equation is a double displacement reaction with a solid product.
+	 * -1 = not of the form
+	 * 0 = spectators already removed
+	 * 1 = spectators need to be removed
+	 */
+	public int isDoubleDisplacement()
+	{
+		boolean type1 = true;
+		if(left.size() != 2 || right.size() != 2)
+		{
+			if(left.size() == 1 && right.size() == 2) type1 = false;
+			else return -1;
+		}
+		ArrayList<Compound> compounds = new ArrayList<Compound>(left);
+		compounds.addAll(right);
+		boolean solid = false;
+		for(Compound c: compounds)
+		{
+			if(type1 && c.getIons().length != 2) return -1;
+			String state = c.getState();
+			if(state.equals("s"))
+			{
+				if(solid) return -1;
+				solid = true;
+			}
+			else if(!state.equals("aq")) return -1;
+		}
+		if(!solid) return -1;
+		return type1 ? 1 : 0; //If it passed all tests, it should be double displacement
+	}
+	
+	/*
+	 * Removes spectator ions from the equation.
+	 * pre: isDoubleDisplacement returns 1.
+	 */
+	public void removeSpectators()
+	{
+		Compound solid = null;
+		for(Compound c: right)
+		{
+			if(c.getState().equals("s"))
+			{
+				solid = c;
+				break;
+			}
+		}
+		
+		Ions[] ions = solid.getIons();
+		int[][] numbers = OxidationNumber.findNumbers(ions, 0);
+		for(int index = 0; index < ions.length; index++)
+		{
+			if(ions[index] instanceof Polyatomic)
+			{
+				if(ions[index].getCharge() == 0)
+				{
+					int charge = 0;
+					for(int num: numbers[index]) charge += num;
+					ions[index].setCharge(charge);
+				}
+			}
+			else
+			{
+				ions[index] = new Monatomic((Monatomic)ions[index]);
+				ions[index].setCharge(numbers[index][0]);
+			}
+		}
+		
+		left = new ArrayList<Compound>();
+		left.add(solid);
+		right = new ArrayList<Compound>();
+		for(Ions i: ions) right.add(new Compound(new Ions[]{i}, "aq"));
 	}
 	
 	public int balance() throws InvalidInputException {
@@ -515,34 +590,4 @@ public class Equation
 		}
 		return ions;
 	}
-
-	/*
-	public static void main(String[] args)
-	{
-		try
-		{
-			Equation eq = parseEquation("Cu(s)+NO<sub>3</sub><sup>-</sup>(aq)\u2192Cu<sup>2+</sup>(aq)+NO(g)");
-			ArrayList<Equation> halves = new ArrayList<Equation>();
-			eq.balanceRedox(true, halves);
-			System.out.println(eq);
-			System.out.println(halves);
-		}
-		catch(Throwable e)
-		{
-			e.printStackTrace();
-		}
-	}
-	*/
-/*
-	public static void main(String[] args) {
-		try {
-			Equation eq = parseEquation("HIO<sub>3</sub>+FeI<sub>2</sub>+HCl\u2192FeCl<sub>3</sub>+ICl+H<sub>2</sub>O");//"H<sub>2</sub>+O<sub>2</sub>+C<sub>4</sub>\u2192H<sub>2</sub>OC+O");
-			eq.balance();
-			System.out.println(eq);
-		}
-		catch (Throwable e) {
-			e.printStackTrace();
-		}
-	}
-*/
 }

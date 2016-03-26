@@ -2,7 +2,7 @@
  * Represents a polyatomic ion and has a public array of common polyatomic ions.
  * 
  * Author: Julia McClellan
- * Version: 3/24/2016
+ * Version: 3/25/2016
  */
 
 package Equation;
@@ -121,7 +121,7 @@ public class Polyatomic extends Ions
 		}
 		ion += getNum() == 1 ? "" : ")";
 		if(getNum() != 1) ion += "<sub>" + getNum() + "</sub>";
-		if(getCharge() != 0) ion += "<sup>" + getCharge() + "</sup>";
+		if(getCharge() != 0) ion += "<sup>" + (Math.abs(getCharge()) == 1 ? "" : Math.abs(getCharge())) + (getCharge() > 0 ? "+" : "-") + "</sup>";
 		return ion;
 	}
 	
