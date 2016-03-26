@@ -2,7 +2,7 @@
  * Represents a chemical equation. 
  * 
  * Authors: Luke Giacalone, Julia McClellan, Hyun Choi
- * Version: 3/25/2016
+ * Version: 3/26/2016
  */
 
 package Equation;
@@ -210,12 +210,13 @@ public class Equation
 			}
 		}
 		
-		Ions[] ions = solid.getIons();
+		Ions[] ions = solid.getIons(), copyIons = new Ions[ions.length];
 		int[][] numbers = OxidationNumber.findNumbers(ions, 0);
 		for(int index = 0; index < ions.length; index++)
 		{
 			if(ions[index] instanceof Polyatomic)
 			{
+				copyIons[index] = new Polyatomic((Polyatomic)ions[index]);
 				if(ions[index].getCharge() == 0)
 				{
 					int charge = 0;
@@ -225,15 +226,15 @@ public class Equation
 			}
 			else
 			{
-				ions[index] = new Monatomic((Monatomic)ions[index]);
-				ions[index].setCharge(numbers[index][0]);
+				copyIons[index] = new Monatomic((Monatomic)ions[index]);
+				copyIons[index].setCharge(numbers[index][0]);
 			}
 		}
 		
 		left = new ArrayList<Compound>();
 		left.add(solid);
 		right = new ArrayList<Compound>();
-		for(Ions i: ions) right.add(new Compound(new Ions[]{i}, "aq"));
+		for(Ions i: copyIons) right.add(new Compound(new Ions[]{i}, "aq"));
 	}
 	
 	public int balance() throws InvalidInputException {
