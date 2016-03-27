@@ -2,7 +2,7 @@
  * Performs various calculations for functions at equilibrium.
  * 
  * Author: Julia McClellan
- * Version: 3/23/2016
+ * Version: 3/27/2016
  */
 
 package Functions;
@@ -17,6 +17,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.TreeMap;
 
 import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
@@ -26,6 +27,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -39,11 +41,12 @@ import HelperClasses.Units;
 
 public class Equilibrium extends Function
 {
+	public static TreeMap<String, Double> KSP = createMap();
 	private JPanel panel, enterPanel, fields;
 	private EquationReader reader;
 	private JLabel expression;
-	private EnterField[] compounds;
-	private EnterField k;
+	private EnterField[] compounds, precipitate;
+	private EnterField k, solubility;
 	private JButton calculate, reset;
 	private Box steps, results;
 	private JRadioButton before;
@@ -125,6 +128,44 @@ public class Equilibrium extends Function
 						steps.add(new JLabel("K = " + values[compounds.length]));
 						sigFigs = Math.min(sigFigs, k.getSigFigs());
 					}
+					
+					double[] extra = new double[4];
+					if(precipitate != null)
+					{
+						for(int index = 0; index < precipitate.length; index++)
+						{
+							extra[index] = precipitate[index].getAmount();
+							if(extra[index] == Units.ERROR_VALUE)
+							{
+								results.add(new JLabel("<html>Error in value for " + precipitate[index].getName().substring(7)));
+								results.setVisible(true);
+								return;
+							}
+							else if(extra[index] != Units.UNKNOWN_VALUE)
+							{
+								steps.add(new JLabel(precipitate[index].getName() + " = " + extra[index] + (index > 0 ? "L" : "")));
+								sigFigs = Math.min(sigFigs, precipitate[index].getSigFigs());
+							}
+							else steps.add(new JLabel(precipitate[index].getName() + " = ?"));
+						}
+					}
+					if(solubility != null)
+					{
+						extra[3] = solubility.getAmount();
+						if(extra[3] == Units.ERROR_VALUE)
+						{
+							results.add(new JLabel("Error in value for solubility."));
+							results.setVisible(true);
+							return;
+						}
+						else if(extra[3] != Units.UNKNOWN_VALUE)
+						{
+							steps.add(new JLabel("Solubility = " + extra[3] + " mol / L"));
+							sigFigs = Math.min(sigFigs, solubility.getSigFigs());
+						}
+						else steps.add(new JLabel("Solubility = ?"));
+					}
+					
 					steps.add(Box.createVerticalStrut(5));
 					steps.add(new JLabel(expression.getIcon()));
 					
@@ -219,7 +260,23 @@ public class Equilibrium extends Function
 					}
 					else //if after is selected
 					{
-						if(values[compounds.length] == Units.UNKNOWN_VALUE) //K is unknown
+						if(solubility != null && extra[3] != Units.UNKNOWN_VALUE)
+						{
+							LinkedList<String> stepList = new LinkedList<String>();
+							values = calculateFromSolubility(extra[3], stepList, relevant, powers);
+							for(String step: stepList) steps.add(new JLabel(step));
+							
+							for(int index = 0; index < values.length - 1; index++)
+							{
+								values[index] = compounds[index].getBlankAmount(values[index]);
+								saved.add(values[index]);
+								results.add(new JLabel("<html>["+ relevant.get(index).withoutNumState() + "] = " + Function.withSigFigs(values[index], sigFigs)
+								+ " " + compounds[index].getUnitName() + " / " + compounds[index].getUnit2Name()));
+							}
+							saved.add(values[values.length - 1]);
+							results.add(new JLabel("K = " + Function.withSigFigs(values[values.length - 1], sigFigs)));
+						}
+						else if(values[compounds.length] == Units.UNKNOWN_VALUE) //K is unknown
 						{
 							LinkedList<String> stepList = new LinkedList<String>();
 							double result = calculateK(values, stepList, powers);
@@ -253,7 +310,8 @@ public class Equilibrium extends Function
 							else if(unknown == Integer.MAX_VALUE)
 							{
 								LinkedList<String> stepList = new LinkedList<String>();
-								LinkedList<Integer> changed = calculateValues(values, stepList, powers, relevant);
+								double[] x = new double[1];
+								LinkedList<Integer> changed = calculateValues(values, stepList, powers, relevant, x);
 								if(changed == null)
 								{
 									results.add(new JLabel(stepList.getLast()));
@@ -266,7 +324,18 @@ public class Equilibrium extends Function
 								{
 									double val = compounds[index].getBlankAmount(values[index]);
 									saved.add(val);
-									results.add(new JLabel("<html>[" + relevant.get(index).withoutNumState() + "] = " + Function.withSigFigs(val, sigFigs)));
+									results.add(new JLabel("<html>[" + relevant.get(index).withoutNumState() + "] = " + Function.withSigFigs(val, sigFigs)
+											+ " " + compounds[index].getUnitName() + " / " + compounds[index].getUnit2Name()));
+								}
+								
+								if(solubility != null)
+								{
+									double result = solubility.getBlankAmount(x[0]);
+									String unit = solubility.getUnitName() + " / " + solubility.getUnit2Name();
+									steps.add(new JLabel("Solubility = x = " + result + " " + unit));
+									saved.add(result);
+									results.add(new JLabel("Solubility = " + Function.withSigFigs(result, sigFigs) + " " + unit));
+									extra[3] = result; //So it won't accidentally be recalculated later
 								}
 							}
 							else
@@ -282,6 +351,16 @@ public class Equilibrium extends Function
 										Function.withSigFigs(saved.get(0), sigFigs)));
 							}
 						}
+					}
+					
+					if(solubility != null && extra[3] == Units.UNKNOWN_VALUE)
+					{
+						steps.add(new JLabel("Solubility * " + relevant.get(0).getNum() + " = " + compounds[0].getName().substring(6)));
+						double s = values[0] / relevant.get(0).getNum();
+						steps.add(new JLabel("Solubility = " + values[0] + " / " + relevant.get(0).getNum() + " = " + s + " mol / L"));
+						s = solubility.getBlankAmount(s);
+						saved.add(s);
+						results.add(new JLabel("Solubility = " + s + " " + solubility.getUnitName() + " / " + solubility.getUnit2Name()));
 					}
 					
 					steps.setVisible(true);
@@ -332,6 +411,8 @@ public class Equilibrium extends Function
 		fields.removeAll();
 		compounds = null;
 		k = null;
+		precipitate = null;
+		solubility = null;
 		results.removeAll();
 		steps.removeAll();
 		enterPanel.setVisible(false);
@@ -397,7 +478,8 @@ public class Equilibrium extends Function
 	 * Calculates all unknown concentrations given the others and K and returns the indices in values which have been changed, or null if there is insufficient
 	 * information for the calculations.
 	 */
-	public static LinkedList<Integer> calculateValues(double[] values, LinkedList<String> steps, ArrayList<Integer> powers, ArrayList<Compound> compounds)
+	public static LinkedList<Integer> calculateValues(double[] values, LinkedList<String> steps, ArrayList<Integer> powers, ArrayList<Compound> compounds,
+			double[] storeX)
 	{
 		double newK = values[values.length - 1]; //Will divide K by all known concentrations
 		String stepK = "<html>" + newK + " / ";
@@ -448,7 +530,8 @@ public class Equilibrium extends Function
 		
 		double x = Math.pow(newK, (1 / (double)sum));
 		steps.add("x = " + x);
-			
+		storeX[0] = x;
+		
 		for(Integer index: changed)
 		{
 			int power = powers.get(index);
@@ -585,6 +668,30 @@ public class Equilibrium extends Function
 		return str;
 	}
 	
+	/*
+	 * Calculates the concentrations of each compound and K from the solubility of the solid.
+	 */
+	public double[] calculateFromSolubility(double s, LinkedList<String> steps, ArrayList<Compound> relevant, ArrayList<Integer> powers)
+	{
+		double[] values = new double[relevant.size() + 1];
+		String step1 = "<html>k = ", step2 = "<html>k = "; //Calculates k as it goes
+		values[values.length - 1] = 1; 
+		for(int index = 0; index < relevant.size(); index++)
+		{
+			String compound = "[" + relevant.get(index).withoutNumState() + "]";
+			int power = powers.get(index);
+			values[index] = s * power;
+			steps.add("<html>" + compound + " = " + s + " * " + power + " = " + values[index] + " mol / L</html>");
+			step1 += compound + "<sup>" + power + "</sup> * ";
+			step2 += "(" + values[index] + ")<sup>" + power + "</sup> * ";
+			values[values.length - 1] *= Math.pow(values[index], power);
+		}
+		steps.add(step1.substring(0, step1.length() - 3) + "<html>");
+		steps.add(step2.substring(0, step2.length() - 3) + "<html>");
+		steps.add("k = " + values[values.length - 1]);
+		return values;
+	}
+	
 	public boolean equation()
 	{
 		return true;
@@ -604,12 +711,24 @@ public class Equilibrium extends Function
 		{
 			for(Compound c: equation.getLeft())
 			{
+				c.checkForPoly();
 				if(c.getState().equals(" ") && !getState(c)) return;
 			}
 			for(Compound c: equation.getRight())
 			{
+				c.checkForPoly();
 				if(c.getState().equals(" ") && !getState(c)) return;
 			}
+		}
+		
+		int type = equation.isDoubleDisplacement();
+		Compound[] reactants = new Compound[2];
+		if(type == 1)
+		{
+			ArrayList<Compound> left = equation.getLeft();
+			reactants[0] = left.get(0);
+			reactants[1] = left.get(1);
+			equation.removeSpectators();
 		}
 		
 		panel.remove(reader.getPanel());
@@ -637,6 +756,51 @@ public class Equilibrium extends Function
 		}
 		k = new EnterField("K");
 		fields.add(k, c);
+		
+		if(type != -1)
+		{
+			Double kValue = KSP.get(irrelevant.get(0).withoutNumState());
+			if(kValue != null)
+			{
+				JCheckBox stored = new JCheckBox("Use stored value for K");
+				stored.addActionListener(new ActionListener()
+					{
+						public void actionPerformed(ActionEvent arg0)
+						{
+							if(stored.isSelected()) k.setAmount(kValue);
+						}
+					});
+				c.gridy++;
+				fields.add(stored, c);
+			}
+			
+			int pre = 0;
+			if(type == 1) 
+			{
+				pre = JOptionPane.showConfirmDialog(panel, "Does the question involve finding whether there is a precipitate?", "Choose Type",
+						JOptionPane.YES_NO_OPTION);
+			}
+			if(type == 0 || pre != 0)
+			{
+				solubility = new EnterField("Solubility", "Amount", "Volume");
+				c.gridy++;
+				fields.add(solubility, c);
+			}
+			else
+			{
+				precipitate = new EnterField[3];
+				precipitate[0] = new EnterField("Q");
+				c.gridy++;
+				fields.add(precipitate[0], c);
+				for(int index = 1; index < precipitate.length; index++)
+				{
+					precipitate[index] = new EnterField("<html>Volume " + reactants[index - 1].withoutNumState() + "</html>", "Volume");
+					c.gridy++;
+					fields.add(precipitate[index], c);
+				}
+			}
+		}
+		
 		enterPanel.setVisible(true);
 	}
 	
@@ -688,6 +852,57 @@ public class Equilibrium extends Function
 			}
 		}
 		k.setAmount(num);
+	}
+	
+	private static TreeMap<String, Double> createMap()
+	{
+		TreeMap<String, Double> map = new TreeMap<String, Double>();
+		map.put("Al(OH)<sub>3</sub>", 1.8E-33);
+		map.put("BaCO<sub>3</sub>", 8.1E-9);
+		map.put("BaF<sub>2</sub>", 1.7E-6);
+		map.put("BaSO<sub>4</sub>", 1.1E-10);
+		map.put("Bi<sub>2</sub>S<sub>3</sub>", 1.6E-72);
+		map.put("CdS", 8E-28);
+		map.put("CaCO<sub>3</sub>", 8.7E-9);
+		map.put("CaF<sub>2</sub>", 3.9E-11);
+		map.put("Ca(OH)<sub>2</sub>", 8E-6);
+		map.put("Ca<sub>3</sub>(PO<sub>4</sub>)<sub>2</sub>", 1.2E-26);
+		map.put("Cr(OH)<sub>3</sub>", 3E-29);
+		map.put("CoS", 4E-21);
+		map.put("CuBr", 4.2E-8);
+		map.put("CuI", 5.1E-12);
+		map.put("Cu(OH)<sub>2</sub>", 2.2E-20);
+		map.put("CuS", 6E-37);
+		map.put("Fe(OH)<sub>2</sub>", 1.6E-14);
+		map.put("Fe(OH)<sub>3</sub>", 1.1E-36);
+		map.put("FeS", 6E-19);
+		map.put("PbCO<sub>3</sub>", 3.3E-14);
+		map.put("PbCl<sub>2</sub>", 2.4E-4);
+		map.put("PbCrO<sub>4</sub>", 2E-14);
+		map.put("PbF<sub>2</sub>", 4.1E-8);
+		map.put("PbI<sub>2</sub>", 1.4E-8);
+		map.put("PbS", 3.4E-28);
+		map.put("MgCO<sub>3</sub>", 4E-3);
+		map.put("Mg(OH)<sub>2</sub>", 1.2E-11);
+		map.put("MnS", 3E-14);
+		map.put("Hg<sub>2</sub>Cl<sub>2</sub>", 3.5E-18);
+		map.put("Hg(OH)<sub>2</sub>", 3.1E-26);
+		map.put("HgS", 4E-54);
+		map.put("Ni(OH)<sub>2</sub>", 5.5E-16);
+		map.put("NiS", 1.4E-24);
+		map.put("AgBr", 7.7E-13);
+		map.put("Ag<sub>2</sub>CO<sub>3</sub>", 8.1E-12);
+		map.put("AgCl", 1.6E-10);
+		map.put("AgI", 8.3E-17);
+		map.put("Ag<sub>2</sub>SO<sub>4</sub>", 1.4E-5);
+		map.put("Ag<sub>2</sub>S", 6E-51);
+		map.put("SrCO<sub>3</sub>", 1.6E-9);
+		map.put("SrSO<sub>4</sub>", 3.8E-7);
+		map.put("Sn(OH)<sub>2</sub>", 5.4E-27);
+		map.put("SnS", 1E-26);
+		map.put("Zn(OH)<sub>2</sub>", 1.8E-14);
+		map.put("ZnS", 3E-23);
+		return map;
 	}
 	
 	public JPanel getPanel()
