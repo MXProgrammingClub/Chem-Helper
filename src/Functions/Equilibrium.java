@@ -129,7 +129,7 @@ public class Equilibrium extends Function
 						sigFigs = Math.min(sigFigs, k.getSigFigs());
 					}
 					
-					double[] extra = new double[4];
+					double[] extra = new double[6];
 					if(precipitate != null)
 					{
 						for(int index = 0; index < precipitate.length; index++)
@@ -151,16 +151,16 @@ public class Equilibrium extends Function
 					}
 					if(solubility != null)
 					{
-						extra[3] = solubility.getAmount();
-						if(extra[3] == Units.ERROR_VALUE)
+						extra[5] = solubility.getAmount();
+						if(extra[5] == Units.ERROR_VALUE)
 						{
 							results.add(new JLabel("Error in value for solubility."));
 							results.setVisible(true);
 							return;
 						}
-						else if(extra[3] != Units.UNKNOWN_VALUE)
+						else if(extra[5] != Units.UNKNOWN_VALUE)
 						{
-							steps.add(new JLabel("Solubility = " + extra[3] + " mol / L"));
+							steps.add(new JLabel("Solubility = " + extra[5] + " mol / L"));
 							sigFigs = Math.min(sigFigs, solubility.getSigFigs());
 						}
 						else steps.add(new JLabel("Solubility = ?"));
@@ -260,10 +260,10 @@ public class Equilibrium extends Function
 					}
 					else //if after is selected
 					{
-						if(solubility != null && extra[3] != Units.UNKNOWN_VALUE)
+						if(solubility != null && extra[5] != Units.UNKNOWN_VALUE)
 						{
 							LinkedList<String> stepList = new LinkedList<String>();
-							values = calculateFromSolubility(extra[3], stepList, relevant, powers);
+							values = calculateFromSolubility(extra[5], stepList, relevant, powers);
 							for(String step: stepList) steps.add(new JLabel(step));
 							
 							for(int index = 0; index < values.length - 1; index++)
@@ -335,7 +335,7 @@ public class Equilibrium extends Function
 									steps.add(new JLabel("Solubility = x = " + result + " " + unit));
 									saved.add(result);
 									results.add(new JLabel("Solubility = " + Function.withSigFigs(result, sigFigs) + " " + unit));
-									extra[3] = result; //So it won't accidentally be recalculated later
+									extra[5] = result; //So it won't accidentally be recalculated later
 								}
 							}
 							else
@@ -353,7 +353,7 @@ public class Equilibrium extends Function
 						}
 					}
 					
-					if(solubility != null && extra[3] == Units.UNKNOWN_VALUE)
+					if(solubility != null && extra[5] == Units.UNKNOWN_VALUE)
 					{
 						steps.add(new JLabel("Solubility * " + relevant.get(0).getNum() + " = " + compounds[0].getName().substring(6)));
 						double s = values[0] / relevant.get(0).getNum();
@@ -788,15 +788,18 @@ public class Equilibrium extends Function
 			}
 			else
 			{
-				precipitate = new EnterField[3];
+				precipitate = new EnterField[5];
 				precipitate[0] = new EnterField("Q");
 				c.gridy++;
 				fields.add(precipitate[0], c);
-				for(int index = 1; index < precipitate.length; index++)
+				for(int index = 1; index < precipitate.length; index += 2)
 				{
-					precipitate[index] = new EnterField("<html>Volume " + reactants[index - 1].withoutNumState() + "</html>", "Volume");
+					precipitate[index] = new EnterField("<html>Volume " + reactants[index / 2].withoutNumState() + "</html>", "Volume");
 					c.gridy++;
 					fields.add(precipitate[index], c);
+					precipitate[index + 1] = new EnterField("<html>[" + reactants[index / 2].withoutNumState() + "]</html>", "Amount", "Volume");
+					c.gridy++;
+					fields.add(precipitate[index + 1], c);
 				}
 			}
 		}
@@ -834,16 +837,24 @@ public class Equilibrium extends Function
 	public void useSavedNumber(double num)
 	{
 		if(k == null) return;
-		String[] list = new String[compounds.length + 1];
+		String[] list = new String[compounds.length + (solubility != null ? 2 : precipitate != null ? 6 : 1)];
 		for(int index = 0; index < compounds.length; index++)
 		{
 			list[index] = compounds[index].getName();
 		}
 		list[compounds.length] = "K";
+		if(solubility != null) list[list.length - 1] = "Solubility";
+		else if(precipitate != null)
+		{
+			for(int index = compounds.length + 1; index < list.length; index++)
+			{
+				list[index] = precipitate[index - compounds.length - 1].getName();
+			}
+		}
 		
 		Object obj = JOptionPane.showInputDialog(panel, "Choose where to use the number.", "Use Saved", JOptionPane.QUESTION_MESSAGE, null, list, list[0]);
 		if(obj == null) return;
-		for(int index = 0; index < list.length; index++)
+		for(int index = 0; index < compounds.length; index++)
 		{
 			if(list[index].equals(obj))
 			{
@@ -851,7 +862,24 @@ public class Equilibrium extends Function
 				return;
 			}
 		}
-		k.setAmount(num);
+		if(obj.equals("K"))
+		{
+			k.setAmount(num);
+			return;
+		}
+		if(obj.equals("Solubility"))
+		{
+			solubility.setAmount(num);
+			return;
+		}
+		for(int index = compounds.length + 1; index < list.length; index++)
+		{
+			if(obj.equals(precipitate[index - compounds.length - 1].getName()))
+			{
+				precipitate[index - compounds.length - 1].setAmount(num);
+				return;
+			}
+		}
 	}
 	
 	private static TreeMap<String, Double> createMap()
