@@ -2,7 +2,7 @@
  * Performs various calculations for functions at equilibrium.
  * 
  * Author: Julia McClellan
- * Version: 3/27/2016
+ * Version: 3/28/2016
  */
 
 package Functions;
@@ -172,8 +172,15 @@ public class Equilibrium extends Function
 					
 					if(precipitate != null)
 					{
-						if(values[0] == Units.UNKNOWN_VALUE) //Fist calculates concentrations of each ion if necessary
+						if(values[0] == Units.UNKNOWN_VALUE && extra[0] == Units.UNKNOWN_VALUE) //Fist calculates concentrations of each ion if necessary
 						{
+							if(extra[1] == Units.UNKNOWN_VALUE || extra[2] == Units.UNKNOWN_VALUE || extra[3] == Units.UNKNOWN_VALUE || extra[4] ==
+									Units.UNKNOWN_VALUE)
+							{
+								results.add(new JLabel("Insufficient information for calculations."));
+								results.setVisible(true);
+								return;
+							}
 							LinkedList<String> stepList = new LinkedList<String>();
 							double[] concentrations = calculateConcentrations(extra, relevant, reactants, stepList);
 							for(String step: stepList) steps.add(new JLabel(step));
@@ -192,11 +199,16 @@ public class Equilibrium extends Function
 							return;
 						}
 						
-						//Finds Qsp and compares it to Ksp to find if there is a precipitate
-						LinkedList<String> stepList = new LinkedList<String>();
-						double q = calculateK(values, stepList, powers, false);
-						for(String step: stepList) steps.add(new JLabel(step));
-						results.add(new JLabel("Q = " + Function.withSigFigs(q, sigFigs)));
+						double q;
+						if(extra[0] == Units.UNKNOWN_VALUE)
+						{
+							//Finds Qsp and compares it to Ksp to find if there is a precipitate
+							LinkedList<String> stepList = new LinkedList<String>();
+							q = calculateK(values, stepList, powers, false);
+							for(String step: stepList) steps.add(new JLabel(step));
+							results.add(new JLabel("Q = " + Function.withSigFigs(q, sigFigs)));
+						}
+						else q = extra[0];
 						steps.add(new JLabel(q + (q > values[values.length - 1] ? " > " : " < ") + values[values.length - 1]));
 						steps.add(new JLabel("Q" + (q > values[values.length - 1] ? " > " : " < ") + "K"));
 						if(q > values[values.length - 1]) results.add(new JLabel("Yes, there is a precipitate."));
@@ -224,7 +236,12 @@ public class Equilibrium extends Function
 							int col = 1;
 							for(int index = 0; index < relevant.size(); index++)
 							{
-								if(values[index] == Units.UNKNOWN_VALUE) values[index] = 0;
+								if(values[index] == Units.UNKNOWN_VALUE)
+								{
+									results.add(new JLabel("Enter initial concentration for " + relevant.get(index).withoutNumState()));
+									results.setVisible(true);
+									return;
+								}
 								labels[0][col] = new JLabel("<html>[" + relevant.get(index).withoutNumState() + "]");
 								labels[1][col] = new JLabel(values[index] + "");
 								labels[2][col] = new JLabel((powers.get(index) == 1 ? "" : powers.get(index)) + "x");
@@ -309,16 +326,7 @@ public class Equilibrium extends Function
 							saved.add(values[values.length - 1]);
 							results.add(new JLabel("K = " + Function.withSigFigs(values[values.length - 1], sigFigs)));
 						}
-						else if(values[compounds.length] == Units.UNKNOWN_VALUE) //K is unknown
-						{
-							LinkedList<String> stepList = new LinkedList<String>();
-							double result = calculateK(values, stepList, powers, true);
-							
-							for(String step: stepList) steps.add(new JLabel(step));
-							saved.add(result);
-							results.add(new JLabel("K = " + Function.withSigFigs(result, sigFigs)));
-						}
-						else //K is known
+						else
 						{
 							int unknown = -1;
 							for(int index = 0; index < compounds.length; index++)
@@ -333,56 +341,75 @@ public class Equilibrium extends Function
 									}
 								}
 							}
-							
-							if(unknown == -1)
+
+							if(values[compounds.length] == Units.UNKNOWN_VALUE) //K is unknown
 							{
-								results.add(new JLabel("Leave a value blank."));
-								results.setVisible(true);
-								return;
-							}
-							else if(unknown == Integer.MAX_VALUE)
-							{
-								LinkedList<String> stepList = new LinkedList<String>();
-								double[] x = new double[1];
-								LinkedList<Integer> changed = calculateValues(values, stepList, powers, relevant, x);
-								if(changed == null)
+								if(unknown != -1)
 								{
-									results.add(new JLabel(stepList.getLast()));
-									results.setVisible(false);
+									results.add(new JLabel("To calculate K, enter the concentrations of all compounds."));
+									results.setVisible(true);
 									return;
 								}
-								for(String step: stepList) steps.add(new JLabel(step));
 								
-								for(Integer index: changed)
-								{
-									double val = compounds[index].getBlankAmount(values[index]);
-									saved.add(val);
-									results.add(new JLabel("<html>[" + relevant.get(index).withoutNumState() + "] = " + Function.withSigFigs(val, sigFigs)
-											+ " " + compounds[index].getUnitName() + " / " + compounds[index].getUnit2Name()));
-								}
-								
-								if(solubility != null)
-								{
-									double result = solubility.getBlankAmount(x[0]);
-									String unit = solubility.getUnitName() + " / " + solubility.getUnit2Name();
-									steps.add(new JLabel("Solubility = x = " + result + " " + unit));
-									saved.add(result);
-									results.add(new JLabel("Solubility = " + Function.withSigFigs(result, sigFigs) + " " + unit));
-									extra[5] = result; //So it won't accidentally be recalculated later
-								}
-							}
-							else
-							{
 								LinkedList<String> stepList = new LinkedList<String>();
-								double result = calculateConcentration(values, stepList, powers, unknown);
+								double result = calculateK(values, stepList, powers, true);
 								
 								for(String step: stepList) steps.add(new JLabel(step));
-								saved.add(compounds[unknown].getBlankAmount(result));
-								if(result != saved.get(0)) steps.add(new JLabel("x = " + saved.get(0) + " " + compounds[unknown].getUnitName() + " / "  
-										+ compounds[unknown].getUnit2Name()));
-								results.add(new JLabel("<html>[" + relevant.get(unknown).withoutNumState() + "] = " + 
-										Function.withSigFigs(saved.get(0), sigFigs)));
-								values[unknown] = result; //In case it it needed to calculate solubility later
+								saved.add(result);
+								results.add(new JLabel("K = " + Function.withSigFigs(result, sigFigs)));
+							}
+							else //K is known
+							{
+								if(unknown == -1)
+								{
+									results.add(new JLabel("Leave a value blank."));
+									results.setVisible(true);
+									return;
+								}
+								else if(unknown == Integer.MAX_VALUE)
+								{
+									LinkedList<String> stepList = new LinkedList<String>();
+									double[] x = new double[1];
+									LinkedList<Integer> changed = calculateValues(values, stepList, powers, relevant, x);
+									if(changed == null)
+									{
+										results.add(new JLabel(stepList.getLast()));
+										results.setVisible(false);
+										return;
+									}
+									for(String step: stepList) steps.add(new JLabel(step));
+									
+									for(Integer index: changed)
+									{
+										double val = compounds[index].getBlankAmount(values[index]);
+										saved.add(val);
+										results.add(new JLabel("<html>[" + relevant.get(index).withoutNumState() + "] = " + Function.withSigFigs(val, sigFigs)
+											+ " " + compounds[index].getUnitName() + " / " + compounds[index].getUnit2Name()));
+									}
+									
+									if(solubility != null)
+									{
+										double result = solubility.getBlankAmount(x[0]);
+										String unit = solubility.getUnitName() + " / " + solubility.getUnit2Name();
+										steps.add(new JLabel("Solubility = x = " + result + " " + unit));
+										saved.add(result);
+										results.add(new JLabel("Solubility = " + Function.withSigFigs(result, sigFigs) + " " + unit));
+										extra[5] = result; //So it won't accidentally be recalculated later
+									}
+								}
+								else
+								{
+									LinkedList<String> stepList = new LinkedList<String>();
+									double result = calculateConcentration(values, stepList, powers, unknown);
+									
+									for(String step: stepList) steps.add(new JLabel(step));
+									saved.add(compounds[unknown].getBlankAmount(result));
+									if(result != saved.get(0)) steps.add(new JLabel("x = " + saved.get(0) + " " + compounds[unknown].getUnitName() + " / "  
+											+ compounds[unknown].getUnit2Name()));
+									results.add(new JLabel("<html>[" + relevant.get(unknown).withoutNumState() + "] = " + 
+											Function.withSigFigs(saved.get(0), sigFigs)));
+									values[unknown] = result; //In case it it needed to calculate solubility later
+								}
 							}
 						}
 					}
