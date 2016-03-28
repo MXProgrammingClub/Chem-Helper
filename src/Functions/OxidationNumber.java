@@ -2,7 +2,7 @@
  * Finds the oxidation numbers for the ions in a compound.
  * 
  * Author: Ted Pyne, Julia McClellan
- * Version: 3/25/2016
+ * Version: 3/27/2016
  */
 
 package Functions;
@@ -144,6 +144,7 @@ public class OxidationNumber extends Function{	//Oxidation number in compound
 				}
 			}
 
+			boolean oxygen = false; //For determining if halogens can be -1
 			//Search for oxygen has to be after, because if there's fluorine the number changes
 			for(int index = 0; index < ions.length; index++)
 			{
@@ -152,6 +153,7 @@ public class OxidationNumber extends Function{	//Oxidation number in compound
 					int num = ((Monatomic)ions[index]).getElement().getNum();
 					if(num == 8)
 					{
+						oxygen = true;
 						//Rule: in the presence of fluorine, oxygen's number is +2
 						if(fluorine)
 						{
@@ -186,6 +188,18 @@ public class OxidationNumber extends Function{	//Oxidation number in compound
 							total += ions[index].getNum();
 						}
 					}
+				}
+			}
+			
+			//Searching for halogens has to be last because the number changes in the presence of oxygen and fluorine
+			if(!oxygen && !fluorine)
+			for(int index = 0; index < ions.length; index++)
+			{
+				//Rule: unless there is oxygen or fluorine, the oxidation number of a halogen is -1
+				if(ions[index] instanceof Monatomic && ((Monatomic)ions[index]).getElement().getGroup() == 17)
+				{
+					numbers[index][0] = -1;
+					total += -ions[index].getNum();
 				}
 			}
 			
