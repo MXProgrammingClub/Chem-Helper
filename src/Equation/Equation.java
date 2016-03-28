@@ -137,9 +137,9 @@ public class Equation
 		String num = getHalf(right, relevant, irrelevant, powers);
 		String denom = getHalf(left, relevant, irrelevant, powers);
 		
-		if(num.length() == 0) return "\\frac{1}{" + denom + "}";
-		if(denom.length() == 0) return num;
-		return "\\frac{" + num + "}{" + denom + "}";
+		if(num.length() == 0) return "\\text{K=}\\frac{1}{" + denom + "}";
+		if(denom.length() == 0) return "\\text{K=}" + num;
+		return "\\text{K=}\\frac{" + num + "}{" + denom + "}";
 	}
 	
 	private String getHalf(ArrayList<Compound> compounds, ArrayList<Compound> relevant, ArrayList<Compound> irrelevant, ArrayList<Integer> powers)
