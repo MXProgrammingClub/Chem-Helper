@@ -3,13 +3,15 @@
  * equation() returns true- has an EquationReader as an instance variable.
  * 
  * Author: Julia McClellan
- * Version: 3/12/2015
+ * Version: 3/27/2015
  */
 
 package Functions;
 
 import java.awt.Color;
-import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -21,20 +23,20 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 
 import Equation.Compound;
 import Equation.Equation;
 
 public class RateLaw extends Function 
 {
-	private JPanel panel, tablePanel, resultPanel;
+	private JPanel panel, subpanel, table;
 	private EquationReader reader;
-	private JButton calculate, reset, add;
+	private JButton add, calculate, reset;
+	private JLabel rate, k, errorMessage, eq;
 	private ArrayList<TableRow> rows;
-	private Box table, box2, box3, box4, steps;
-	private JLabel errorMessage, displayEquation, law, kValue;
 	private ArrayList<Compound> compounds;
+	private GridLayout t; //For the table
+	private Box steps, results;
 	
 	public RateLaw()
 	{
@@ -46,75 +48,92 @@ public class RateLaw extends Function
 	private void setPanel()
 	{
 		reader = new EquationReader(this);
-		errorMessage = new JLabel();
+		panel.add(reader.getPanel());
 		
-		displayEquation = new JLabel();
-		add = new JButton("Add row");
-		add.addActionListener(new AddRow());
+		subpanel = new JPanel(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridy = 0;
+		
+		eq = new JLabel();
+		subpanel.add(eq, c);
+		
+		c.gridy++;
+		table = new JPanel();
+		subpanel.add(table, c);
+		
+		add = new JButton("Add Row");
+		add.addActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent arg0)
+				{
+					t.setRows(t.getRows() + 1);
+					subpanel.setVisible(false);
+					rows.add(new TableRow());
+					subpanel.setVisible(true);
+				}
+			});
+		c.gridy++;
+		subpanel.add(add, c);
+		
 		calculate = new JButton("Calculate");
 		calculate.addActionListener(new Calculate());
-		table = Box.createVerticalBox();
-		box4 = Box.createVerticalBox();
-		box4.add(displayEquation);
-		box4.add(Box.createVerticalStrut(10));
-		box4.add(table);
-		box4.add(add);
-		box4.add(Box.createVerticalStrut(10));
-		box4.add(calculate);
-		box4.add(errorMessage);
-		tablePanel = new JPanel();
-		tablePanel.add(box4);
-		tablePanel.setVisible(false);
+		c.gridy++;
+		subpanel.add(calculate, c);
 		
-		law = new JLabel();
-		kValue = new JLabel();
+		errorMessage = new JLabel();
+		c.gridy++;
+		subpanel.add(errorMessage, c);
+		
+		results = Box.createVerticalBox();
+		rate = new JLabel();
+		results.add(rate);
+		k = new JLabel();
+		results.add(k);
 		reset = new JButton("Reset");
 		reset.addActionListener(new Reset());
-		box2 = Box.createVerticalBox();
-		box2.add(law);
-		box2.add(kValue);
-		box2.add(reset);
-		resultPanel = new JPanel();
-		resultPanel.add(box2);
-		resultPanel.setVisible(false);
+		results.add(reset);
+		results.setVisible(false);
+		c.gridy++;
+		subpanel.add(results, c);
 		
-		box3 = Box.createVerticalBox();
-		box3.add(tablePanel);
-		box3.add(resultPanel);
-		
+		subpanel.setVisible(false);
+		JPanel sub2 = new JPanel(new GridBagLayout());
+		c = new GridBagConstraints();
+		c.gridx = 0;
+		c.anchor = GridBagConstraints.NORTH;
+		sub2.add(subpanel, c);
+		c.gridx++;
+		sub2.add(Box.createHorizontalStrut(10), c);
+		c.gridx++;
 		steps = Box.createVerticalBox();
-		
-		panel.add(reader.getPanel());
-		panel.add(box3);
-		panel.add(steps);
+		sub2.add(steps);
+		panel.add(sub2);	
 	}
 	
-	private class TableRow extends JPanel
+	private class TableRow
 	{
 		private JTextField[] concentrations;
 		private JTextField rate;
-		private Box box;
 		private JLabel numLabel;
 		
-		public TableRow(int num)
+		public TableRow()
 		{
-			concentrations = new JTextField[compounds.size()];
-			numLabel = new JLabel("" + (num + 1));
+			numLabel = new JLabel("" + (rows.size() + 1));
 			numLabel.setBorder(BorderFactory.createLineBorder(Color.black));
-			numLabel.setPreferredSize(new Dimension(30, 20));
-			box = Box.createHorizontalBox();
-			box.add(numLabel);
+			table.add(numLabel);
+			
+			concentrations = new JTextField[compounds.size()];
 			for(int index = 0; index < compounds.size(); index++)
 			{
 				JTextField field = new JTextField(5);
 				field.setBorder(BorderFactory.createLineBorder(Color.black));
-				box.add(field);
+				table.add(field);
 				concentrations[index] = field;
 			}
+			
 			rate = new JTextField(5);
 			rate.setBorder(BorderFactory.createLineBorder(Color.black));
-			box.add(rate);
-			add(box);
+			table.add(rate);
 		}
 		
 		public String getConcentration(int index)
@@ -130,62 +149,39 @@ public class RateLaw extends Function
 	
 	private void generateTable()
 	{
-		rows = new ArrayList<TableRow>();
-		int cols = compounds.size(), rows = cols + 1;
-		Box header = Box.createHorizontalBox();
+		t = new GridLayout(compounds.size() + 2, compounds.size() + 1);
+		table.setLayout(t);
+		//First row of the table
 		JLabel trial = new JLabel("Trial");
-		trial.setPreferredSize(new Dimension(30, 30));
-		trial.setMinimumSize(new Dimension(30, 30));
-		trial.setMaximumSize(new Dimension(30, 30));
-		trial.setBorder(BorderFactory.createLineBorder(Color.black));
-		header.add(trial);
-		JTextField testSize = new JTextField(5);
+		trial.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		table.add(trial);
 		for(Compound c: compounds)
 		{
-			String compound = c.toString();
-			if(c.getNum() != 1) compound = compound.substring(1);
-			JLabel cLabel = new JLabel("<html>" + compound + "</html>", SwingConstants.CENTER);
-			cLabel.setPreferredSize(new Dimension(testSize.getPreferredSize().width, 30));
-			cLabel.setMaximumSize(new Dimension(testSize.getPreferredSize().width, 30));
-			cLabel.setMinimumSize(new Dimension(testSize.getPreferredSize().width, 30));
-			cLabel.setBorder(BorderFactory.createLineBorder(Color.black));
-			header.add(cLabel);
+			JLabel label = new JLabel("<html>[" + c.withoutNumState() + "]");
+			label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+			table.add(label);
 		}
-		JLabel rate = new JLabel("Rate", SwingConstants.CENTER);
-		rate.setPreferredSize(new Dimension(testSize.getPreferredSize().width, 30));
-		rate.setMinimumSize(new Dimension(testSize.getPreferredSize().width, 30));
-		rate.setMaximumSize(new Dimension(testSize.getPreferredSize().width, 30));
-		rate.setBorder(BorderFactory.createLineBorder(Color.black));
-		header.add(rate);
-		table.add(header);
-		for(int row = 0; row < rows; row++)
+		JLabel rate = new JLabel("Rate");
+		rate.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		table.add(rate);
+		
+		//All other rows
+		rows = new ArrayList<TableRow>();
+		for(int index = compounds.size(); index >= 0; index--)
 		{
-			TableRow newRow = new TableRow(row);
-			this.rows.add(newRow);
-			table.add(newRow);
+			rows.add(new TableRow());
 		}
-	}
-	
-	private class AddRow implements ActionListener
-	{
-		public void actionPerformed(ActionEvent arg0)
-		{
-			tablePanel.setVisible(false);
-			TableRow newRow = new TableRow(rows.size());
-			rows.add(newRow);
-			table.add(newRow);
-			tablePanel.setVisible(true);
-		}
+		subpanel.setVisible(true);
 	}
 	
 	private class Calculate implements ActionListener
 	{
 		public void actionPerformed(ActionEvent arg0)
 		{
-			box4.remove(errorMessage);
+			errorMessage.setText("");
 			steps.removeAll();
 			steps.setVisible(false);
-			resultPanel.setVisible(false);
+			results.setVisible(false);
 			//Converts the values stored in rows into a 2d array of doubles
 			double[][] table = new double[rows.size()][compounds.size() + 1];
 			int sigFigs = Integer.MAX_VALUE;
@@ -202,8 +198,6 @@ public class RateLaw extends Function
 					catch(Throwable e)
 					{
 						errorMessage.setText("There was a problem with your input.");
-						box4.add(errorMessage);
-						box4.setVisible(true);
 						return;
 					}					
 				}
@@ -216,29 +210,27 @@ public class RateLaw extends Function
 				catch(Throwable e)
 				{
 					errorMessage.setText("There was a problem with your input.");
-					box4.add(errorMessage);
-					box4.setVisible(true);
 					return;
 				}
 			}
 			
 			ArrayList<String> stepList = new ArrayList<String>(); //For steps to be stored in during calculations
-			double[] k = new double[1]; //Will hold the value of k once calculated
-			int[] values = calculate(table, compounds.size(), k, stepList);
+			double[] kValue = new double[1]; //Will hold the value of k once calculated
+			int[] values = calculate(table, compounds.size(), kValue, stepList);
 			
-			String rate = "<html>Rate = k";
+			String law = "<html>Rate = k";
 			for(int index = 0; index < values.length; index++) 
 			{
-				rate += "[" + compounds.get(index).withoutNum() + "]<sup>" + values[index] + "</sup>";
+				law += "[" + compounds.get(index).withoutNum() + "]<sup>" + values[index] + "</sup>";
 			}
-			law.setText(rate);
-			kValue.setText("<html>k = " + Function.withSigFigs(k[0], sigFigs) + " " + stepList.remove(stepList.size() - 1));
+			rate.setText(law);
+			k.setText("<html>k = " + Function.withSigFigs(kValue[0], sigFigs) + " " + stepList.remove(stepList.size() - 1));
 			for(String step: stepList)
 			{
 				if(step.equals("")) steps.add(Box.createVerticalStrut(10));
 				else steps.add(new JLabel(step));
 			}
-			resultPanel.setVisible(true);
+			results.setVisible(true);
 			steps.setVisible(true);
 		}
 	}
@@ -370,11 +362,11 @@ public class RateLaw extends Function
 	
 	public void useSaved(Equation equation)
 	{
+		panel.setVisible(false);
 		panel.remove(reader.getPanel());
-		panel.repaint();
 		compounds = equation.getLeft();
-		displayEquation.setText("<html>" + equation + "</html");
+		eq.setText("<html>" + equation + "</html");
 		generateTable();
-		tablePanel.setVisible(true);
+		panel.setVisible(true);
 	}
 }
