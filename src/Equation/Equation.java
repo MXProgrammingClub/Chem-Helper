@@ -2,7 +2,7 @@
  * Represents a chemical equation. 
  * 
  * Authors: Luke Giacalone, Julia McClellan, Hyun Choi
- * Version: 3/26/2016
+ * Version: 3/27/2016
  */
 
 package Equation;
@@ -229,12 +229,16 @@ public class Equation
 				copyIons[index] = new Monatomic((Monatomic)ions[index]);
 				copyIons[index].setCharge(numbers[index][0]);
 			}
+			copyIons[index].setNum(1);
 		}
 		
 		left = new ArrayList<Compound>();
 		left.add(solid);
 		right = new ArrayList<Compound>();
-		for(Ions i: copyIons) right.add(new Compound(new Ions[]{i}, "aq"));
+		for(int index = 0; index < copyIons.length; index++)
+		{
+			right.add(new Compound(new Ions[]{copyIons[index]}, "aq", ions[index].getNum()));
+		}
 	}
 	
 	public int balance() throws InvalidInputException {
