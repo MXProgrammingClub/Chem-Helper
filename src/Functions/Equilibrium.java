@@ -382,6 +382,7 @@ public class Equilibrium extends Function
 										+ compounds[unknown].getUnit2Name()));
 								results.add(new JLabel("<html>[" + relevant.get(unknown).withoutNumState() + "] = " + 
 										Function.withSigFigs(saved.get(0), sigFigs)));
+								values[unknown] = result; //In case it it needed to calculate solubility later
 							}
 						}
 					}
@@ -503,7 +504,7 @@ public class Equilibrium extends Function
 		steps.add(step2);
 		value = values[values.length - 1] / value;
 		steps.add("<html>x<sup>" + powers.get(unknown) + "</sup> = " + value);
-		value = Math.pow(value, 1 / powers.get(unknown));
+		value = Math.pow(value, 1.0 / powers.get(unknown));
 		steps.add("x = " + value + " mol / L");
 		return value;
 	}
