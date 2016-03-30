@@ -433,6 +433,14 @@ public class Solutions extends Function
 		}
 	}
 	
+	public String getHelp()
+	{
+		return "<html>Enter all known information about the solution with<br>"
+				+ "the appropriate units, then click the calculate button<br>"
+				+ "and ChemHelper will display all properties which can<br>"
+				+ "be calculated from the provided information.</html>";
+	}
+	
 	public JPanel getPanel()
 	{
 		return panel;

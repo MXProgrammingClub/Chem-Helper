@@ -169,11 +169,6 @@ public class Combustion extends Function
 		return equation;
 	}
 	
-	public boolean help()
-	{
-		return true;
-	}
-	
 	public String getHelp()
 	{
 		return "<html>" + TextField.getHelp() + "</html>";

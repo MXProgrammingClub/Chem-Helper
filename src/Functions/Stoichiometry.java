@@ -263,11 +263,6 @@ public class Stoichiometry extends Function
 		if(field1 != null) field1.setText("" + num);
 	}
 	
-	public boolean help()
-	{
-		return true;
-	}
-	
 	public String getHelp()
 	{
 		return "<html>" + TextField.getHelp() + "</html>";

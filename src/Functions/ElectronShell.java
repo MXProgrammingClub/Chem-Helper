@@ -195,4 +195,12 @@ public class ElectronShell extends Function
 			}
 		}
 	}
+	
+	public String getHelp()
+	{
+		return "<html>With the buttons on the side, select whether you are entering<br>" 
+				+ "the atomic number, symbol, or name of the element. Then enter the<br>"
+				+ "chosen information and press the button to see the electron shell<br>"
+				+ "configuration for that element.</html>";
+	}
 }

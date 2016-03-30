@@ -107,6 +107,16 @@ public class PeriodicTable extends Function
 	{
 		return table;
 	}
+	
+	public boolean help()
+	{
+		return false;
+	}
+	
+	public String getHelp()
+	{
+		return null;
+	}
 
 	public static Element[] getTable()
 	{
@@ -400,5 +410,4 @@ public class PeriodicTable extends Function
 			"Re", "Os", "Ir", "Pt", "Au", "Hg", "Tl", "Pb", "Bi", "Po", "At", "Rn", "Fr", "Ra", "Ac", "Th", "Pa", "U", "Np",
 			"Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm", "Md", "No", "Lr", "Rf", "Db", "Sg", "Bh", "Hs", "Mt", "Ds", "Rg", "Cn",
 			"Uut", "Fl", "Uup", "Lv", "Uus", "Uuo"};
-
 }

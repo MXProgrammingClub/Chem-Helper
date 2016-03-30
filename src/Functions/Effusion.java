@@ -264,11 +264,6 @@ public class Effusion extends Function
 		}
 	}
 	
-	public boolean help()
-	{
-		return true;
-	}
-	
 	public String getHelp()
 	{
 		return "<html>" + TextField.getHelp() + "</html>";

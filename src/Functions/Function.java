@@ -58,8 +58,8 @@ public abstract class Function {
 	public void useSavedNumber(double num){}
 	
 	//If help() returns true, than getHelp() should return information to be put in a popup message.
-	public boolean help(){return false;}
-	public String getHelp(){return null;}
+	public boolean help(){return true;}
+	public abstract String getHelp();
 	
 	public static JPanel wrapInFlow(Component comp){			//Wrap a component in a FlowLayout
 		JPanel panel = new JPanel();

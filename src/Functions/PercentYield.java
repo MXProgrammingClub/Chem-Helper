@@ -274,11 +274,6 @@ public class PercentYield extends Function
 		else if(selected.equals("Product") && fieldP != null) fieldP.setText("" + num);
 	}
 	
-	public boolean help()
-	{
-		return true;
-	}
-	
 	public String getHelp()
 	{
 		return "<html>" + TextField.getHelp() + "</html>";
