@@ -369,4 +369,13 @@ public class RateLaw extends Function
 		generateTable();
 		panel.setVisible(true);
 	}
+	
+	public String getHelp()
+	{
+		return "<html>Enter the equation to calculate the rate law for.<br>"
+				+ "Enter all provided date. To add a row, click the<br>"
+				+ "\"Add Row\" button. Click on the \"Calculate\" button<br>"
+				+ "and ChemHelper will find the rate law. To enter a<br>"
+				+ "new equation, click on the \"Reset\" button.</html>";
+	}
 }

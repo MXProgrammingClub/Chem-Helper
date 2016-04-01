@@ -271,6 +271,13 @@ public class pHCalculator extends Function
 		}
 	}
 	
+	public String getHelp()
+	{
+		return "<html>Enter the known value for the acidic or basic<br>"
+				+ "solution: pH, poH, H<sup>+</sup>, or OH<sup>-</sup> and ChemHelper<br>"
+				+ "will calculate the rest.</html>";
+	}
+	
 	public JPanel getPanel()
 	{
 		return panel;

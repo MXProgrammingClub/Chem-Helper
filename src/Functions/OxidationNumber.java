@@ -214,4 +214,12 @@ public class OxidationNumber extends Function{	//Oxidation number in compound
 		}
 		return numbers;
 	}
+	
+	public String getHelp()
+	{
+		return "<html>Enter the compound for which to calculate<br>"
+				+ "oxidation numbers and click the \"Calculate\"<br>"
+				+ "button to see the oxidation number for each<br>"
+				+ "element.</html>";
+	}
 }
