@@ -160,4 +160,8 @@ public class Waves extends Function {
 		return panel;
 	}
 	
+	public String getHelp() {
+		return "Julia is the worst";
+	}
+	
 }
