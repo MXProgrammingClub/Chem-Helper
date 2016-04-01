@@ -172,6 +172,16 @@ public class Redox extends Function
 		return potential;
 	}
 	
+	public String getHelp()
+	{
+		return "<html>Enter your redox reaction, select whether it is in an acidic or<br>"
+				+ "basic environment, and click balance to see the balanced redox<br>"
+				+ "reaction. If it is possible for that reaction, you will have the<br>"
+				+ "option to create the electrochemical cell.<br>"
+				+ "Note: ChemHelper cannot currently balance all redox reactions.<br>"
+				+ "Sorry for the any inconvenience.</html>";
+	}
+	
 	public JPanel getPanel()
 	{
 		return panel;

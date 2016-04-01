@@ -149,6 +149,16 @@ public class ReactionEnthalpy extends Function
 		return num;
 	}
 	
+	public String getHelp()
+	{
+		return "<html>Enter an equation to calculate its enthalpy of formation.<br>"
+				+ "Please include states of matter. ChemHelper will check its<br>"
+				+ "database for each element's heat of formation. If a given<br>"
+				+ "element cannot be found, you will be prompted to manally enter<br>"
+				+ "that element's value. ChemHelper will then calculate the enthalpy<br>"
+				+ "for the reaction using these values.</html>";
+	}
+	
 	public JPanel getPanel()
 	{
 		return panel;
