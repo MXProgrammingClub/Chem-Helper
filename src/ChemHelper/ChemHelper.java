@@ -325,7 +325,4 @@ public class ChemHelper extends JFrame { //Primary GUI class
 		}
 	}
 	
-	public String getHelp() {
-		return "Julia is the worst";
-	}
 }
