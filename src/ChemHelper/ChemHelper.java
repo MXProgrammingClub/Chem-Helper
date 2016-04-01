@@ -324,4 +324,8 @@ public class ChemHelper extends JFrame { //Primary GUI class
 			new CrashFrame(e, e.getStackTrace());
 		}
 	}
+	
+	public String getHelp() {
+		return "Julia is the worst";
+	}
 }
