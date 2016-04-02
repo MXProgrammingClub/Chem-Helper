@@ -188,6 +188,16 @@ public class GibbsEnergy extends Function
 		else fields[2].setText("" + num);
 	}
 	
+	public String getHelp()
+	{
+		return "<html>Enter all known information. If you enter the<br>"
+				+ "temperature, ChemHelper will calculate \u0394G<br>"
+				+ "and determine if the reaction is spontaneous.<br>"
+				+ "If you do not enter the temperatue, ChemHelper<br>"
+				+ "will determine the temperature range for which<br>"
+				+ "the reaction is spontaneous.</html>";
+	}
+	
 	public JPanel getPanel()
 	{
 		return panel;

@@ -197,6 +197,16 @@ public class IdealGas extends Function
 		}
 	}
 	
+	public String getHelp()
+	{
+		return "<html>Enter all known quantities, being sure to<br>"
+				+ "select the appropriate units. For STP values,<br>"
+				+ "click the checkbox below the fields. For the<br>"
+				+ "value remaining, select the desired unit. Click<br>"
+				+ "the calculate button and ChemHelper will<br>"
+				+ "calculate the remaining value.</html>";
+	}
+	
 	public JPanel getPanel()
 	{
 		return panel;

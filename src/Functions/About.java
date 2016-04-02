@@ -45,4 +45,13 @@ public class About extends Function {
 		return panel;
 	}
 	
+	public boolean help()
+	{
+		return false;
+	}
+	
+	public String getHelp()
+	{
+		return null;
+	}
 }
