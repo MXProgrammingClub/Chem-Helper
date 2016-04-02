@@ -53,16 +53,8 @@ public class Empirical extends Function
 			TableRow row = new TableRow();
 			rows.add(row);
 		}
-		/*JLabel element = new JLabel(" Element  ");
-		element.setBorder(BorderFactory.createLineBorder(Color.black));
-		JLabel percent = new JLabel(" Percent  ");
-		percent.setBorder(BorderFactory.createLineBorder(Color.black));
-		JPanel topRow = new JPanel();
-		topRow.add(element);
-		topRow.add(percent);
-		topRow.add(new JLabel("              "));*/
+		
 		rowBox = Box.createVerticalBox();
-		//rowBox.add(topRow);
 		for(TableRow row: rows) rowBox.add(row);
 		
 		addRow = new JButton("Add row");
@@ -418,6 +410,14 @@ public class Empirical extends Function
 			if(selected.equals("Moles")) moles.setText("" + num);
 			else mass.setText("" + num);
 		}
+	}
+	
+	public String getHelp()
+	{
+		return "<html>Enter the symbols of all elements which make<br>"
+				+ "up the compound and what percentage of the<br>"
+				+ "atomic mass each element represents. If one<br>"
+				+ "percent is listed as the remainder, enter \"R\"</html>";
 	}
 	
 	public JPanel getPanel()

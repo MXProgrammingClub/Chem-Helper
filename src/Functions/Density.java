@@ -224,6 +224,14 @@ public class Density extends Function
 		}
 	}
 	
+	public String getHelp()
+	{
+		return "<html>Enter the two known values and select the<br>"
+				+ "desired unit for the unknown. Click the<br>"
+				+ "calculate button for ChemHelper to find<br>"
+				+ "the third value.</html>";
+	}
+	
 	public JPanel getPanel()
 	{
 		return panel;

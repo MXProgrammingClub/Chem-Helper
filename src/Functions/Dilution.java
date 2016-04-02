@@ -153,6 +153,13 @@ public class Dilution extends Function
 		else volume.setAfterValue(num);
 	}
 	
+	public String getHelp()
+	{
+		return "<html>Enter two before values and one after value<br>"
+				+ "from a diluted solution. Click the calculate<br>"
+				+ "button to find the remaining after value.</html>";
+	}
+	
 	public JPanel getPanel()
 	{
 		return panel;

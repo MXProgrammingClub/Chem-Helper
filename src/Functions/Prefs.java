@@ -101,9 +101,22 @@ public class Prefs extends Function {
 		panel = new JPanel();
 		panel.add(subpanel);
 	}
+	
+	public String getHelp()
+	{
+		return "<html>Periodic table settings: Choose blank backgrounds for<br>"
+				+ "elements or from two color coded options. Additionally,<br>"
+				+ "choose whether elements symbols should be colored<br>"
+				+ "based on state.<br>"
+				+ "Significant figures settings: \"None\" will display all<br>"
+				+ "numbers without rounding, \"Scientific Notation\" will<br>"
+				+ "display all numbers rounded in scientific notation, and<br>"
+				+ "\"Standard\" will display rounded numbers, using<br>"
+				+ "scientific notation if necessary to maintain the correct<br>"
+				+ "number of significant figures.</html>";
+	}
 
 	public JPanel getPanel() {
 		return panel;
-	}
-	
+	}	
 }

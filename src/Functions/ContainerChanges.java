@@ -261,6 +261,16 @@ public class ContainerChanges extends Function
 		}
 	}
 	
+	public String getHelp()
+	{
+		return "<html>Choose from the checkboxes at the top which<br>"
+				+ "aspects of the container changed. Enter both<br>"
+				+ "the before and after values for all but one.<br>"
+				+ "Leave only the after value blank for this<br>"
+				+ "component. Press the calculate button to find<br>"
+				+ "the value of the missing changed aspect.</html>";
+	}
+	
 	public JPanel getPanel()
 	{
 		return panel;

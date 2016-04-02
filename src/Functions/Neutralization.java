@@ -229,6 +229,13 @@ public class Neutralization extends Function
 		else base.setVolume(num);
 	}
 	
+	public String getHelp()
+	{
+		return "<html>Enter all known quantities from the acid-base<br>"
+				+ "neutralization reaction and press calculate to<br>"
+				+ "find the remaining value.</html>";
+	}
+	
 	public JPanel getPanel()
 	{
 		return panel;
