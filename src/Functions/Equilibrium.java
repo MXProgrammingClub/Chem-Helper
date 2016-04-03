@@ -1026,6 +1026,20 @@ public class Equilibrium extends Function
 		return map;
 	}
 	
+	public String getHelp()
+	{
+		return "<html>First enter the reaction at equilibrium, being<br>"
+				+ " sure to include states of matter. For double<br>"
+				+ "displacement reactions, ChemHelper will remove<br>"
+				+ "spectator ions, and ask whether the question<br>"
+				+ "requires finding if there is a precipitate.<br>"
+				+ "Select whether the given concentrations are from<br>"
+				+ "before the reaction occurred or at equilibrium,<br>"
+				+ "and enter all known information. Click the<br>"
+				+ "calculate button for ChemHelper to find any<br>"
+				+ "remaining values.</html>";
+	}
+	
 	public JPanel getPanel()
 	{
 		return panel;

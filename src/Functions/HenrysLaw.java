@@ -150,6 +150,13 @@ public class HenrysLaw extends Function
 		else pressure.setAfterValue(num);
 	}
 	
+	public String getHelp()
+	{
+		return "<html>Enter two before values and one after value<br>"
+				+ "from the solution. Click the calculate button<br>"
+				+ "to find the remaining after value.</html>";
+	}
+	
 	public JPanel getPanel()
 	{
 		return panel;
