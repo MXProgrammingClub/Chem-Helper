@@ -852,10 +852,10 @@ public class Equilibrium extends Function
 		
 		if(type != -1)
 		{
-			Double kValue = KSP.get(irrelevant.get(0).withoutNumState());
+			final Double kValue = KSP.get(irrelevant.get(0).withoutNumState());
 			if(kValue != null)
 			{
-				JCheckBox stored = new JCheckBox("Use stored value for K");
+				final JCheckBox stored = new JCheckBox("Use stored value for K");
 				stored.addActionListener(new ActionListener()
 					{
 						public void actionPerformed(ActionEvent arg0)
