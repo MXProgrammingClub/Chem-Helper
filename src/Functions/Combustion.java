@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import ChemHelper.InvalidInputException;
@@ -45,6 +46,17 @@ public class Combustion extends Function
 		compound = new TextField(TextField.COMPOUND);
 		combust = new JButton("Combust");
 		combust.addActionListener(new Combust());
+		JButton help = new JButton("Help");
+		help.addActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent arg0)
+				{
+					JOptionPane.showMessageDialog(panel, "<html>" + TextField.getHelp() + "</html>", "Help", JOptionPane.QUESTION_MESSAGE);
+				}
+			});
+		JPanel buttons = new JPanel();
+		buttons.add(help);
+		buttons.add(combust);
 		result = new JLabel();
 		
 		JPanel subpanel = new JPanel(new GridBagLayout());
@@ -55,7 +67,7 @@ public class Combustion extends Function
 		c.gridy++;
 		subpanel.add(compound, c);
 		c.gridy++;
-		subpanel.add(combust, c);
+		subpanel.add(buttons, c);
 		c.gridy++;
 		subpanel.add(result, c);
 		
