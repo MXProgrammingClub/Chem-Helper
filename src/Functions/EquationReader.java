@@ -158,6 +158,7 @@ public class EquationReader extends Function
 				{
 					isBalanced = equation.balance();
 					if(isBalanced == 2) isBalanced = equation.balance2();
+					if(isBalanced == 0) balanced.setText("This equation could not be balanced programmatically.");
 				}
 				else
 				{
@@ -165,11 +166,11 @@ public class EquationReader extends Function
 					isBalanced = equation.balanceRedox(acid.isSelected(), ((Redox)f).getArrays(), steps);
 					for(String step: steps) box.add(new JLabel(step));
 					box.setVisible(true);
+					if(isBalanced == 0) balanced.setText("This equation could not be balanced as a redox reaction.");
 				}
-				
 				result.setIcon(latex(equation).getIcon());
-				if(isBalanced == 0) balanced.setText("This equation could not be balanced programmatically.");
-				else if(use != null && (!redox || (equation.getLeft().size() == 2 && equation.getRight().size() == 2)))
+				
+				if(isBalanced != 0 && use != null && (!redox || (equation.getLeft().size() == 2 && equation.getRight().size() == 2)))
 				{
 					panel.setVisible(false);
 					use.setVisible(true);
