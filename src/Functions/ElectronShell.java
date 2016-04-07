@@ -2,7 +2,7 @@
  * Displays with latex an element's electron shell configuration given its atomic number, name, or symbol.
  * 
  * Authors: Julia McClellan, Luke Giacalone, Hyun Choi, Ted Pyne
- * Version: 3/12/2016
+ * Version: 4/6/2016
  */
 
 package Functions;
@@ -65,18 +65,19 @@ public class ElectronShell extends Function
 		//adds all the elements to a panel with GridBagLayout
 		JPanel subpanel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
-		c.gridwidth = 2;
 		c.gridx = 0;
 		c.gridy = 0;
-		subpanel.add(info, c);
 		c.gridwidth = 1;
-		c.gridy = 1;
 		subpanel.add(buttons, c);
 		c.gridx = 1;
 		subpanel.add(enterPanel, c);
 		c.gridx = 0;
-		c.gridy = 2;
+		c.gridy++;
 		c.gridwidth = 3;
+		subpanel.add(info, c);
+		c.gridx = 0;
+		c.gridy++;
+		
 		subpanel.add(results, c);
 		c.gridy++;
 		nobleGas = new JLabel();
@@ -99,6 +100,7 @@ public class ElectronShell extends Function
 			nobleGas.setIcon(null);
 			results.setIcon(null);
 			results.setText("");
+			info.setText("");
 			String input = enter.getText(), output = "";
 			Element[] table = PeriodicTable.TABLE; 
 			boolean done = false;
@@ -115,7 +117,9 @@ public class ElectronShell extends Function
 					}
 					else
 					{
-						output += table[index - 1].getEShell();
+						Element e = table[index - 1];
+						info.setText(e.getName());
+						output += e.getEShell();
 						done = true;
 						//results.setText(table[atomicNum - 1].getEShell());
 					}
