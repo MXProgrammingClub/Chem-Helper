@@ -169,5 +169,16 @@ public class HeatEquation extends Function {
 	public JPanel getPanel() {
 		return panel;
 	}
+	
+	public String getHelp() {
+		return "<html>Enter all known quantities, being sure to<br>"
+				+ "select the appropriate units. For temperatures<br>"
+				+ "given as a start and end, select the corresponding<br>"
+				+ "button, and for temperatures given as \u0394t, select<br>"
+				+ "the corresponding button. For the value remaining,<br>"
+				+ "select the desired unit. Click the calculate<br>"
+				+ "button and ChemHelper will calculate the remaining<br>"
+				+ "value.</html>";
+	}
 
 }

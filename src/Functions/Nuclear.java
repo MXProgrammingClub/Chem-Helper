@@ -223,4 +223,11 @@ public class Nuclear extends Function {
 		equation.setIcon(icon);
 	}
 	
+	public String getHelp() {
+		return "<html>Enter the isotope's symbol in the large box,<br>"
+				+ "its mass in the top box and its atomic number in<br>"
+				+ "the lower box. Select the type of decay you wish<br>"
+				+ "the isotope to go under.";
+	}
+	
 }

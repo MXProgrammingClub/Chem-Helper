@@ -235,4 +235,16 @@ public class StateChangeTemp extends Function {
 		else if(result.equals(options[4])) k.setAmount(num);
 		else m.setAmount(num);
 	}
+	
+	public String getHelp() {
+		return "<html>Enter all known quantities, being sure to<br>"
+				+ "select the appropriate units. If <i>i</i> is given<br>"
+				+ "as one value, select the corresponding button. If <i>i</i><br>"
+				+ "is given as moles of ions and moles of solute,<br>"
+				+ "select the corresponding button. For the remaining<br>"
+				+ "value, select the desired unit. Click the calculate<br>"
+				+ "button and ChemHelper will calculate the remaining<br>"
+				+ "value.";
+	}
+	
 }
