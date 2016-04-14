@@ -24,7 +24,6 @@ import javax.swing.JPanel;
 import Equation.Compound;
 import Equation.Equation;
 import HelperClasses.RadioEnterField;
-import HelperClasses.TextField;
 import HelperClasses.Units;
 
 public class Stoichiometry extends Function 
@@ -265,6 +264,15 @@ public class Stoichiometry extends Function
 	
 	public String getHelp()
 	{
-		return "<html>" + TextField.getHelp() + "</html>";
+		return "<html>Enter the equation and after balancing it, click<br>"
+				+ "the \"Use\" button. Click on the compound whose<br>"
+				+ "amount is given, then the one whose amount is<br>"
+				+ "unknown. Enter the amount of the known compound,<br>"
+				+ "and select whether it is in moles or grams, then<br>"
+				+ "choose whether the unknown value should be in<br>"
+				+ "moles or grams. Click the \"Calculate\" button for<br>"
+				+ "ChemHelper to find the unknown amount. To perform<br>"
+				+ "calculations with another reaction, click the<br>"
+				+ "\"Reset\" button.</html>";
 	}
 }
