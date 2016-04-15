@@ -4,19 +4,20 @@
  * number() returns true- saves most recently calculated value and uses saved as known amount.
  * 
  * Author: Julia McClellan
- * Version: 2/13/2016
+ * Version: 4/15/2016
  */
 
 package Functions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import java.util.ArrayList;
 
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -28,16 +29,16 @@ import HelperClasses.Units;
 
 public class Stoichiometry extends Function 
 {
-	private JPanel panel, stoicPanel, displayEquation, stepsPanel;
+	private JPanel panel, stoicPanel, displayEquation, stepsPanel, box2;
 	private EquationReader reader;
 	private JButton calculate, reset;
 	private Equation equation;
 	private JLabel instructions;
 	private boolean given, done;
 	private Compound known, unknown;
-	private Box box2;
 	private double toSave;
 	private RadioEnterField field1, field2;
+	private GridBagConstraints c;
 	
 	public Stoichiometry()
 	{
@@ -61,9 +62,14 @@ public class Stoichiometry extends Function
 		stepsPanel = new JPanel();
 		stepsPanel.setVisible(false);
 		
-		box2 = Box.createVerticalBox();
-		box2.add(instructions);
-		box2.add(displayEquation);
+		box2 = new JPanel(new GridBagLayout());
+		c = new GridBagConstraints();
+		c.gridx = 0;
+		c.gridy = 0;
+		c.anchor = GridBagConstraints.WEST;
+		box2.add(instructions, c);
+		c.gridy++;
+		box2.add(displayEquation, c);
 		
 		stoicPanel = new JPanel();
 		stoicPanel.add(box2);
@@ -126,7 +132,8 @@ public class Stoichiometry extends Function
 					if(known.getNum() == 1) name = "<html>" + compound.withoutCharge() + "</html>";
 					else name = "<html>" + compound.withoutCharge().substring(1) + "</html>";
 					field1 = new RadioEnterField(name, true, "Mass", "Amount", false);
-					box2.add(field1);
+					c.gridy++;
+					box2.add(field1, c);
 					instructions.setText("Now click on the compound of which you wish to find the quanitity");
 					given = false;
 				}
@@ -137,8 +144,10 @@ public class Stoichiometry extends Function
 					if(unknown.getNum() == 1) name = "<html>" + compound.withoutCharge() + "</html>";
 					else name = "<html>" + compound.withoutCharge().substring(1) + "</html>";
 					field2 = new RadioEnterField(name, false, "Mass", "Amount", false);
-					box2.add(field2);
-					box2.add(calculate);
+					c.gridy++;
+					box2.add(field2, c);
+					c.gridy++;
+					box2.add(calculate, c);
 					instructions.setText("Once you have entered the quantities and units, click the calculate button");
 					done = true;
 				}
@@ -176,8 +185,10 @@ public class Stoichiometry extends Function
 			{
 				resultString = "There was a problem with your input";
 			}
-			box2.add(new JLabel(resultString));
-			box2.add(reset);
+			c.gridy++;
+			box2.add(new JLabel(resultString), c);
+			c.gridy++;
+			box2.add(reset, c);
 		}
 	}
 	
