@@ -4,11 +4,13 @@
  * number() returns true- can save any of calculated leftovers and use saved for any of the reactants.
  * 
  * Author: Julia McClellan
- * Version: 2/14/2016
+ * Version: 4/15/2016
  */
 
 package Functions;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -72,8 +74,14 @@ public class LimitingReactant extends Function
 		stoicPanel.setVisible(false);
 		
 		panel.add(reader.getPanel());
-		panel.add(stoicPanel);
-		panel.add(stepsPanel);
+		JPanel subpanel = new JPanel(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.anchor = GridBagConstraints.NORTH;
+		c.gridx = 0;
+		subpanel.add(stoicPanel, c);
+		c.gridx++;
+		subpanel.add(stepsPanel, c);
+		panel.add(subpanel);
 		
 		toSave = new ArrayList<Double>();
 	}
