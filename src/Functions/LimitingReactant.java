@@ -24,7 +24,6 @@ import javax.swing.JPanel;
 import Equation.Compound;
 import Equation.Equation;
 import HelperClasses.RadioEnterField;
-import HelperClasses.TextField;
 import HelperClasses.Units;
 
 public class LimitingReactant extends Function
@@ -284,7 +283,12 @@ public class LimitingReactant extends Function
 	
 	public String getHelp()
 	{
-		return "<html>" + TextField.getHelp() + "</html>";
+		return "<html>Enter your reaction. Once it is balanced, click<br>"
+				+ "the \"Use\" button. For each reactant for which the<br>"
+				+ "amount is known, have the checkbox selected, and<br>"
+				+ "enter the amount of that reactant. Once all known<br>"
+				+ "reactants are entered, click the \"Calculate\" button<br>"
+				+ "to find out which is the limiting reactant.</html>";
 	}
 	
 	public JPanel getPanel()
