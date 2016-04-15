@@ -183,6 +183,7 @@ public class Combustion extends Function
 	
 	public String getHelp()
 	{
-		return "<html>" + TextField.getHelp() + "</html>";
+		return "<html>Enter a compound and click the \"Combust\"<br>"
+				+ "button to create a combustion reaction.</html>";
 	}
 }
