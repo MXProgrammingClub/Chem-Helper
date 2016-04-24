@@ -2,11 +2,12 @@
  * Represents a monatomic ion.
  * 
  * Author: Julia McClellan
- * Version: 3/10/2016
+ * Version: 4/24/2016
  */
 package Equation;
 
 import Elements.Element;
+import Functions.Function;
 
 public class Monatomic extends Ions
 {
@@ -74,9 +75,11 @@ public class Monatomic extends Ions
 		return element.getMolarMass() * super.getNum();
 	}
 
-	public String getMolarMassSteps() 
+	public double getMolarMassSteps(StringBuffer str) 
 	{
-		return "(" + element.getMolarMass() + " * " + super.getNum() + ")";
+		str.append("(" + element.getMolarMass() + "\\frac{g\\text{ }" + element.getSymbol() + "}{mol\\text{ }" + element.getSymbol() + "} * " + super.getNum()
+		+ ")");
+		return getMolarMass();
 	}
 	
 	/*

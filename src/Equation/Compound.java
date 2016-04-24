@@ -162,17 +162,20 @@ public class Compound
 	/*
 	 * Returns a String explaining how to find the molar mass of the compound.
 	 */
-	public String getMolarMassSteps()
+	public double getMolarMassSteps(StringBuffer[] strings)
 	{
-		String instruction = "Multiply the molar mass of each element by its coefficient: ";
+		strings[0] = new StringBuffer("\\text{Multiply the molar mass of each element by its coefficient: }");
+		StringBuffer str = new StringBuffer();
 		double total = 0;
 		for(Ions ion: ions)
 		{
-			instruction += ion.getMolarMassSteps() + " + ";
-			total += ion.getMolarMass();
+			total += ion.getMolarMassSteps(str);
+			str.append(" + ");
 		}
-		instruction = instruction.substring(0, instruction.length() - 3) + " = " + total + " g/mol";
-		return instruction;
+		str.delete(str.length() - 3, str.length());
+		str.append(" = " + total + "\\frac{g}{mol}");
+		strings[1] = str;
+		return total;
 	}
 
 	public boolean contains(Element e)

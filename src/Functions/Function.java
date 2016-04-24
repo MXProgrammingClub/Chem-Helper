@@ -4,7 +4,7 @@
  * classes that need them.
  * 
  * Authors: Ted Pyne, Hyun Choi, Julia McClellan
- * Version: 4/23/2016
+ * Version: 4/24/2016
  */
 
 package Functions;
@@ -88,6 +88,15 @@ public abstract class Function {
 		return str;
 	}
 	
+	public static String latex(Compound comp)
+	{
+		String str = "";
+		if(comp.getNum() != 1) str += comp.getNum();
+		for (Ions ion: comp.getIons()) str += latex(ion);
+		if(!comp.getState().equals(" ")) str += "\\text{(" + comp.getState() + ")}";
+		return str;
+	}
+	
 	public static JLabel latex(Equation eq) { //only for equations at this point
 		JLabel label = new JLabel();
 		
@@ -103,14 +112,8 @@ public abstract class Function {
 		
 		for (ArrayList<Compound> side: sides) {
 			for (Compound comp: side) {
-				if(comp.getNum() != 1) str += comp.getNum();
-				
-				for (Ions ion: comp.getIons()) str += latex(ion);
-				
-				if(!comp.getState().equals(" ")) str += "\\text{(" + comp.getState() + ")}";
+				str += latex(comp);
 				str += "+";
-				
-				
 			}
 			str = str.substring(0, str.length()-1);
 			
@@ -138,7 +141,7 @@ public abstract class Function {
 	{
 		JLabel label = new JLabel();
 		TeXFormula formula = new TeXFormula(str);
-		TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, 20);
+		TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, 15);
 				
 		BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
 		icon.paintIcon(new JLabel(), image.getGraphics(), 0, 0);

@@ -4,7 +4,7 @@
  * number() returns true- saves last calculated value and can use saved in moles or mass.
  * 
  * Authors: Julia McClellan and Luke Giacalone
- * Version: 4/23/2016
+ * Version: 4/24/2016
  */
 
 package Functions;
@@ -73,11 +73,18 @@ public class CompoundStoichiometry extends Function
 		
 		steps = Box.createVerticalBox();
 		
-		panel = new JPanel();
-		panel.add(subpanel);
-		panel.add(Box.createHorizontalStrut(20));
-		panel.add(steps);
+		JPanel panel1 = new JPanel(new GridBagLayout());
+		c.gridy = 0;
+		c.gridx = 0;
+		c.anchor = GridBagConstraints.NORTHWEST;
+		panel1.add(subpanel, c);
+		c.gridx++;
+		panel1.add(Box.createHorizontalStrut(20), c);
+		c.gridx++;
+		panel1.add(steps, c);
 		
+		panel = new JPanel();
+		panel.add(panel1);
 		toSave = 0;
 	}
 	
@@ -94,12 +101,13 @@ public class CompoundStoichiometry extends Function
 			try
 			{
 				Compound c = Compound.parseCompound(compound.getText().trim());
-				steps.add(new JLabel("<html>Calculate the molar mass of " + c + ":</html>"));
-				String mass = c.getMolarMassSteps();
-				molarMass = Double.parseDouble(mass.substring(mass.lastIndexOf('=') + 1, mass.lastIndexOf('g')));
-				steps.add(new JLabel(mass));
+				steps.add(Function.latex("\\text{Calculate the molar mass of }" + Function.latex(c) + "\\text{:}"));
+				StringBuffer[] mass = new StringBuffer[2];
+				molarMass = c.getMolarMassSteps(mass);
+				steps.add(Function.latex(mass[0].toString()));
+				steps.add(Function.latex(mass[1].toString()));
 				steps.add(Box.createVerticalStrut(5));
-				steps.add(new JLabel("Molar mass = " + molarMass + " g/mol"));
+				steps.add(Function.latex("\\text{Molar mass = " + molarMass + "}\\frac{g}{mol}"));
 			}
 			catch(InvalidInputException e)
 			{
@@ -109,7 +117,7 @@ public class CompoundStoichiometry extends Function
 			catch(Throwable e)
 			{
 				molarMass = blank;
-				steps.add(new JLabel("Molar mass = ? g/mol"));
+				steps.add(Function.latex("\\text{Molar mass = ?}\\frac{g}{mol}"));
 			}
 			
 			givenMass = mass.getAmount();
@@ -118,7 +126,7 @@ public class CompoundStoichiometry extends Function
 				if(molarMass != blank)
 				{
 					givenMass = blank;
-					steps.add(new JLabel("Mass = ? g"));
+					steps.add(Function.latex("\\text{Mass = ? g}"));
 				}
 				else
 				{
@@ -133,7 +141,8 @@ public class CompoundStoichiometry extends Function
 			}
 			else 
 			{
-				steps.add(new JLabel("Mass = " + givenMass + " g"));
+				if(mass.getUnit() != 6) steps.add(Function.latex("\\text{Mass = " + mass.getText() + " " + mass.getUnitName() + " = " + givenMass + " g"));
+				else steps.add(Function.latex("\\text{Mass = " + givenMass + " g}"));
 				sigFigs = mass.getSigFigs();
 			}
 			
@@ -143,7 +152,7 @@ public class CompoundStoichiometry extends Function
 				if(molarMass != blank && givenMass != blank)
 				{
 					givenMoles = blank;
-					steps.add(new JLabel("Moles = ? mol"));
+					steps.add(Function.latex("\\text{Moles = ? mol}"));
 				}
 				else
 				{
@@ -158,11 +167,11 @@ public class CompoundStoichiometry extends Function
 			}
 			else 
 			{
-				steps.add(new JLabel("Moles = " + givenMoles + " mol"));
+				steps.add(Function.latex("\\text{Moles = " + givenMoles + " mol}"));
 				sigFigs = Math.min(sigFigs, moles.getSigFigs());
 			}
 			
-			steps.add(Box.createVerticalStrut(5));
+			steps.add(Function.latex("\\text{Molar mass=}\\frac{Moles}{Mass}"));
 			
 			if(molarMass == blank)
 			{

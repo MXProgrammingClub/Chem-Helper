@@ -2,7 +2,7 @@
  * Represents a polyatomic ion and has a public array of common polyatomic ions.
  * 
  * Author: Julia McClellan
- * Version: 3/26/2016
+ * Version: 4/24/2016
  */
 
 package Equation;
@@ -144,13 +144,18 @@ public class Polyatomic extends Ions
 		return mass;
 	}
 
-	public String getMolarMassSteps() 
+	public double getMolarMassSteps(StringBuffer str) 
 	{
-		String mass = "(" + getNum() + " * (";
-		for(Monatomic ion: elements) mass += ion.getMolarMassSteps() + " + ";
-		if(mass.length() != 0) mass = mass.substring(0, mass.length() - 3);
-		mass += "))";
-		return mass;
+		str.append("(" + getNum() + " * (");
+		double total = 0;
+		for(Monatomic ion: elements) 
+		{
+			total += ion.getMolarMassSteps(str);
+			str.append(" + ");
+		}
+		str.delete(str.length() - 3, str.length());
+		str.append("))");
+		return total;
 	}
 	
 	public boolean equals(Ions other)

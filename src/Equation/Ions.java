@@ -2,7 +2,7 @@
  * Represents a collection of ions of the same type and charge. The two implementations are Polyatomic and Monatomic.
  * 
  * Author: Julia McClellan
- * Version: 3/10/2016
+ * Version: 4/24/2016
  */
 
 package Equation;
@@ -53,7 +53,7 @@ public abstract class Ions
 	
 	public abstract double getMolarMass();
 	
-	public abstract String getMolarMassSteps();
+	public abstract double getMolarMassSteps(StringBuffer str);
 	
 	public abstract String withoutCharge();
 	
