@@ -4,7 +4,7 @@
  * number() returns true- saves last calculated value and can use saved in moles or mass.
  * 
  * Authors: Julia McClellan and Luke Giacalone
- * Version: 2/9/2016
+ * Version: 4/23/2016
  */
 
 package Functions;
@@ -168,13 +168,13 @@ public class CompoundStoichiometry extends Function
 			{
 				toSave = givenMass / givenMoles;
 				result.setText("Molar mass = " + Function.withSigFigs(toSave, sigFigs) + " g/mol");
-				steps.add(new JLabel("Molar mass = " + givenMass + " / " + givenMoles + " = " + toSave + " g/mol"));
+				steps.add(Function.latex("\\text{Molar mass=}\\frac{" + givenMass + "\\text{ g}}{" + givenMoles + "\\text{ mol}}\\text{=" + toSave + 
+						"\\frac{g}{mol}}"));
 			}
 			else if(givenMass == blank)
 			{
 				toSave = molarMass * givenMoles;
-				
-				steps.add(new JLabel("Mass = " + molarMass + " * " + givenMoles + " = " + toSave + " g"));
+				steps.add(Function.latex("\\text{Mass=" + molarMass + "\\frac{g}{mol} * " + givenMoles + " mol = " + toSave + " g}"));
 				String unit = mass.getUnitName();
 				if(!unit.equals("g"))
 				{
@@ -189,7 +189,7 @@ public class CompoundStoichiometry extends Function
 			{
 				toSave = givenMass / molarMass;
 				result.setText("Moles = " + Function.withSigFigs(toSave, sigFigs) + " mol");
-				steps.add(new JLabel("Mass = " + givenMass + " / " + molarMass + " = " + toSave + " mol"));
+				steps.add(Function.latex("\\text{Mass=}\\frac{" + givenMass + "\\text{ g}}{" + molarMass + "\\frac{g}{mol}}\\text{=" + toSave + " mol}"));
 			}
 			steps.setVisible(true);
 		}

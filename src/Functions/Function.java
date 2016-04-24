@@ -4,7 +4,7 @@
  * classes that need them.
  * 
  * Authors: Ted Pyne, Hyun Choi, Julia McClellan
- * Version: 3/24/2016
+ * Version: 4/23/2016
  */
 
 package Functions;
@@ -132,6 +132,20 @@ public abstract class Function {
 		
 		return label;
 		
+	}
+	
+	public static JLabel latex(String str)
+	{
+		JLabel label = new JLabel();
+		TeXFormula formula = new TeXFormula(str);
+		TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, 20);
+				
+		BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+		icon.paintIcon(new JLabel(), image.getGraphics(), 0, 0);
+		
+		label.setIcon(icon);
+		
+		return label;
 	}
 	
 	// Find gcd of two ints
