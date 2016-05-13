@@ -121,4 +121,19 @@ public class DoubleEnterField extends JPanel {
 	{
 		return before.getStandardUnit();
 	}
+	
+	public String getBeforeUnitName()
+	{
+		return before.getUnitName() + (before.getUnit2() != -1 ? " / " + before.getUnit2Name() : "");
+	}
+	
+	public String getBeforeText()
+	{
+		return before.getText();
+	}
+	
+	public String getAfterText()
+	{
+		return after.getText();
+	}
 }

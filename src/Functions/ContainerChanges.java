@@ -135,7 +135,7 @@ public class ContainerChanges extends Function
 			int sigFigs = Integer.MAX_VALUE;
 			steps.removeAll();
 			steps.setVisible(false);
-			String[] step = {"(", "(", "(", "("};
+			String[] step = {"", "", "", ""};
 			for(DoubleEnterField field: information)
 			{
 				if(field.isVisible())
@@ -152,10 +152,15 @@ public class ContainerChanges extends Function
 					if(!field.isLeft())
 					{
 						val = 1 / val;
-						step[1] += val + " * ";
+						step[1] += val + "\\text{ " + field.getStandardUnit() + "} * ";
 					}
-					else step[0] += val + " * ";
-					steps.add(new JLabel(field.getName() + "-before = " + val + " " + field.getStandardUnit()));
+					else step[0] += val + "\\text{ " + field.getStandardUnit() + "} * ";
+					if(!field.getStandardUnit().equals(field.getBeforeUnitName())) 
+					{
+						steps.add(Function.latex("\\text{" + field.getName() + "-before = " + field.getBeforeText() + field.getBeforeUnitName() + " = " + val 
+								+ " " + field.getStandardUnit() + "}"));
+					}
+					else steps.add(Function.latex("\\text{" + field.getName() + "-before = " + val + " " + field.getStandardUnit() + "}"));
 					
 					double thisAfter = val = field.getAfterValue();
 					if(thisAfter == Units.ERROR_VALUE)
@@ -168,9 +173,9 @@ public class ContainerChanges extends Function
 						if(unknown == null)
 						{
 							unknown = field;
-							steps.add(new JLabel(field.getName() + "-after = ? " + field.getStandardUnit()));
-							if(field.isLeft()) step[2] += "x * ";
-							else step[3] += "x * ";
+							steps.add(Function.latex("\\text{" + field.getName() + "-after = ? " + field.getStandardUnit() + "}"));
+							if(field.isLeft()) step[2] += "x\\text{ " + field.getStandardUnit() + "} * ";
+							else step[3] += "x\\text{ " + field.getStandardUnit() + "} * ";
 						}
 						else
 						{
@@ -184,10 +189,10 @@ public class ContainerChanges extends Function
 						if(!field.isLeft())
 						{
 							val = 1 / val;
-							step[3] += val + " * ";
+							step[3] += val + "\\text{ " + field.getStandardUnit() + "} * ";
 						}
-						else step[2] += val + " * ";
-						steps.add(new JLabel(field.getName() + "-after = " + val + " " + field.getStandardUnit()));
+						else step[2] += val + "\\text{ " + field.getStandardUnit() + "} * ";
+						steps.add(Function.latex("\\text{" + field.getName() + "-after = " + val + " " + field.getStandardUnit() + "}"));
 					}
 				}
 			}
@@ -197,26 +202,29 @@ public class ContainerChanges extends Function
 			{
 				for(int index = 0; index < 4; index ++)
 				{
-					if(step[index].equals("("))
+					if(step[index].equals(""))
 					{
 						if(index % 2 == 0) step[index] = "1";
 						else step[index] = "";
 					}
 					else
 					{
-						step[index] = step[index].substring(0, step[index].length() - 3) + ")";
-						if(index % 2 != 0) step[index] = " / " + step[index];
+						step[index] = step[index].substring(0, step[index].length() - 3);
 					}
 				}
-				steps.add(new JLabel(step[0] + step[1] + " = " + step[2] + step[3]));
+				if(step[1].equals("") && step[3].equals("")) steps.add(Function.latex(step[0] + " = " + step[2]));
+				else if(step[1].equals("")) steps.add(Function.latex(step[0] + " = \\frac{" + step[2] + "}{" + step[3] + "}"));
+				else if(step[3].equals("")) steps.add(Function.latex("\\frac{" + step[0] + "}{" + step[1] + "} = " + step[2]));
+				else steps.add(Function.latex("\\frac{" + step[0] + "}{" + step[1] + "} = \\frac{" + step[2] + "}{" + step[3] + "}"));
 				
 				double resultant;
 				if(unknown.isLeft()) resultant = before / after;
 				else resultant = after / before;
-				steps.add(new JLabel("x = " + resultant + " " + unknown.getStandardUnit()));
+				steps.add(Function.latex("\\text{x = " + resultant + " " + unknown.getStandardUnit() + "}"));
 				String unit = unknown.getDesiredUnit();
 				toSave = unknown.getBlankAmount(resultant);
-				if(toSave != resultant) steps.add(new JLabel(resultant + " " + unknown.getStandardUnit() + " = " + toSave + " " + unknown.getDesiredUnit()));
+				if(toSave != resultant) steps.add(Function.latex("\\text{" + resultant + " " + unknown.getStandardUnit() + " = " + toSave + " " 
+						+ unknown.getDesiredUnit() + "}"));
 				result.setText(unknown.getName() + " = " + Function.withSigFigs(resultant, sigFigs) + " " + unit);
 				steps.setVisible(true);
 			}
