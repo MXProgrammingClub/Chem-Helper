@@ -3,7 +3,7 @@
  * number() returns true- saves last calculated value and can use saved for density, mass, or volume.
  * 
  * Author: Julia McClellan
- * Version: 2/9/2016
+ * Version: 5/16/2016
  */
 
 package Functions;
@@ -55,7 +55,7 @@ public class Density extends Function
 		
 		input.add(new JLabel("Enter known informaion:"), c);
 		
-		c.anchor = GridBagConstraints.WEST;
+		c.anchor = GridBagConstraints.NORTHWEST;
 		c.gridy = 1;
 		input.add(density, c);
 		c.gridy = 2;
@@ -72,9 +72,18 @@ public class Density extends Function
 		
 		steps = Box.createVerticalBox();
 		
+		JPanel subpanel = new JPanel(new GridBagLayout());
+		c.gridy = 0;
+		c.gridx = 0;
+		c.anchor = GridBagConstraints.NORTHWEST;
+		subpanel.add(input, c);
+		c.gridx++;
+		subpanel.add(Box.createHorizontalStrut(10), c);
+		c.gridx++;
+		subpanel.add(steps, c);
+		
 		panel = new JPanel();
-		panel.add(input);
-		panel.add(steps);
+		panel.add(subpanel);
 	}
 	
 	private class Calculate implements ActionListener
@@ -83,7 +92,7 @@ public class Density extends Function
 		{
 			steps.removeAll();
 			steps.setVisible(false);
-			steps.add(new JLabel("D = M / V"));
+			steps.add(Function.latex("D = \\frac{M}{V}"));
 			steps.add(Box.createVerticalStrut(5));
 			double givenMass = 0, givenVolume = 0, givenDensity = 0;
 			String unknown = "";
@@ -92,7 +101,7 @@ public class Density extends Function
 			if(givenMass == Units.UNKNOWN_VALUE)
 			{
 				unknown = "Mass";
-				steps.add(new JLabel("Mass = ?"));
+				steps.add(Function.latex("\\text{Mass} = ? g"));
 			}
 			else if(givenMass == Units.ERROR_VALUE)
 			{
@@ -102,7 +111,7 @@ public class Density extends Function
 			else
 			{
 				givenMass /= 1000;
-			steps.add(new JLabel("Mass = " + givenMass + " kg"));
+				steps.add(Function.latex("\\text{Mass} = " + givenMass + " kg"));
 			}
 			
 			givenVolume = volume.getAmount();
@@ -114,14 +123,14 @@ public class Density extends Function
 					return;
 				}
 				unknown = "Volume";
-				steps.add(new JLabel("Volume = ?"));
+				steps.add(Function.latex("\\text{Volume} = ? L"));
 			}
 			else if(givenVolume == Units.ERROR_VALUE)
 			{
 				result.setText("Unacceptable value for volume.");
 				return;
 			}
-			else steps.add(new JLabel("Volume = " + givenVolume + " L"));
+			else steps.add(Function.latex("\\text{Volume} = " + givenVolume + " L"));
 			
 			givenDensity = density.getAmount();
 			if(givenDensity == Units.UNKNOWN_VALUE)
@@ -132,7 +141,7 @@ public class Density extends Function
 					return;
 				}
 				unknown = "Density";
-				steps.add(new JLabel("Density = ?"));
+				steps.add(Function.latex("\\text{Density} = ? \\frac{kg}{L}"));
 			}
 			else if(givenDensity == Units.ERROR_VALUE)
 			{
@@ -142,7 +151,7 @@ public class Density extends Function
 			else
 			{
 				givenDensity /= 1000;
-				steps.add(new JLabel("Density = " + givenDensity + " kg / L"));
+				steps.add(Function.latex("\\text{Density} = " + givenDensity + " \\frac{kg}{L}"));
 			}
 			
 			steps.add(Box.createVerticalStrut(5));
@@ -153,41 +162,41 @@ public class Density extends Function
 			{
 				sigFigs = Math.min(volume.getSigFigs(), density.getSigFigs());
 				toSave = givenDensity * givenVolume;
-				steps.add(new JLabel("Mass = " + givenDensity + " * " + givenVolume + " = " + toSave + " kg"));
+				steps.add(Function.latex("\\text{Mass} = " + givenDensity + "\\frac{kg}{L} * " + givenVolume + "L = " + toSave + " kg"));
 				unknownUnit = mass.getUnitName();
 				if(!unknownUnit.equals("kg"))
 				{
 					String step = toSave + " kg = ";
 					toSave *= 1000;
 					toSave = mass.getBlankAmount(toSave);
-					steps.add(new JLabel(step + toSave + " " + unknownUnit));
+					steps.add(Function.latex(step + toSave + " " + unknownUnit));
 				}
 			}
 			else if(unknown.equals("Volume"))
 			{
 				sigFigs = Math.min(mass.getSigFigs(), density.getSigFigs());
 				toSave = givenMass / givenDensity;
-				steps.add(new JLabel("Volume = " + givenMass + " / " + givenDensity + " = " + toSave + " L"));
+				steps.add(Function.latex("\\text{Volume} = \\frac{" + givenMass + "kg}{" + givenDensity + " \\frac{kg}{L}} = " + toSave + " L"));
 				unknownUnit = volume.getUnitName();
 				if(!unknownUnit.equals("L"))
 				{
 					String step = toSave + " L = ";
 					toSave = volume.getBlankAmount(toSave);
-					steps.add(new JLabel(step + toSave + " " + unknownUnit));
+					steps.add(Function.latex(step + toSave + " " + unknownUnit));
 				}
 			}
 			else if(unknown.equals("Density"))
 			{
 				sigFigs = Math.min(mass.getSigFigs(), volume.getSigFigs());
 				toSave = givenMass / givenVolume;
-				steps.add(new JLabel("Density = " + givenMass + " / " + givenVolume + " = " + toSave + " kg/L"));
+				steps.add(Function.latex("\\text{Density} = \\frac{" + givenMass + "kg}{" + givenVolume + "L} = " + toSave + "\\frac{kg}{L}"));
 				String mUnit = density.getUnitName(), vUnit = density.getUnit2Name();
 				if(!mUnit.equals("kg") || !vUnit.equals("L"))
 				{
-					String step = toSave + " kg/L = ";
+					String step = toSave + "\\frac{kg}{L} = ";
 					if(!mUnit.equals("kg")) toSave *= 1000;
 					toSave = density.getBlankAmount(toSave);
-					unknownUnit = mUnit + "/" + vUnit;
+					unknownUnit = "\\frac{" + mUnit + "}{" + vUnit + "}";
 					steps.add(new JLabel(step + toSave + " " + unknownUnit));
 				}
 			}
