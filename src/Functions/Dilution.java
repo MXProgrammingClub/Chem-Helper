@@ -2,7 +2,7 @@
  * Uses the dilution equation to calculate the molarity or volume of the diluted solution.
  * 
  * Author: Julia McClellan
- * Version: 3/1/16
+ * Version: 5/17/16
  */
 
 package Functions;
@@ -70,30 +70,32 @@ public class Dilution extends Function
 						return;
 					}
 					
-					steps.add(new JLabel("<html>M<sub>1</sub> * V<sub>1</sub> = M<sub>2</sub> * V<sub>2</sub>"));
-					steps.add(new JLabel("<html>M<sub>1</sub> = " + values[0] + " mol / L"));
-					steps.add(new JLabel("<html>V<sub>1</sub> = " + values[2] + " L"));
+					steps.add(Function.latex("M_1*V_1= M_2*V_2"));
+					steps.add(Function.latex("M_1= " + values[0] + "\\frac{mol}{L}"));
+					steps.add(Function.latex("V_1 = " + values[2] + " L"));
 					int sigFigs = Math.min(molarity.getSigFigs(), volume.getSigFigs());
 					if(values[1] == Units.UNKNOWN_VALUE)
 					{
-						steps.add(new JLabel("<html>M<sub>2</sub> = ? mol / L"));
-						steps.add(new JLabel("<html>V<sub>2</sub> = " + values[3] + " L"));
+						steps.add(Function.latex("M_1=\\text{ ?}\\frac{mol}{L}"));
+						steps.add(Function.latex("V_2 = " + values[3] + " L"));
 						steps.add(Box.createVerticalStrut(10));
 						double amount = values[0] * values[2] / values[3];
-						steps.add(new JLabel("<html>M<sub>2</sub> = " + values[0] + " * " + values[2] + " / " + values[3] + " = " + amount));
+						steps.add(Function.latex("M_2 = \\frac{" + values[0] + "\\frac{mol}{L} * " + values[2] + "L}{" + values[3] + "L} = " + amount + 
+								"\\frac{mol}{L}"));
 						answer = molarity.getBlankAmount(amount);
-						if(amount != answer) steps.add(new JLabel(amount + "mol / L  = " + answer + " " + molarity.getDesiredUnit()));
+						if(amount != answer) steps.add(Function.latex(amount + "\\frac{mol}{L}=" + answer + " " + molarity.getDesiredUnitLatex()));
 						result.setText("<html>M<sub>2</sub> = " + Function.withSigFigs(answer, sigFigs) + " "  + molarity.getDesiredUnit());
 					}
 					else if(values[3] == Units.UNKNOWN_VALUE)
 					{
-						steps.add(new JLabel("<html>M<sub>2</sub> = " + values[1] + " mol / L"));
-						steps.add(new JLabel("<html>V<sub>2</sub> = ? L"));
+						steps.add(Function.latex("M_2= " + values[1] + "\\frac{mol}{L}"));
+						steps.add(Function.latex("V_2=\\text{ ? }L"));
 						steps.add(Box.createVerticalStrut(10));
 						double amount = values[2] * values[0] / values[1];
-						steps.add(new JLabel("<html>V<sub>2</sub> = " + values[2] + " * " + values[0] + " / " + values[1] + " = " + amount));
+						steps.add(Function.latex("V_2 =\\frac{" + values[2] + "L * " + values[0] + "\\frac{mol}{L}}{" + values[1] + "\\frac{mol}{L}} = " + 
+								amount + "L"));
 						answer = volume.getBlankAmount(amount);
-						if(amount != answer) steps.add(new JLabel(amount + "L  = " + answer + " " + volume.getDesiredUnit()));
+						if(amount != answer) steps.add(Function.latex(amount + "L  = " + answer + " " + volume.getDesiredUnit()));
 						result.setText("<html>V<sub>2</sub> = " + Function.withSigFigs(answer, sigFigs) + " "  + volume.getDesiredUnit());
 					}
 					else 

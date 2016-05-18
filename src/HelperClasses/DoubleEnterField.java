@@ -94,6 +94,19 @@ public class DoubleEnterField extends JPanel {
 			return unit;
 		}
 	}
+	
+	public String getDesiredUnitLatex()
+	{
+		String unit = after.getUnitName();
+		try
+		{
+			return "\\frac{" + unit + "}{" + after.getUnit2Name() + "}";
+		}
+		catch(Throwable e)
+		{
+			return unit;
+		}
+	}
 
 	public String getName()
 	{
