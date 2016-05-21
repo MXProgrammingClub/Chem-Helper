@@ -4,11 +4,13 @@
  * number() returns true- saves latest calculated value and can used saved for a molar mass or ratio.
  * 
  * Author: Julia McClellan
- * Version: 2/9/2016
+ * Version: 5/21/2016
  */
 
 package Functions;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -89,9 +91,18 @@ public class Effusion extends Function
 		
 		steps = Box.createVerticalBox();
 		
+		JPanel subpanel = new JPanel(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx = 0;
+		c.anchor = GridBagConstraints.NORTHWEST;
+		subpanel.add(box, c);
+		c.gridx++;
+		subpanel.add(Box.createHorizontalStrut(10), c);
+		c.gridx++;
+		subpanel.add(steps, c);
+		
 		panel = new JPanel();
-		panel.add(box);
-		panel.add(steps);
+		panel.add(subpanel);
 		
 		toSave = 0;
 	}
@@ -120,10 +131,11 @@ public class Effusion extends Function
 						result.setText(e.getMessage());
 						return;
 					}
-					String m1 = c1.getMolarMassSteps();
-					mass1 = Double.parseDouble(m1.substring(m1.lastIndexOf('=') + 1, m1.lastIndexOf('g')));
-					steps.add(new JLabel("<html>Find molar mass of " + c1 + ":</html>"));
-					steps.add(new JLabel(m1));
+					StringBuffer[] massStep = new StringBuffer[2];
+					mass1 = c1.getMolarMassSteps(massStep);
+					steps.add(Function.latex("\\text{Find molar mass of }" + latex(c1) + "\\text{:}"));
+					steps.add(Function.latex(massStep[0].toString()));
+					steps.add(Function.latex(massStep[1].toString()));
 				}
 				else 
 				{
@@ -138,7 +150,7 @@ public class Effusion extends Function
 						return;
 					}
 				}
-				steps.add(new JLabel("Mass 1 = " + mass1));
+				steps.add(Function.latex("\\text{Mass 1} = " + mass1 + "\\frac{g}{mol}"));
 				steps.add(Box.createVerticalStrut(5));
 			}
 			
@@ -157,10 +169,11 @@ public class Effusion extends Function
 						result.setText(e.getMessage());
 						return;
 					}
-					String m2 = c2.getMolarMassSteps();
-					mass2 = Double.parseDouble(m2.substring(m2.lastIndexOf('=') + 1, m2.lastIndexOf('g')));
-					steps.add(new JLabel("<html>Find molar mass of " + c2 + ":</html>"));
-					steps.add(new JLabel(m2));
+					StringBuffer[] massStep = new StringBuffer[2];
+					mass2 = c2.getMolarMassSteps(massStep);
+					steps.add(Function.latex("\\text{Find molar mass of }" + latex(c2) + "\\text{:}"));
+					steps.add(Function.latex(massStep[0].toString()));
+					steps.add(Function.latex(massStep[1].toString()));
 				}
 				else 
 				{
@@ -175,7 +188,7 @@ public class Effusion extends Function
 						return;
 					}
 				}
-				steps.add(new JLabel("Mass 2 = " + mass2));
+				steps.add(Function.latex("\\text{Mass 2 = }" + mass2 + "\\frac{g}{mol}"));
 				steps.add(Box.createVerticalStrut(5));
 			}
 			else if(mass1 == 0)
@@ -196,7 +209,7 @@ public class Effusion extends Function
 					result.setText("Invalid input for ratio.");
 					return;
 				}
-				steps.add(new JLabel("Ratio of rates = " + rate));
+				steps.add(Function.latex("\\text{Ratio of rates = }" + rate));
 				steps.add(Box.createVerticalStrut(10));
 			}
 			else if(mass1 == 0 || mass2 == 0)
@@ -209,19 +222,22 @@ public class Effusion extends Function
 			if(rate == 0)
 			{
 				toSave = Math.sqrt(mass1 / mass2);
-				steps.add(new JLabel("Ratio of rates = \u221A(" + mass1 + " / " + mass2 + ") = " + toSave));
-				result.setText("Ratio of rates = " + Function.withSigFigs(toSave, sigFigs));
+				steps.add(Function.latex("\\text{Ratio of rates = }\\sqrt{\\frac{" + mass1 + "\\frac{g}{mol}}{" + mass2 + "\\frac{g}{mol}}} = " + toSave));
+				if(sigFigs == Integer.MAX_VALUE) result.setText("Ratio of rates = " + toSave);
+				else result.setText("Ratio of rates = " + Function.withSigFigs(toSave, sigFigs));
+				
 			}
 			else if(mass2 == 0)
 			{
 				toSave = mass1 / (rate * rate);
-				steps.add(new JLabel("<html>Mass 2 = " + mass1 + " / " + rate + "<sup>2</sup> = " + toSave + "</html>"));
+				steps.add(Function.latex("\\text{Mass 2 = }\\frac{" + mass1 + "\\frac{g}{mol}}{" + rate + "^2} = " + toSave + "\\frac{g}{mol}"));
 				result.setText("Mass of compound 2 = " + Function.withSigFigs(toSave, sigFigs));
+				
 			}
 			else if(mass1 == 0)
 			{
 				toSave = (rate * rate) / mass2;
-				steps.add(new JLabel("<html>Mass 1 = " + rate + "<sup>2</sup> / " + mass2 + " = " + toSave + "</html>"));
+				steps.add(new JLabel("\\text{Mass 1 = }\\frac{" + rate + "^2}{" + mass2 + "\\frac{g}{mol}} = " + toSave + "\\frac{g}{mol}"));
 				result.setText("Mass of compound 1 = " + Function.withSigFigs(toSave, sigFigs));
 			}
 			else
