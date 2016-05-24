@@ -4,7 +4,7 @@
  * or molecular molar mass, and use a saved number in moles or mass for molecular calculations.
  * 
  * Author: Julia "Super Irish Looking" McClellan
- * Version: 2/21/2016
+ * Version: 5/24/2016
  */
 
 package Functions;
@@ -133,10 +133,18 @@ public class Empirical extends Function
 		
 		steps = Box.createVerticalBox();
 		
-		panel = new JPanel();
-		panel.add(subpanel);
-		panel.add(steps);
+		JPanel subpanel2 = new JPanel(new GridBagLayout());
+		c.gridy = 0;
+		c.gridx = 0;
+		c.anchor = GridBagConstraints.NORTHWEST;
+		subpanel2.add(subpanel, c);
+		c.gridx++;
+		subpanel2.add(Box.createHorizontalStrut(10), c);
+		c.gridx++;
+		subpanel2.add(steps, c);
 		
+		panel = new JPanel();
+		panel.add(subpanel2);
 		toSave = new Double[2];
 	}
 	
@@ -267,7 +275,7 @@ public class Empirical extends Function
 				}
 				else
 				{
-					steps.add(new JLabel(elements[index] + ": " + values[index]));
+					steps.add(Function.latex("\\text{" + elements[index] + ": }" + values[index]));
 					sum += values[index];
 				}
 			}
@@ -288,49 +296,50 @@ public class Empirical extends Function
 			}
 			steps.add(Box.createVerticalStrut(5));
 			
-			steps.add(new JLabel("Divide each amount by the element's molar mass:"));
+			steps.add(Function.latex("\\text{Divide each amount by the element's molar mass:}"));
 			double min = Double.MAX_VALUE;
 			for(int index = 0; index < values.length; index++)
 			{
 				double molarMass = elements[index].getMolarMass();
-				String step = elements[index] + ": " + values[index] + " / " + molarMass + " = ";
+				String step = "\\text{" + elements[index] + ": }\\frac{" + values[index] + "}{" + molarMass + "\\frac{g}{mol}} = ";
 				values[index] /= molarMass;
-				steps.add(new JLabel(step + values[index]));
+				steps.add(Function.latex(step + values[index]));
 				if(min > values[index]) min = values[index];
 			}
 			steps.add(Box.createVerticalStrut(5));
 			
-			steps.add(new JLabel("Divide each value by the smallest, " + min + ":"));
+			steps.add(Function.latex("\\text{Divide each value by the smallest, }" + min + ":"));
 			for(int index = 0; index < values.length; index++)
 			{
-				String step = elements[index] + ": " + values[index] + " / " + min + " = ";
+				String step = "\\text{" + elements[index] + ": }\\frac{" + values[index] + "}{" + min + "} = ";
 				values[index] /= min;
-				steps.add(new JLabel(step + values[index]));
+				steps.add(Function.latex(step + values[index]));
 			}
 			int times = integerize(values);
 			steps.add(Box.createVerticalStrut(5));
 			
-			steps.add(new JLabel("Multiply by " + times + " to round to an integer value:"));
+			steps.add(Function.latex("\\text{Multiply by " + times + " to round to an integer value:}"));
 			int[] coefficients = new int[values.length];
-			String formula = "<html>Empirical formula: ";
-			String massString = "<html>Calculate molar mass by multiplying each element's mass by its coefficient:<br>";
+			String formula = "\\text{Empirical formula: }";
+			String massString = "";
 			double eMass = 0;
 			for(int index = 0; index < coefficients.length; index++)
 			{
-				String step = elements[index] + ": " + values[index] + " * " + times + " \u2248 ";
+				String step = "\\text{" + elements[index] + ": }" + values[index] + " * " + times + " \u2248 ";
 				coefficients[index] = (int)Math.round(values[index] * times);
-				steps.add(new JLabel(step + coefficients[index]));
+				steps.add(Function.latex(step + coefficients[index]));
 				double mass = elements[index].getMolarMass();
 				eMass += coefficients[index] * mass;
-				massString += "(" + coefficients[index] + " * " + mass + ") + ";
-				formula += elements[index].getSymbol();
-				if(coefficients[index] != 1) formula += "<sub>" + coefficients[index] + "</sub>";
+				massString += "(" + coefficients[index] + " * " + mass + "\\frac{g\\text{ " + elements[index] + "}}{mol}) + ";
+				formula += "\\text{" + elements[index].getSymbol() + "}";
+				if(coefficients[index] != 1) formula += "_{" + coefficients[index] + "}";
 			}
-			formula += "</html>";
-			empirical.setText(formula);
-			steps.add(new JLabel(formula));
-			steps.add(new JLabel(massString.substring(0, massString.length() - 2) + "= " + eMass));
-			mass1.setText("Molar Mass = " + eMass + " g/mol");
+			JLabel f = Function.latex(formula);
+			empirical.setIcon(f.getIcon());
+			steps.add(f);
+			steps.add(Function.latex("\\text{Calculate molar mass by multiplying each element's mass by its coefficient:}"));
+			steps.add(Function.latex(massString.substring(0, massString.length() - 3) + " = " + eMass + "\\frac{g}{mol}"));
+			mass1.setIcon(Function.latex("\\text{Molar Mass }= " + eMass + " \\frac{g}{mol}").getIcon());
 			toSave[0] = eMass;
 			
 			if(!mass.getText().trim().equals(""))
@@ -341,30 +350,30 @@ public class Empirical extends Function
 					if(mole == 1)
 					{
 						mMass = Double.parseDouble(mass.getText());
-						steps.add(new JLabel("Molar mass = " + mMass + " g/mol"));
+						steps.add(Function.latex("\\text{Molar mass }= " + mMass + " \\frac{g}{mol}"));
 					}
 					else
 					{
 						double massForMoles = Double.parseDouble(mass.getText());
-						String step = "Molar mass = " + massForMoles + " g / " + mole + " mol = ";
+						String step = "\\text{Molar mass }= \\frac{" + massForMoles + " g}{" + mole + " mol}= ";
 						mMass = massForMoles / mole;
-						steps.add(new JLabel(step + mMass + " g/mol"));
+						steps.add(new JLabel(step + mMass + "\\frac{g}{mol}"));
 					}
 					int factor = (int)Math.round(mMass / eMass);
-					steps.add(new JLabel("Find ratio of masses and round to an integer: " + mMass + " / " + eMass + " \u2248 " 
-							+ factor));
-					steps.add(new JLabel("Multiply all of the coefficients by " + factor + ":"));
-					formula = "<html>Molecular formula: ";
+					steps.add(Function.latex("\\text{Find ratio of masses and round to an integer: }\\frac{" + mMass + "\\frac{g}{mol}}{" + eMass + 
+							"\\frac{g}{mol}}\u2248 " + factor));
+					steps.add(Function.latex("\\text{Multiply all of the coefficients by }" + factor + ":"));
+					formula = "\\text{Molecular formula: }";
 					for(int index = 0; index < coefficients.length; index++)
 					{
 						coefficients[index] *= factor;
-						formula += elements[index].getSymbol();
-						if(coefficients[index] != 1) formula += "<sub>" + coefficients[index] + "</sub>";
+						formula += "\\text{" + elements[index].getSymbol() + "}";
+						if(coefficients[index] != 1) formula += "_{" + coefficients[index] + "}";
 					}
-					formula += "</html>";
-					molecular.setText(formula);
-					steps.add(new JLabel(formula));
-					mass2.setText("Molar Mass = " + mMass + " g/mol");
+					f = Function.latex(formula);
+					empirical.setIcon(f.getIcon());
+					steps.add(f);
+					mass2.setIcon(Function.latex("\\text{Molar Mass }= " + mMass + " \\frac{g}{mol}").getIcon());
 					toSave[1] = mMass;
 				}
 				catch(Throwable e)
