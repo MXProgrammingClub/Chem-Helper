@@ -1,13 +1,17 @@
 /*
- * Represents a chemical equation. 
- * 
- * Authors: Luke Giacalone, Julia McClellan, Hyun Choi
- * Version: 3/27/2016
+ * File: Equation.java
+ * Package: Equation
+ * Version: 07/31/2016
+ * Author: Luke Giacalone, Julia McClellan, Hyun Choi
+ * --------------------------------------------------
+ * Represents a chemical equation.
  */
 
 package Equation;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import ChemHelper.InvalidInputException;
 import Functions.Function;
@@ -21,18 +25,21 @@ public class Equation
 	
 	private static final String alphabet = "abcdefghijklmnopqrstuvwxyz";
 	private ArrayList<Compound> left, right;
+	private Set<Element> elements;
 	private boolean equilibrium;
 	
 	public Equation()
 	{
 		left = new ArrayList<Compound>();
 		right = new ArrayList<Compound>();
+		populateElements();
 	}
 	
 	public Equation(ArrayList<Compound> left, ArrayList<Compound> right)
 	{
 		this.left = left;
 		this.right = right;
+		populateElements();
 	}
 	
 	public Equation(ArrayList<Compound> left, ArrayList<Compound> right, boolean equilibrium)
@@ -40,6 +47,20 @@ public class Equation
 		this.left = left;
 		this.right = right;
 		this.equilibrium = equilibrium;
+		populateElements();
+	}
+	
+	/**
+	 * Creates a set of Element objects that contains all the types of Elements this Equation has.
+	 */
+	private void populateElements() {
+		elements = new HashSet<Element>();
+		for(Compound c: left) {
+			elements.addAll(c.getElements());
+		}
+		for(Compound c: right) {
+			elements.addAll(c.getElements());
+		}
 	}
 	
 	public boolean atEquilibrium()
@@ -52,14 +73,24 @@ public class Equation
 		this.equilibrium = equilibrium;
 	}
 	
+	/**
+	 * Returns the set of Elements that this equation contains.
+	 * @return Set<Element> of Elements that this equation contains.
+	 */
+	public Set<Element> getElements() {
+		return elements;
+	}
+	
 	public void addToLeft(Compound c)
 	{
 		left.add(c);
+		populateElements();
 	}
 	
 	public void addToRight(Compound c)
 	{
 		right.add(c);
+		populateElements();
 	}
 	
 	public Equation reverse()
@@ -239,27 +270,19 @@ public class Equation
 		{
 			right.add(new Compound(new Ions[]{copyIons[index]}, "aq", ions[index].getNum()));
 		}
+		populateElements();
 	}
 	
+	/**
+	 * Takes the equation and balances it by using a matrix.
+	 * @return Whether the equation was balanced correctly.
+	 * @throws InvalidInputException If there was a problem in the balancing.
+	 */
 	public int balance() throws InvalidInputException {
 		if(isBalanced()) return 1;
-		String[] equations = createEquations();
-		//for(String s: equations) System.out.println(s);
-		equations = subForA(equations);
-		//for(String s: equations) System.out.println(s);
-		Matrix m;
-		try{m = new Matrix(equations);}
-		catch(InvalidInputException e){throw e;}
-		//System.out.println(m);
-		double[] solved = m.solve();
-		for(double d: solved)
-			if(("" + d).equals("NaN")) return 2;
-		//for(double n: solved) System.out.println(n);
-		double[] doubleCoeff = new double[solved.length + 1];
-		doubleCoeff[0] = 1; //setting a = 1
-		for(int i = 1; i < doubleCoeff.length; i++) //transferring the rest of the variables over
-			doubleCoeff[i] = solved[i - 1];
-		int[] coefficients = integerize(doubleCoeff);
+		Matrix matrix = new Matrix(this);
+		matrix.solve();
+		int[] coefficients = matrix.getCoefficients();
 		
 		int index = 0;
 		for(Compound c: left) {
@@ -271,37 +294,6 @@ public class Equation
 			index++;
 		}
 		
-		if(isBalanced()) return 1;
-		else return 0;
-	}
-	
-	//Balances the equation if the right side is one compound and the left side compounds all contain exactly one element.
-	public int balance2() {
-		//Checks if the conditions are met first before using the method.
-		if(right.size() != 1) return 0;
-		for(Compound c: left) if(c.getIons().length != 1) return 0;
-		Compound rightCompound = right.get(0);
-		for(int index = 0; index < left.size(); index ++)
-		{
-			Ions leftIon = left.get(index).getIons()[0], rightIon = null;
-			for(Ions ion: rightCompound.getIons())
-			{
-				if(ion.equals(leftIon))
-				{
-					rightIon = ion;
-					break;
-				}
-			}
-			if(rightIon == null) return 0;
-			int num1 = leftIon.getNum() * left.get(index).getNum(), num2 = rightCompound.getNum() * rightIon.getNum(), gcd = Function.gcd(num1, num2);
-			num1 = num1 / gcd;
-			num2 = num2 / gcd;
-			rightCompound.setNum(rightCompound.getNum() * num1);
-			for(int index2 = 0; index2 <= index; index2++)
-			{
-				left.get(index2).setNum(num2 * left.get(index2).getNum() * (index2 != index ? num1 : 1));
-			}
-		}
 		if(isBalanced()) return 1;
 		else return 0;
 	}

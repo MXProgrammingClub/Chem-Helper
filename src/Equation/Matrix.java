@@ -10,248 +10,233 @@
 package Equation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import ChemHelper.InvalidInputException;
+import Elements.Element;
+import Functions.Function;
 
 public class Matrix {
 	
 	private int[][] matrix;
-	private int numVar; //number of variables
-
-	//precondition: the equations are in the form 1a + 2b = c where c is a constant
-	//				there are the same number of equations as there are unknowns
-	public Matrix(String[] equations) throws InvalidInputException {
-		numVar = equations[0].split("=")[0].split("\\+").length;
-		int index1 = 0;
-		while(numVar < equations.length) { //to check whether 2 equations are the same and then remove the unneeded one
-			boolean broken = false;
-			check:
-			for(int i = 0; i < equations.length; i++) {
-				for(int j = 0; j < equations.length; j++) {
-					if(i != j && equations[i].equals(equations[j])) {
-						String[] temp = new String[equations.length - 1]; 
-						int index = 0;
-						for(int k = 0; k < equations.length; k++)
-							if(k != i) {
-								temp[index] = equations[k];
-								index++;
-							}
-						equations = temp;
-						if(i != equations.length - 1) break check;
-					}
-					if(i == j && i == equations.length - 1) {
-						broken = true;
-						break;
-					}
-				}
-				if(broken) break;
-			}
-			if(broken) break;
+	private int rows;
+	private int cols;
+	//private int numVar; //number of variables
+	
+	public Matrix(Equation equation) {
+		Element[] elements = equation.getElements().toArray(new Element[0]);
+		rows = elements.length + 1;
+		cols = equation.getLeft().size() + equation.getRight().size() + 1;
+		matrix = new int[rows][cols];
+		ArrayList<Compound> lhs = equation.getLeft();
+		ArrayList<Compound> rhs = equation.getRight();
+		for (int i = 0; i < elements.length; i++) {
+			int j = 0;
+			for (int k = 0; k < lhs.size(); j++, k++)
+				matrix[i][j] = lhs.get(k).numberOf(elements[i]);
+			for (int k = 0; k < rhs.size(); j++, k++)
+				matrix[i][j] = -rhs.get(k).numberOf(elements[i]);
 		}
-		
-		//matrix = new int[numVar][numVar + 1];
-		matrix = new int[equations.length][numVar + 1]; //will be cut to size if needed
-		
-		for(String str: equations) {
-			String half1 = str.substring(0, str.indexOf("="));
-			String half2 = str.substring(str.indexOf("=") + 1);
-			int index2 = 0;
-			
-			//for the part before the equal sign
-			for(String part: half1.split("\\+")) {
-				String temp = part.substring(0, part.length() - 1);
-				while(Character.isLetter(temp.charAt(temp.length() - 1)))
-					temp = temp.substring(0, temp.length() - 1);
-
-				matrix[index1][index2] = Integer.parseInt(temp);
-				index2++;
-			}
-			
-			//for the part after the equal sign
-			matrix[index1][index2] = Integer.parseInt(half2);
-
-			index1++;
-		}
-		
-		if(numVar < matrix.length) {
-			ArrayList<Integer>[] options = new ArrayList[numVar];
-			for(int i = 0; i < options.length; i++)
-				options[i] = new ArrayList<Integer>();
-			for(int var = 0; var < matrix[0].length - 1; var++) //adds the indexes of the equations with numbers for each var
-				for(int eq = 0; eq < matrix.length; eq++)
-					if(matrix[eq][var] != 0) options[var].add(eq);
-			
-			int[] indexes = new int[numVar];
-			boolean chosen = chooseEquations(0, options, indexes);
-			if(!chosen) throw new InvalidInputException(InvalidInputException.NOT_BALANCED);
-			int[][] temp = new int[numVar][numVar + 1];
-			for(int i = 0; i < indexes.length; i++)
-				temp[i] = matrix[indexes[i]];
-			matrix = temp;
-		}
-		
 	}
 	
-	private boolean chooseEquations(int number, ArrayList<Integer>[] list, int[] chosen) {
-		if(number == chosen.length) return true;
-		for(int i = 0; i < list[number].size(); i++) {
-			chosen[number] = list[number].get(i);
-			boolean complete = chooseEquations(number + 1, list, chosen);
-			if(complete) return true;
+	/**
+	 * Returns the matrix.
+	 * @return The int[][] that represents this matrix.
+	 */
+	public int[][] getMatrix() {
+		return matrix;
+	}
+	
+	/**
+	 * Solves this matrix as a set of linear equations.
+	 * @throws InvalidInputException If all coefficients are zero.
+	 */
+	public void solve() throws InvalidInputException {
+		gaussianMethod();
+		
+		// Find row with more than one non-zero coefficient
+		int i;
+		for (i = 0; i < rows - 1; i++) {
+			if (countNonzeroCoeffs(i) > 1) break;
 		}
-		return false;
+		if (i == rows - 1) throw new InvalidInputException(InvalidInputException.NOT_BALANCED); // Unique solution with all coefficients zero
+		
+		// Add an inhomogeneous equation
+		matrix[rows - 1][i] = 1;
+		matrix[rows - 1][cols - 1] = 1;
+		
+		gaussianMethod();
 	}
+	
+	/**
+	 * Changes this matrix to reduced row echelon form (RREF), except that each leading coefficient is not necessarily 1. 
+	 * Each row is simplified.
+	 */
+	private void gaussianMethod() {
+		// Simplify all rows
+		for(int[] x: matrix) x = simplifyRow(x);;
 
-	//switches two rows
-	//precondition: the two variables, row1 and row2, are valid row indices
-	public void switchRows(int row1, int row2) {
-		int[] temp = matrix[row1];
-		matrix[row1] = matrix[row2];
-		matrix[row2] = temp;
-	}
+		// Compute row echelon form (REF)
+		int numPivots = 0;
+		for(int i = 0; i < cols; i++) {
+			// Find pivot
+			int pivotRow = numPivots;
+			while(pivotRow < rows && matrix[pivotRow][i] == 0) pivotRow++;
+			if(pivotRow == rows) continue;
+			int pivot = matrix[pivotRow][i];
+			swapRows(numPivots, pivotRow);
+			numPivots++;
 
-	//multiplies a row by a given constant
-	public void multiply(int row, int factor) {
-		for(int i = 0; i < matrix[row].length; i++)
-			matrix[row][i] *= factor;
-	}
-
-	//adds row2 to row1
-	public void add(int row1, int row2) {
-		for(int i = 0; i < matrix[row1].length; i++)
-			matrix[row1][i] = matrix[row1][i] + matrix[row2][i];
-	}
-
-	//returns whether a matrix is an identity matrix (1s on top-left to bottom-right diagonal and 0s everywhere else)
-	// [1, 0, 0, | 3]
-	// [0, 1, 0, | 4]
-	// [0, 0, 1, | 1]
-	public boolean isIdentity() {
-		for(int row = 0; row < matrix.length; row++) {
-			for(int i = 0; i < matrix[row].length - 1; i++) {
-				//System.out.println(row + ", " + i + ", " + matrix[row][i]);
-				if(!(row == i && matrix[row][i] == 1) && !(row != i && matrix[row][i] == 0)) return false;
-			}
-		}
-		return true;
-	}
-
-	// this solve stuff I found online and adapted to our needs
-	public double[] solve() {
-		double[][] constants = new double[numVar][1];
-		double[][] doubleMatrix = new double[matrix.length][matrix[0].length];
-		for (int i = 0; i < matrix.length; i++) {
-			constants[i][0] = matrix[i][matrix[0].length - 1];
-			for (int j = 0; j < matrix[0].length; j++)
-				doubleMatrix[i][j] = matrix[i][j];
-		}
-
-		double inverted_mat[][] = invert(doubleMatrix);
-
-		// Multiplication of mat inverse and constants
-		double[] result = new double[numVar];
-		for (int i = 0; i < numVar; i++) {
-			for (int j = 0; j < 1; j++) {
-				for (int k = 0; k < numVar; k++) {
-					result[i] = result[i] + inverted_mat[i][k] * constants[k][j];
-				}
+			// Eliminate below
+			for(int j = numPivots; j < rows; j++) {
+				int g = Function.gcd(pivot, matrix[j][i]);
+				matrix[j] = simplifyRow(addRows(multiplyRow(matrix[j], pivot / g), multiplyRow(matrix[i], -matrix[j][i] / g)));
 			}
 		}
 
+		// Compute reduced row echelon form (RREF), but the leading coefficient need not be 1
+		for(int i = rows - 1; i >= 0; i--) {
+			// Find pivot
+			int pivotCol = 0;
+			while(pivotCol < cols && matrix[i][pivotCol] == 0) pivotCol++;
+			if (pivotCol == cols) continue;
+			int pivot = matrix[i][pivotCol];
+
+			// Eliminate above
+			for (int j = i - 1; j >= 0; j--) {
+				int g = Function.gcd(pivot, matrix[j][pivotCol]);
+				matrix[j] = simplifyRow(addRows(multiplyRow(matrix[j], pivot / g), multiplyRow(matrix[i], -matrix[j][pivotCol] / g)));
+			}
+		}
+	}
+	
+	/**
+	 * Returns a new row where the leading non-zero number (if any) is positive, and the GCD of the row is 0 or 1. 
+	 * @param x The row to be simplified.
+	 * @return The simplified row.
+	 */
+	private int[] simplifyRow(int[] x) {
+		x = x.clone();
+		int sign = 0;
+		for (int i = 0; i < x.length; i++) {
+			if (x[i] > 0) {
+				sign = 1;
+				break;
+			} 
+			else if (x[i] < 0) {
+				sign = -1;
+				break;
+			}
+		}
+		int[] y = x.clone();
+		if (sign == 0) return y;
+		int g = gcdRow(x) * sign;
+		for (int i = 0; i < y.length; i++) y[i] /= g;
+		return y;
+	}
+	
+	/**
+	 * Finds the GCD of the row.
+	 * @param x The row to be used.
+	 * @return The GCD of the row.
+	 */
+	private int gcdRow(int[] x) {
+		int result = 0;
+		for(int i : x) result = Function.gcd(i, result);
 		return result;
 	}
-
-	public static double[][] invert(double a[][]) {
-		int n = a.length;
-		double x[][] = new double[n][n];
-		double b[][] = new double[n][n];
-		int index[] = new int[n];
-		for (int i = 0; i < n; ++i)
-			b[i][i] = 1;
-
-		// Transform the matrix into an upper triangle
-		gaussian(a, index);
-		// Update the matrix b[i][j] with the ratios stored
-		for (int i = 0; i < n - 1; ++i)
-			for (int j = i + 1; j < n; ++j)
-				for (int k = 0; k < n; ++k)
-					b[index[j]][k] -= a[index[j]][i] * b[index[i]][k];
-
-		// Perform backward substitutions
-		for (int i = 0; i < n; ++i) {
-			x[n - 1][i] = b[index[n - 1]][i] / a[index[n - 1]][n - 1];
-			for (int j = n - 2; j >= 0; --j) {
-				x[j][i] = b[index[j]][i];
-				for (int k = j + 1; k < n; ++k) {
-					x[j][i] -= a[index[j]][k] * x[k][i];
-				}
-				x[j][i] /= a[index[j]][j];
-			}
+	
+	/**
+	 * Swaps the two rows at the given indexes;
+	 * @param i The first row.
+	 * @param j The second row.
+	 */
+	private void swapRows(int i, int j) {
+		if (i < 0 || i >= rows || j < 0 || j >= rows) throw new IndexOutOfBoundsException();
+		int[] temp = matrix[i].clone();
+		matrix[i] = matrix[j];
+		matrix[j] = temp;
+	}
+	
+	/**
+	 * Adds two rows together and returns their sum.
+	 * @precondition The two rows are the same length.
+	 * @param x The first row.
+	 * @param y The second row.
+	 * @return The sum of the rows.
+	 */
+	private int[] addRows(int[] x, int[] y) {
+		x = x.clone();
+		y = y.clone();
+		int[] z = new int[x.length];
+		for(int i = 0; i < x.length; i++) {
+			z[i] = x[i] + y[i];
+		}
+		return z;
+	}
+	
+	/**
+	 * Multiplies the given row by the given scaler.
+	 * @param x The row.
+	 * @param c The scaler.
+	 * @return The modified row.
+	 */
+	private int[] multiplyRow(int[] x, int c) {
+		x = x.clone();
+		for(int i = 0; i < x.length; i++) {
+			x[i] = x[i] * c;
 		}
 		return x;
 	}
-	// Method to carry out the partial-pivoting Gaussian
-	// elimination. Here index[] stores pivoting order.
-
-	public static void gaussian(double a[][], int index[]) {
-		int n = index.length;
-		double c[] = new double[n];
-		// Initialize the index
-		for (int i = 0; i < n; ++i)
-			index[i] = i;
-
-		// Find the rescaling factors, one from each row
-		for (int i = 0; i < n; ++i) {
-			double c1 = 0;
-			for (int j = 0; j < n; ++j) {
-				double c0 = Math.abs(a[i][j]);
-				if (c0 > c1)
-					c1 = c0;
-			}
-			c[i] = c1;
+	
+	/**
+	 * Counts the number of nonzero coefficients in the given row.
+	 * @param row The row to check.
+	 * @return The number of nonzero coefficients.
+	 */
+	private int countNonzeroCoeffs(int row) {
+		int count = 0;
+		for(int i = 0; i < cols; i++) {
+			if(matrix[row][i] != 0) count++;
 		}
-
-		// Search the pivoting element from each column
-		int k = 0;
-		for (int j = 0; j < n - 1; ++j) {
-			double pi1 = 0;
-			for (int i = j; i < n; ++i) {
-				double pi0 = Math.abs(a[index[i]][j]);
-				pi0 /= c[index[i]];
-				if (pi0 > pi1) {
-					pi1 = pi0;
-					k = i;
-				}
-			}
-
-			// Interchange rows according to the pivoting order
-			int itmp = index[j];
-			index[j] = index[k];
-			index[k] = itmp;
-			for (int i = j + 1; i < n; ++i) {
-				// System.out.println(a[index[i]][j] + ", " + a[index[j]][j]);
-				double pj = a[index[i]][j] / a[index[j]][j];
-				// Record pivoting ratios below the diagonal
-				a[index[i]][j] = pj;
-
-				// Modify other elements accordingly
-				for (int l = j + 1; l < n; ++l)
-					a[index[i]][l] -= pj * a[index[j]][l];
-			}
+		return count;
+	}
+	
+	/**
+	 * Gets the coefficients of the elements from the matrix.
+	 * @return The coefficients of the matrix/equation.
+	 * @throws InvalidInputException If there is a problem balancing.
+	 */
+	public int[] getCoefficients() throws InvalidInputException {
+		if (cols - 1 > rows || matrix[cols - 2][cols - 2] == 0)
+			/*throw "Multiple independent solutions";*/throw new InvalidInputException(InvalidInputException.NOT_BALANCED);
+		
+		int lcm = 1;
+		for(int i = 0; i < cols - 1; i++)
+			lcm = lcm / Function.gcd(lcm, matrix[i][i]) * matrix[i][i];
+		
+		int[] coefs = new int[cols - 1];
+		boolean allzero = true;
+		for(int i = 0; i < cols - 1; i++) {
+			int coef = lcm / matrix[i][i] * matrix[i][cols - 1];
+			coefs[i] = coef;
+			allzero &= coef == 0;
 		}
+		if(allzero)
+			throw new InvalidInputException(InvalidInputException.NOT_BALANCED);//throw "Assertion error: All-zero solution";
+		return coefs;
 	}
 
-	//returns the string representation of a matrix
+	/**
+	 * Creates and returns the String representation of the matrix.
+	 * @return The String representation of the matrix.
+	 */
+	@Override
 	public String toString() {
 		String str = "";
 		for(int[] line: matrix) {
 			if(str.length() > 0) str += "\n";
-			str += "[";
-			for(int i: line) {
-				if(str.charAt(str.length() - 1) != '[') str += ", ";
-				str += i;
-			}
-			str += "]";
+			str += Arrays.toString(line);
 		}
 		return str;
 	}

@@ -1,14 +1,17 @@
 /*
  * File: Compound.java
- * Name: Luke Giacalone --Julia did a very minimal portion of this class; one might call it insignificant
- * Date: 11/11/1111
- * -----------------------
+ * Package: Equation
+ * Version: 07/31/2016
+ * Author: Julia McClellan Luke Giacalone --Julia did a very minimal portion of this class; one might call it insignificant
+ * --------------------------------------
  * This represents something which Julia has not told me. Clearly I did in fact write this entire class.
+ * (It represents a Compound)
  */
 
 package Equation;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
@@ -21,6 +24,7 @@ public class Compound
 	private Ions[] ions;
 	private String state;
 	private int num;
+	private Set<Element> elements;
 
 	private static final Set<String> VALID_STATES = createSet();
 
@@ -28,6 +32,7 @@ public class Compound
 		this.ions = ions;
 		this.state = " ";
 		this.num = 1;
+		populateElements();
 	}
 
 	public Compound(Ions[] ions, String state)
@@ -36,6 +41,7 @@ public class Compound
 		if(VALID_STATES.contains(state)) this.state = state;
 		else this.state = " ";
 		this.num = 1;
+		populateElements();
 	}
 
 	public Compound(Ions[] ions, int num)
@@ -43,6 +49,7 @@ public class Compound
 		this.ions = ions;
 		this.state = " ";
 		this.num = num;
+		populateElements();
 	}
 
 	public Compound(Ions[] ions, String state, int num)
@@ -60,6 +67,16 @@ public class Compound
 		if(!valid) this.state = " ";
 		else this.state = state;
 		this.num = num;
+		populateElements();
+	}
+	
+	private void populateElements() {
+		elements = new HashSet<Element>();
+		for(Ions i: ions) {
+			for(Monatomic m : i.getElements()) {
+				elements.add(m.getElement());
+			}
+		}
 	}
 
 	public String getState()
@@ -98,6 +115,10 @@ public class Compound
 	public Ions[] getIons()
 	{
 		return ions;
+	}
+	
+	public Set<Element> getElements() {
+		return elements;
 	}
 
 	public String toString()

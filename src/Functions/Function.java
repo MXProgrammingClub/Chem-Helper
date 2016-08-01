@@ -1,10 +1,12 @@
 /*
+ * File: Function.java
+ * Package: Function
+ * Version: 4/24/2016
+ * Authors: Ted Pyne, Hyun Choi, Julia McClellan
+ * -----------------------------------------------
  * An abstract class representing a function used in ChemHelper. Contains static methods for latex rendering equations, calculating significant figures, 
  * and rounds numbers to a given number of significant figures. Provides default operations for equation and number saving, to be implemented by child
  * classes that need them.
- * 
- * Authors: Ted Pyne, Hyun Choi, Julia McClellan
- * Version: 4/24/2016
  */
 
 package Functions;
@@ -151,17 +153,22 @@ public abstract class Function {
 		return label;
 	}
 	
-	// Find gcd of two ints
-	public static int gcd (int num1, int num2)
-	   {
-	      while (num1 != num2)
-	         if (num1 > num2)
-	            num1 = num1 - num2;
-	         else
-	            num2 = num2 - num1;
-
-	      return num1;
-	   }
+	/**
+	 * Finds the GCD of two given numbers.
+	 * @param num1 The first number.
+	 * @param num2 The second number.
+	 * @return The GCD of the two numbers.
+	 */
+	public static int gcd (int num1, int num2) {
+		num1 = Math.abs(num1);
+		num2 = Math.abs(num2);
+		while (num2 != 0) {
+			int temp = num1 % num2;
+			num1 = num2;
+			num2 = temp;
+		}
+		return num1;
+	}
 	
 	// Find lcm of two ints
 	public static int lcm(int num1, int num2){

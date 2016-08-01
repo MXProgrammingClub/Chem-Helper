@@ -1,9 +1,11 @@
 /*
+ * File: EquationReader.java
+ * Package: Function
+ * Version: 07/31/2016
+ * Author: Julia McClellan, Hyun Choi, Luke Giacalone
+ * --------------------------------------------------
  * Parses and balances an equation. Displays equations with latex.
  * equation() returns true- saves latest balanced equation and can display a saved one.
- * 
- * Author: Julia McClellan, Hyun Choi, Luke Giacalone
- * Version: 3/19/2016
  */
 
 package Functions;
@@ -157,7 +159,7 @@ public class EquationReader extends Function
 				if(!redox)
 				{
 					isBalanced = equation.balance();
-					if(isBalanced == 2) isBalanced = equation.balance2();
+					//if(isBalanced == 2) isBalanced = equation.balance2();
 					if(isBalanced == 0) balanced.setText("This equation could not be balanced programmatically.");
 				}
 				else
