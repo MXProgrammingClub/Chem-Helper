@@ -1,10 +1,3 @@
-/*
- * Performs various calculations for functions at equilibrium.
- * 
- * Author: Julia McClellan
- * Version: 3/28/2016
- */
-
 package Functions;
 
 import java.awt.Color;
@@ -39,6 +32,14 @@ import Equation.Equation;
 import HelperClasses.EnterField;
 import HelperClasses.Units;
 
+/**
+ * File: Equilibrium.java
+ * Package: Functions
+ * Version: 08/07/2016
+ * Author: Julia McClellan
+ * --------------------------------------------------
+ * Performs various calculations for functions at equilibrium.
+ */
 public class Equilibrium extends Function
 {
 	public static TreeMap<String, Double> KSP = createMap();
@@ -55,6 +56,9 @@ public class Equilibrium extends Function
 	private ArrayList<Integer> powers;
 	private Compound[] reactants;
 	
+	/**
+	 * Constructs the function.
+	 */
 	public Equilibrium()
 	{
 		super("Equilibrium");
@@ -109,10 +113,11 @@ public class Equilibrium extends Function
 							results.setVisible(true);
 							return;
 						}
-						else if(values[index] == Units.UNKNOWN_VALUE) steps.add(new JLabel("<html> " + name + " = ? M</html>"));
+						else if(values[index] == Units.UNKNOWN_VALUE) steps.add(Function.latex("[" + Function.latex(relevant.get(index), false) + 
+								"] =\\text{ ? M}"));
 						else
 						{
-							steps.add(new JLabel("<html> " + name + " = " + values[index] + " M</html>"));
+							steps.add(Function.latex("[" + Function.latex(relevant.get(index), false) + "] = " + values[index] + "\\text{ M}"));
 							sigFigs = Math.min(sigFigs, compounds[index].getSigFigs());
 						}
 					}
@@ -123,10 +128,10 @@ public class Equilibrium extends Function
 						results.setVisible(true);
 						return;
 					}
-					else if(values[compounds.length] == Units.UNKNOWN_VALUE) steps.add(new JLabel("K = ?"));
+					else if(values[compounds.length] == Units.UNKNOWN_VALUE) steps.add(Function.latex("\\text{K }= ?"));
 					else
 					{
-						steps.add(new JLabel("K = " + values[compounds.length]));
+						steps.add(Function.latex("\\text{K} = " + values[compounds.length]));
 						sigFigs = Math.min(sigFigs, k.getSigFigs());
 					}
 					
@@ -144,10 +149,13 @@ public class Equilibrium extends Function
 							}
 							else if(extra[index] != Units.UNKNOWN_VALUE)
 							{
-								steps.add(new JLabel(precipitate[index].getName() + " = " + extra[index] + (index > 0 ? "L" : "")));
+								steps.add(Function.latex((index == 0 ? precipitate[index].getName() : ((index % 2 == 0 ? "[" : "\\text{Volume }") + 
+										Function.latex(reactants[(index - 1) / 2], false) + (index % 2 == 0 ? "]" : ""))) + " = " + extra[index] + 
+										(index > 0 ? "\\text{ " + (index % 2 == 0 ? "M" : "L") + "}" : "")));
 								sigFigs = Math.min(sigFigs, precipitate[index].getSigFigs());
 							}
-							else steps.add(new JLabel(precipitate[index].getName() + " = ?"));
+							else steps.add(Function.latex((index == 0 ? precipitate[index].getName() : ((index % 2 == 0 ? "[" : "\\text{Volume }") + 
+									Function.latex(reactants[(index - 1) / 2], false) + (index % 2 == 0 ? "]" : ""))) + " = ?"));
 						}
 					}
 					if(solubility != null)
@@ -161,10 +169,10 @@ public class Equilibrium extends Function
 						}
 						else if(extra[5] != Units.UNKNOWN_VALUE)
 						{
-							steps.add(new JLabel("Solubility = " + extra[5] + " mol / L"));
+							steps.add(Function.latex("\\text{Solubility}= " + extra[5] + " \\frac{mol}{L}"));
 							sigFigs = Math.min(sigFigs, solubility.getSigFigs());
 						}
-						else steps.add(new JLabel("Solubility = ?"));
+						else steps.add(Function.latex("\\text{Solubility = ?}"));
 					}
 					
 					steps.add(Box.createVerticalStrut(5));
@@ -183,7 +191,7 @@ public class Equilibrium extends Function
 							}
 							LinkedList<String> stepList = new LinkedList<String>();
 							double[] concentrations = calculateConcentrations(extra, relevant, reactants, stepList);
-							for(String step: stepList) steps.add(new JLabel(step));
+							for(String step: stepList) steps.add(Function.latex(step));
 							for(int index = 0; index < concentrations.length; index++)
 							{
 								values[index] = compounds[index].getBlankAmount(concentrations[index]);
@@ -205,12 +213,12 @@ public class Equilibrium extends Function
 							//Finds Qsp and compares it to Ksp to find if there is a precipitate
 							LinkedList<String> stepList = new LinkedList<String>();
 							q = calculateK(values, stepList, powers, false);
-							for(String step: stepList) steps.add(new JLabel(step));
+							for(String step: stepList) steps.add(Function.latex(step));
 							results.add(new JLabel("Q = " + Function.withSigFigs(q, sigFigs)));
 						}
 						else q = extra[0];
-						steps.add(new JLabel(q + (q > values[values.length - 1] ? " > " : " < ") + values[values.length - 1]));
-						steps.add(new JLabel("Q" + (q > values[values.length - 1] ? " > " : " < ") + "K"));
+						steps.add(Function.latex(q + (q > values[values.length - 1] ? " > " : " < ") + values[values.length - 1]));
+						steps.add(Function.latex("\\text{Q}" + (q > values[values.length - 1] ? " > " : " < ") + "\\text{K}"));
 						if(q > values[values.length - 1]) results.add(new JLabel("Yes, there is a precipitate."));
 						else results.add(new JLabel("No, there is not a precipitate."));
 					}
@@ -231,14 +239,14 @@ public class Equilibrium extends Function
 							labels[2][0] = new JLabel("Change");
 							labels[3][0] = new JLabel("Equilibrium");
 							
-							String equation = "<html>" + values[values.length - 1] + " = ";
+							String equation = values[values.length - 1] + " = ";
 							String[] expressions = new String[values.length - 1];
 							int col = 1;
 							for(int index = 0; index < relevant.size(); index++)
 							{
 								if(values[index] == Units.UNKNOWN_VALUE)
 								{
-									results.add(new JLabel("Enter initial concentration for " + relevant.get(index).withoutNumState()));
+									results.add(new JLabel("<html>Enter initial concentration for " + relevant.get(index).withoutNumState()));
 									results.setVisible(true);
 									return;
 								}
@@ -247,8 +255,8 @@ public class Equilibrium extends Function
 								labels[2][col] = new JLabel((powers.get(index) == 1 ? "" : powers.get(index)) + "x");
 								labels[3][col] = new JLabel((values[index] == 0 ? "" : values[index] + " + ") + (powers.get(index) == 1 ? "" : 
 									(powers.get(index) == -1 ? "-" : powers.get(index))) + "x");
-								expressions[index] = labels[0][col].getText() + " = " + labels[3][col].getText();
-								equation += "(" + labels[3][col].getText() + ")<sup>" + powers.get(index) + "</sup> * ";
+								expressions[index] = Function.latex(relevant.get(index), false) + " = " + labels[3][col].getText();
+								equation += "(" + labels[3][col].getText() + ")^{" + powers.get(index) + "} * ";
 								col++;
 							}
 							JPanel table = new JPanel(new GridLayout(4, values.length));
@@ -261,7 +269,7 @@ public class Equilibrium extends Function
 								}
 							}
 							steps.add(table);
-							steps.add(new JLabel(equation.substring(0, equation.length() - 3) + "</html>"));
+							steps.add(Function.latex(equation.substring(0, equation.length() - 3)));
 							
 							//If powers are too high, solves approximately
 							int sum = 0, index = 0;
@@ -278,7 +286,7 @@ public class Equilibrium extends Function
 								{
 									LinkedList<String> stepList = new LinkedList<String>();
 									double[] concentrations = solveApprox(values, product, sum, index, powers, stepList, expressions);
-									for(String step: stepList) steps.add(new JLabel(step));
+									for(String step: stepList) steps.add(Function.latex(step));
 									for(int i = 0; i < concentrations.length; i++)
 									{
 										double val = compounds[i].getBlankAmount(concentrations[i]);
@@ -295,7 +303,7 @@ public class Equilibrium extends Function
 							{
 								LinkedList<String> stepList = new LinkedList<String>();
 								double[] concentrations = solveICE(values, powers, stepList, expressions);
-								for(String step: stepList) steps.add(new JLabel(step));
+								for(String step: stepList) steps.add(Function.latex(step));
 								for(int i = 0; i < concentrations.length; i++)
 								{
 									double val = compounds[i].getBlankAmount(concentrations[i]);
@@ -314,7 +322,7 @@ public class Equilibrium extends Function
 						{
 							LinkedList<String> stepList = new LinkedList<String>();
 							values = calculateFromSolubility(extra[5], stepList, relevant, powers);
-							for(String step: stepList) steps.add(new JLabel(step));
+							for(String step: stepList) steps.add(Function.latex(step));
 							
 							for(int index = 0; index < values.length - 1; index++)
 							{
@@ -354,7 +362,7 @@ public class Equilibrium extends Function
 								LinkedList<String> stepList = new LinkedList<String>();
 								double result = calculateK(values, stepList, powers, true);
 								
-								for(String step: stepList) steps.add(new JLabel(step));
+								for(String step: stepList) steps.add(Function.latex(step));
 								saved.add(result);
 								results.add(new JLabel("K = " + Function.withSigFigs(result, sigFigs)));
 							}
@@ -377,7 +385,7 @@ public class Equilibrium extends Function
 										results.setVisible(false);
 										return;
 									}
-									for(String step: stepList) steps.add(new JLabel(step));
+									for(String step: stepList) steps.add(Function.latex(step));
 									
 									for(Integer index: changed)
 									{
@@ -390,10 +398,10 @@ public class Equilibrium extends Function
 									if(solubility != null)
 									{
 										double result = solubility.getBlankAmount(x[0]);
-										String unit = solubility.getUnitName() + " / " + solubility.getUnit2Name();
-										steps.add(new JLabel("Solubility = x = " + result + " " + unit));
+										String unit1 = solubility.getUnitName(), unit2 = solubility.getUnit2Name();
+										steps.add(Function.latex("\\text{Solubility} = x = " + result + " \\frac{" + unit1 + "}{" + unit2 + "}"));
 										saved.add(result);
-										results.add(new JLabel("Solubility = " + Function.withSigFigs(result, sigFigs) + " " + unit));
+										results.add(new JLabel("Solubility = " + Function.withSigFigs(result, sigFigs) + " " + unit1 + " / " + unit2));
 										extra[5] = result; //So it won't accidentally be recalculated later
 									}
 								}
@@ -402,10 +410,10 @@ public class Equilibrium extends Function
 									LinkedList<String> stepList = new LinkedList<String>();
 									double result = calculateConcentration(values, stepList, powers, unknown);
 									
-									for(String step: stepList) steps.add(new JLabel(step));
+									for(String step: stepList) steps.add(Function.latex(step));
 									saved.add(compounds[unknown].getBlankAmount(result));
-									if(result != saved.get(0)) steps.add(new JLabel("x = " + saved.get(0) + " " + compounds[unknown].getUnitName() + " / "  
-											+ compounds[unknown].getUnit2Name()));
+									if(result != saved.get(0)) steps.add(Function.latex("\\text{x} = " + saved.get(0) + "\\frac{" + 
+											compounds[unknown].getUnitName() + "}{" + compounds[unknown].getUnit2Name() + "}"));
 									results.add(new JLabel("<html>[" + relevant.get(unknown).withoutNumState() + "] = " + 
 											Function.withSigFigs(saved.get(0), sigFigs)));
 									values[unknown] = result; //In case it it needed to calculate solubility later
@@ -416,9 +424,10 @@ public class Equilibrium extends Function
 					
 					if(solubility != null && extra[5] == Units.UNKNOWN_VALUE)
 					{
-						steps.add(new JLabel("Solubility * " + relevant.get(0).getNum() + " = " + compounds[0].getName().substring(6)));
+						steps.add(Function.latex("\\text{Solubility} * " + relevant.get(0).getNum() + " = " + Function.latex(relevant.get(0), false)));
 						double s = values[0] / relevant.get(0).getNum();
-						steps.add(new JLabel("Solubility = " + values[0] + " / " + relevant.get(0).getNum() + " = " + s + " mol / L"));
+						steps.add(Function.latex("\\text{Solubility} = \\frac{" + values[0] + "}{" + relevant.get(0).getNum() + "} = " + s 
+								+ "\\frac{mol}{L}"));
 						s = solubility.getBlankAmount(s);
 						saved.add(s);
 						results.add(new JLabel("Solubility = " + s + " " + solubility.getUnitName() + " / " + solubility.getUnit2Name()));
@@ -463,8 +472,8 @@ public class Equilibrium extends Function
 		panel.add(subpanel);
 	}
 	
-	/*
-	 * Returns the panel to its original state after the rest button has been pressed.
+	/**
+	 * Returns the panel to its original state after the reset button has been pressed.
 	 */
 	private void setPanel()
 	{
@@ -480,17 +489,22 @@ public class Equilibrium extends Function
 		panel.add(reader.getPanel());
 	}
 	
-	/*
+	/**
 	 * Calculates the value of K given the concentrations of the relevant compounds.
+	 * @param values An array containing the concentrations of relevant compounds (should be of length relevant.size() + 1, last index doesn't matter).
+	 * @param steps An empty LinkedList that the method will fill with steps.
+	 * @param powers An array with the power each concentration should be raised to.
+	 * @param k Whether the calculations are solving for K or Q.
+	 * @return The value of k.
 	 */
 	private static double calculateK(double[] values, LinkedList<String> steps, ArrayList<Integer> powers, boolean k)
 	{
 		double value = 1;
-		String step1 = "<html>" + (k ? "K" : "Q") + " = ", step2 = "<html>" + (k ? "K" : "Q") + " = "; //Step 1 shows multiplication before raising to powers, 
-			//step 2 shows after
+		String step1 = "\\text{" + (k ? "K" : "Q") + "} = ", step2 = "\\text{" + (k ? "K" : "Q") + "} = "; //Step 1 shows multiplication before raising to 
+			//powers, step 2 shows after
 		for(int index = 0; index < values.length - 1; index++)
 		{
-			step1 += "(" + values[index] + ")<sup>" + powers.get(index) + "</sup> * ";
+			step1 += "" + values[index] + "^{" + powers.get(index) + "} * ";
 			double num = Math.pow(values[index], powers.get(index));
 			step2 += num + " * ";
 			value *= num;
@@ -503,26 +517,31 @@ public class Equilibrium extends Function
 		return value;
 	}
 	
-	/*
+	/**
 	 * Calculates one concentration given all the others and K.
+	 * @param values The concentrations (with the unknown index left empty) and the last index containing K.
+	 * @param steps An empty LinkedList that the method will fill with steps.
+	 * @param powers An array with the power each concentration should be raised to.
+	 * @param unknown The index of the unknown concentration.
+	 * @return The concentration of the compound in the unknown index.
 	 */
 	public static double calculateConcentration(double[] values, LinkedList<String> steps, ArrayList<Integer> powers, int unknown)
 	{
 		double value = 1;
-		String step1 = "<html>" + values[values.length - 1] + " = ", step2 = "<html>" + values[values.length - 1] + " = ";
+		String step1 = values[values.length - 1] + " = ", step2 = values[values.length - 1] + " = ";
 		for(int index = 0; index < values.length - 1; index++)
 		{
 			if(index != unknown)
 			{
-				step1 += "(" + values[index] + ")<sup>" + powers.get(index) + "</sup> * ";
+				step1 += values[index] + "^{" + powers.get(index) + "} * ";
 				double num = Math.pow(values[index], powers.get(index));
 				step2 += num + " * ";
 				value *= num;
 			}
 			else
 			{
-				step1 += "x<sup>" + powers.get(index) + "</sup> * ";
-				step2 += "x<sup>" + powers.get(index) + "</sup> * ";
+				step1 += "x^{" + powers.get(index) + "} * ";
+				step2 += "x^{" + powers.get(index) + "} * ";
 			}
 		}
 		step1 = step1.substring(0, step1.length() - 3);
@@ -530,21 +549,27 @@ public class Equilibrium extends Function
 		steps.add(step1);
 		steps.add(step2);
 		value = values[values.length - 1] / value;
-		steps.add("<html>x<sup>" + powers.get(unknown) + "</sup> = " + value);
+		steps.add("x^{" + powers.get(unknown) + "} = " + value);
 		value = Math.pow(value, 1.0 / powers.get(unknown));
-		steps.add("x = " + value + " mol / L");
+		steps.add("x = " + value + "\\text{ M}");
 		return value;
 	}
 	
-	/*
-	 * Calculates all unknown concentrations given the others and K and returns the indices in values which have been changed, or null if there is insufficient
-	 * information for the calculations.
+	/**
+	 * Calculates all unknown concentrations given the others and K and returns the indices in values which have been changed, or null if there is 
+	 * insufficient information for the calculations.
+	 * @param values The concentrations and K value, with unknown indices left blank.
+	 * @param steps An empty LinkedList that the method will fill with steps.
+	 * @param powers An array with the power each concentration should be raised to.
+	 * @param compounds The compounds used in the calculations
+	 * @param storeX An array of length 1 to store the value of x.
+	 * @return The indices in values which have been changed, or null if there is insufficient information for the calculations.
 	 */
 	public static LinkedList<Integer> calculateValues(double[] values, LinkedList<String> steps, ArrayList<Integer> powers, ArrayList<Compound> compounds,
 			double[] storeX)
 	{
 		double newK = values[values.length - 1]; //Will divide K by all known concentrations
-		String stepK = "<html>" + newK + " / ";
+		String stepK = newK + " * ";
 		LinkedList<Integer> changed = new LinkedList<Integer>(); //To put in relevant indices
 		for(int index = 0; index < compounds.size(); index++)
 		{
@@ -557,40 +582,40 @@ public class Equilibrium extends Function
 				}
 				else
 				{
-					steps.add("<html>[" + compounds.get(index).withoutNumState() + "] = " + (powers.get(index) == 1 ? "" : powers.get(index)) + "x");
+					steps.add("[" + Function.latex(compounds.get(index), false) + "] = " + (powers.get(index) == 1 ? "" : powers.get(index)) + "x");
 					changed.add(index);
 				}
 			}
 			else
 			{
 				newK /= Math.pow(values[index], powers.get(index));
-				stepK += "(" + values[index] + ")<sup>" + powers.get(index) + "</sup> / ";
+				stepK += "\\frac{1}{" + values[index] + "^{" + powers.get(index) + "}} * ";
 			}
 		}
 		if(newK != values[values.length - 1])
 		{
-			steps.add("Divide K by known concentrations:");
-			steps.add(stepK.substring(0, stepK.length() - 3) + " = " + newK); //Gets rid of last / before adding equals
+			steps.add("\\text{Divide K by known concentrations:}");
+			steps.add(stepK.substring(0, stepK.length() - 3) + " = " + newK); //Gets rid of last * before adding equals
 		}
 		
-		String step = "<html>" + newK + " = ";
+		String step = newK + " = ";
 		int value = 1, sum = 0;
 		for(int index = 0; index < values.length - 1; index++)
 		{
 			int power = powers.get(index);
 			value *= Math.pow(power, power);
 			sum += power;
-			step += "(" + (power == 1 ? "" : power) + "x)<sup>" + power + "</sup> * ";
+			step += (power == 1 ? "" : power) + "x^{" + power + "} * ";
 		}
 		steps.add(step.substring(0, step.length() - 3)); //Removes last *
 		if(value != 1)
 		{
-			steps.add("<html>" + newK + " = " + (value == 1 ? "" : value + " * ") + "x<sup>" + sum + "</sup><html>");
+			steps.add(newK + " = " + (value == 1 ? "" : value + " * ") + "x^{" + sum + "}");
 			newK /= value;
 		}
-		steps.add("<html>" + newK + " = x<sup>" + sum + "</sup><html>");
+		steps.add(newK + " = x^{" + sum + "}");
 		
-		double x = Math.pow(newK, (1 / (double)sum));
+		double x = Math.pow(newK, (1.0 / sum));
 		steps.add("x = " + x);
 		storeX[0] = x;
 		
@@ -598,42 +623,55 @@ public class Equilibrium extends Function
 		{
 			int power = powers.get(index);
 			values[index] = x * power;
-			steps.add("<html>[" + compounds.get(index).withoutNumState() + "] = " + (power == 1 ? "" : power) + "x = " + values[index] + " mol / L</html>");
+			steps.add("[" + Function.latex(compounds.get(index), false) + "] = " + (power == 1 ? "" : power) + "x = " + values[index] + " \\frac{mol}{L}");
 		}
 		
 		return changed;
 	}
 	
-	/*
+	/**
 	 * Solves the ICE table approximately by assuming that in the denominator x does not matter.
+	 * @param values
+	 * @param product The product of x^x for each positive power.
+	 * @param sum The sum of the positive powers.
+	 * @param index The first index of powers with a negative value.
+	 * @param powers An array with the power each concentration should be raised to.
+	 * @param steps An empty LinkedList that the method will fill with steps.
+	 * @param ex The expressions describing each index of values.
+	 * @return The solved concentrations.
 	 */
-	public static double[] solveApprox(double[] original, double product, int sum, int index, ArrayList<Integer> powers, LinkedList<String> steps, String[] ex)
+	public static double[] solveApprox(double[] values, double product, int sum, int index, ArrayList<Integer> powers, LinkedList<String> steps, String[] ex)
 	{
 		double denom = 1;
-		String fraction = "<html>" + original[original.length - 1] + " = " + product + "x<sup>" + sum + "</sup> / (";
+		String fraction = values[values.length - 1] + " = \\frac{" + product + "x^{" + sum + "}}{";
 		for(; index < powers.size(); index++)
 		{
-			steps.add("Assume " + original[index] + " - " + (powers.get(index) == -1 ? "" : -powers.get(index)) + "x \u2245 " + original[index]);
-			fraction += original[index] + "<sup>" + -powers.get(index) + "</sup> * ";
-			denom *= Math.pow(original[index], -powers.get(index));
+			steps.add("\\text{Assume }" + values[index] + " - " + (powers.get(index) == -1 ? "" : -powers.get(index)) + "x \u2248 " + values[index]);
+			fraction += values[index] + "^{" + -powers.get(index) + "} * ";
+			denom *= Math.pow(values[index], -powers.get(index));
 		}
-		steps.add(fraction.substring(0, fraction.length() - 3) + ")</html>");
-		double x = original[original.length - 1] * denom / product;
-		steps.add("<html>" + x + " = x<sup>" + sum + "</sup></html>");
+		steps.add(fraction.substring(0, fraction.length() - 3));
+		double x = values[values.length - 1] * denom / product;
+		steps.add(x + " = x^{" + sum + "}");
 		x = Math.pow(x, 1.0 / sum);
 		steps.add("x = " + x);
 		
-		double[] results = new double[original.length - 1];
+		double[] results = new double[values.length - 1];
 		for(int i = 0; i < powers.size(); i++)
 		{
-			results[i] = original[i] + powers.get(i) * x;
-			steps.add(ex[i] + " = " + results[i] + " M");
+			results[i] = values[i] + powers.get(i) * x;
+			steps.add(ex[i] + " = " + results[i] + " \\text{M}");
 		}
 		return results;
 	}
 	
-	/*
+	/**
 	 * Solves the ICE table with quadratic equations. Returns null if it cannot be solved.
+	 * @param original The concentrations and k values before the reaction.
+	 * @param powers An array with the power each concentration should be raised to.
+	 * @param steps An empty LinkedList that the method will fill with steps.
+	 * @param expressions The expressions describing each index of values.
+	 * @return The concentrations after the reaction, or null if it cannot be solved.
 	 */
 	public static double[] solveICE(double[] original, ArrayList<Integer> powers, LinkedList<String> steps, String[] expressions)
 	{
@@ -672,19 +710,19 @@ public class Equilibrium extends Function
 		}
 		
 		double[] top = foil(num), bottom = foil(denom);
-		steps.add("<html>" + original[original.length - 1] + " = (" + displayQuadratic(top) + ") / (" + displayQuadratic(bottom) + ")</html>");
+		steps.add(original[original.length - 1] + " = \\frac{" + displayQuadratic(top) + "}{" + displayQuadratic(bottom) + "}");
 		
 		for(int i = 0; i < bottom.length; i++)
 		{
 			bottom[i] *= original[original.length - 1];
 		}
-		steps.add("<html>" + displayQuadratic(bottom) + " = " + displayQuadratic(top) + "</html>");
+		steps.add(displayQuadratic(bottom) + " = " + displayQuadratic(top));
 		
 		for(int i = 0; i < bottom.length; i++)
 		{
 			top[i] -= bottom[i];
 		}
-		steps.add("<html>0 = " + displayQuadratic(top) + "</html>");
+		steps.add("0 = " + displayQuadratic(top));
 		
 		double x = (-top[1] + Math.sqrt(top[1] * top[1] - 4 * top[0] * top[2])) / (2 * top[0]); //Uses higher root only
 		steps.add("x = " + x);
@@ -698,6 +736,11 @@ public class Equilibrium extends Function
 		return results;
 	}
 	
+	/**
+	 * Multiplies the two binomials.
+	 * @param factors A 2d array with the two binomials.
+	 * @return The resulting trinomial in the form of an array.
+	 */
 	private static double[] foil(double[][] factors)
 	{
 		double[] expression = new double[3];
@@ -707,12 +750,17 @@ public class Equilibrium extends Function
 		return expression;
 	}
 	
+	/**
+	 * Formats the trinomial stored in an array as a quadratic.
+	 * @param expression The trinomial in the form of an array.
+	 * @return The quadratic as a string.
+	 */
 	private static String displayQuadratic(double[] expression)
 	{
 		String str = "";
 		if(expression[0] == -1) str += "-";
 		else if(expression[0] != 1 && expression[0] != 0) str += expression[0];
-		if(expression[0] != 0) str += "x<sup>2</sup>";
+		if(expression[0] != 0) str += "x^{2}";
 		
 		if(expression[1] != 0)
 		{
@@ -730,30 +778,43 @@ public class Equilibrium extends Function
 		return str;
 	}
 	
-	/*
+	/**
 	 * Calculates the concentrations of each compound and K from the solubility of the solid.
+	 * @param s The solubility of the precipitate.
+	 * @param steps An empty LinkedList that the method will fill with steps.
+	 * @param relevant The relevant compounds.
+	 * @param powers An array with the power each concentration should be raised to.
+	 * @return The concentrations of each compound.
 	 */
 	public static double[] calculateFromSolubility(double s, LinkedList<String> steps, ArrayList<Compound> relevant, ArrayList<Integer> powers)
 	{
 		double[] values = new double[relevant.size() + 1];
-		String step1 = "<html>k = ", step2 = "<html>k = "; //Calculates k as it goes
+		String step1 = "\\text{k} = ", step2 = "\\text{k} = "; //Calculates k as it goes
 		values[values.length - 1] = 1; 
 		for(int index = 0; index < relevant.size(); index++)
 		{
-			String compound = "[" + relevant.get(index).withoutNumState() + "]";
+			String compound = "[" + Function.latex(relevant.get(index), false) + "]";
 			int power = powers.get(index);
 			values[index] = s * power;
-			steps.add("<html>" + compound + " = " + s + " * " + power + " = " + values[index] + " mol / L</html>");
-			step1 += compound + "<sup>" + power + "</sup> * ";
-			step2 += "(" + values[index] + ")<sup>" + power + "</sup> * ";
+			steps.add(compound + " = " + s + " * " + power + " = " + values[index] + " \\frac{mol}{L}");
+			step1 += compound + "^{" + power + "} * ";
+			step2 += "(" + values[index] + ")^{" + power + "} * ";
 			values[values.length - 1] *= Math.pow(values[index], power);
 		}
-		steps.add(step1.substring(0, step1.length() - 3) + "<html>");
-		steps.add(step2.substring(0, step2.length() - 3) + "<html>");
-		steps.add("k = " + values[values.length - 1]);
+		steps.add(step1.substring(0, step1.length() - 3));
+		steps.add(step2.substring(0, step2.length() - 3));
+		steps.add("\\text{k} = " + values[values.length - 1]);
 		return values;
 	}
 	
+	/**
+	 * Calculates the concentrations of the compounds.
+	 * @param values The extra values about the precipitate.
+	 * @param compounds The relevant compounds.
+	 * @param original The reactants.
+	 * @param steps An empty LinkedList that the method will fill with steps.
+	 * @return The solved concentrations.
+	 */
 	public static double[] calculateConcentrations(double[] values, ArrayList<Compound> compounds, Compound[] original, LinkedList<String> steps)
 	{
 		double[] concentrations = new double[2];
@@ -773,31 +834,44 @@ public class Equilibrium extends Function
 		}
 		else coefficients[1] = original[1].numberOf((compounds.get(1).getIons()[0].getElements()[0].getElement()));
 		
-		steps.add("<html>[" + compounds.get(0).withoutNumState() + "] = " + values[1] + " * " + values[2] + " * " + coefficients[0] + " / (" + values[1] +
-				" + " + values[3] + ")</html>");
+		String compound0 = "[" + Function.latex(compounds.get(0), false) + "]", compound1 = "[" + Function.latex(compounds.get(1), false) + "]";
+		steps.add(compound0 + " = \\frac{" + values[1] + " * " + values[2] + " * " + coefficients[0] + "}{" + values[1] +
+				" + " + values[3] + "}");
 		concentrations[0] = values[1] * values[2] * coefficients[0] / (values[1] + values[3]);
-		steps.add("<html>[" + compounds.get(0).withoutNumState() + "] = " + concentrations[0] + " mol / L</html>)");
+		steps.add(compound0 + " = " + concentrations[0] + " \\frac{mol}{L}");
 		
-		steps.add("<html>[" + compounds.get(1).withoutNumState() + "] = " + values[3] + " * " + values[4] + " * " + coefficients[1] + " / (" + values[1] +
-				" + " + values[3] + ")</html>");
+		steps.add(compound1 + " = \\frac{" + values[3] + " * " + values[4] + " * " + coefficients[1] + "}{" + values[1] +
+				" + " + values[3] + "}");
 		concentrations[1] = values[3] * values[4] * coefficients[1] / (values[1] + values[3]);
-		steps.add("<html>[" + compounds.get(1).withoutNumState() + "] = " + concentrations[1] + " mol / L</html>)");
+		steps.add(compound1 + " = " + concentrations[1] + " \\frac{mol}{L}");
 		return concentrations;
 	}
 	
+	/**
+	 * Returns true as the equilibrium function does deal with equations.
+	 * @return true
+	 */
+	@Override
 	public boolean equation()
 	{
 		return true;
 	}
 	
+	/**
+	 * Returns the most recently used equation so that ChemHelper can save it.
+	 * @return The equation to save.
+	 */
+	@Override
 	public Equation saveEquation()
 	{
 		return reader.saveEquation();
 	}
 	
-	/*
+	/**
 	 * Takes equation and sets up EnterFields to perform calculations with the compounds in the equation.
+	 * @param equation The equation to be used.
 	 */
+	@Override
 	public void useSaved(Equation equation)
 	{
 		//States of matter are necessary to make an equilibrium expression
@@ -900,8 +974,10 @@ public class Equilibrium extends Function
 		enterPanel.setVisible(true);
 	}
 	
-	/*
+	/**
 	 * Prompts the user to choose a state for the compound. If they do, returns true, returns false otherwise.
+	 * @param c The compound without a state.
+	 * @return Whether the user enters a state for the compound.
 	 */
 	private boolean getState(Compound c)
 	{
@@ -912,11 +988,20 @@ public class Equilibrium extends Function
 		return true;
 	}
 	
+	/**
+	 * Returns true as this function can save and use saved numbers.
+	 */
+	@Override
 	public boolean number()
 	{
 		return true;
 	}
 	
+	/**
+	 * Allows the user to chooses a recently calculated number to save.
+	 * @return The number the user chooses, or 0 if one is not chosen.
+	 */
+	@Override
 	public double saveNumber()
 	{
 		if(saved.size() == 0) return 0;
@@ -927,6 +1012,11 @@ public class Equilibrium extends Function
 		return 0;
 	}
 	
+	/**
+	 * Uses a number previously saved by ChemHelper in this function.
+	 * @param num The saved number.
+	 */
+	@Override
 	public void useSavedNumber(double num)
 	{
 		if(k == null) return;
@@ -975,6 +1065,10 @@ public class Equilibrium extends Function
 		}
 	}
 	
+	/**
+	 * Creates the static TreeMap from compound name to solubility.
+	 * @return The TreeMap<String, Double> from compound formula to solubility.
+	 */
 	private static TreeMap<String, Double> createMap()
 	{
 		TreeMap<String, Double> map = new TreeMap<String, Double>();
@@ -1026,6 +1120,11 @@ public class Equilibrium extends Function
 		return map;
 	}
 	
+	/**
+	 * Returns the instructions for this function.
+	 * @return The help string.
+	 */
+	@Override
 	public String getHelp()
 	{
 		return "<html>First enter the reaction at equilibrium, being<br>"
@@ -1040,6 +1139,11 @@ public class Equilibrium extends Function
 				+ "remaining values.</html>";
 	}
 	
+	/**
+	 * Returns the panel containing the equilibrium GUI components.
+	 * @return The JPanel for this function.
+	 */
+	@Override
 	public JPanel getPanel()
 	{
 		return panel;

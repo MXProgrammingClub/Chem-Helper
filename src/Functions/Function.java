@@ -1,14 +1,3 @@
-/*
- * File: Function.java
- * Package: Function
- * Version: 4/24/2016
- * Authors: Ted Pyne, Hyun Choi, Julia McClellan
- * -----------------------------------------------
- * An abstract class representing a function used in ChemHelper. Contains static methods for latex rendering equations, calculating significant figures, 
- * and rounds numbers to a given number of significant figures. Provides default operations for equation and number saving, to be implemented by child
- * classes that need them.
- */
-
 package Functions;
 
 import java.awt.Component;
@@ -29,7 +18,16 @@ import Equation.Ions;
 import Equation.Monatomic;
 import Equation.Polyatomic;
 
-
+/**
+ * File: Function.java
+ * Package: Function
+ * Version: 08/07/2016
+ * Authors: Ted Pyne, Hyun Choi, Julia McClellan
+ * -----------------------------------------------
+ * An abstract class representing a function used in ChemHelper. Contains static methods for latex rendering equations, calculating significant figures, 
+ * and rounds numbers to a given number of significant figures. Provides default operations for equation and number saving, to be implemented by child
+ * classes that need them.
+ */
 public abstract class Function {
 	private String name;
 	private static int sigFig;
@@ -90,12 +88,28 @@ public abstract class Function {
 		return str;
 	}
 	
+	/**
+	 * Formats the compound with latex.
+	 * @param comp The compound to represent.
+	 * @return The latex form of the compound.
+	 */
 	public static String latex(Compound comp)
 	{
+		return latex(comp, true);
+	}
+	
+	/**
+	 * Formats the compound with latex.
+	 * @param comp The compound to represent.
+	 * @param withNumState Whether the string should include the compound's coefficient and state.
+	 * @return The latex form of the compound.
+	 */
+	public static String latex(Compound comp, boolean withNumState)
+	{
 		String str = "";
-		if(comp.getNum() != 1) str += comp.getNum();
+		if(withNumState && comp.getNum() != 1) str += comp.getNum();
 		for (Ions ion: comp.getIons()) str += latex(ion);
-		if(!comp.getState().equals(" ")) str += "\\text{(" + comp.getState() + ")}";
+		if(withNumState && !comp.getState().equals(" ")) str += "\\text{(" + comp.getState() + ")}";
 		return str;
 	}
 	
@@ -186,6 +200,7 @@ public abstract class Function {
 	public static int sigFigs(String numString)
 	{
 		if(sigFig == 0) return 0; //There is no point in calculating if they won't be used.
+		if(numString.equals("0")) return 1;
 		if(numString.indexOf('E') != -1) numString = numString.substring(0, numString.indexOf('E'));
 		int sigFigs = numString.length();
 		if(numString.indexOf("-") != -1) sigFigs--;	//These characters lead the String to be longer than the number of sig figs
