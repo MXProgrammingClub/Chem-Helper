@@ -990,6 +990,7 @@ public class Equilibrium extends Function
 	
 	/**
 	 * Returns true as this function can save and use saved numbers.
+	 * @return true
 	 */
 	@Override
 	public boolean number()

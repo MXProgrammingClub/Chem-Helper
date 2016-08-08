@@ -1,12 +1,7 @@
-/*
- * Calculates the solubility or pressure of a solution using Henry's Law.
- * 
- * Author: Julia McClellan
- * Version: 2/8/2016
- */
-
 package Functions;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -19,6 +14,14 @@ import javax.swing.JPanel;
 import HelperClasses.DoubleEnterField;
 import HelperClasses.Units;
 
+/**
+ * File: HenrysLaw.java
+ * Package: Functions
+ * Version: 08/08/2016
+ * Author: Julia McClellan
+ * -----------------------------------------------
+ * Calculates the solubility or pressure of a solution using Henry's Law.
+ */
 public class HenrysLaw extends Function
 {
 	private JPanel panel;
@@ -28,6 +31,9 @@ public class HenrysLaw extends Function
 	private Box steps;
 	private double num;
 	
+	/**
+	 * Constructs the function.
+	 */
 	public HenrysLaw()
 	{
 		super("Henry's Law");
@@ -41,7 +47,7 @@ public class HenrysLaw extends Function
 				{
 					steps.setVisible(false);
 					steps.removeAll();
-					steps.add(new JLabel("<html>S<sub>1</sub> / S<sub>2</sub> = P<sub>1</sub> / P<sub>2</sub>"));
+					steps.add(Function.latex("\\frac{S_{1}}{S_{2}} = \\frac{P_{1}}{P_{2}}"));
 					steps.add(Box.createVerticalStrut(5));
 					
 					double s1 = solubility.getBeforeValue(), s2 = solubility.getAfterValue(), p1 = pressure.getBeforeValue(), p2 = pressure.getAfterValue();
@@ -65,21 +71,22 @@ public class HenrysLaw extends Function
 							result.setText("Leave only one value blank");
 							return;
 						}
-						steps.add(new JLabel("<html>S<sub>1</sub> = " + s1 + " g / 100mL</html>"));
-						steps.add(new JLabel("<html>P<sub>1</sub> = " + p1 + " atm</html>"));
-						steps.add(new JLabel("<html>S<sub>2</sub> = ? g / 100mL</html>"));
-						steps.add(new JLabel("<html>P<sub>1</sub> = " + p1 + " atm</html>"));
+						steps.add(Function.latex("S_{1} = " + s1 + " \\frac{g}{100mL}"));
+						steps.add(Function.latex("P_{1} = " + p1 + " atm"));
+						steps.add(Function.latex("S_{2} = ? \\frac{g}{100mL}"));
+						steps.add(Function.latex("P_{1} = " + p1 + " atm"));
 						steps.add(Box.createVerticalStrut(5));
 						
-						steps.add(new JLabel("<html>S<sub>2</sub> = S<sub>1</sub> * P<sub>2</sub> / P<sub>1</sub></html>"));
+						steps.add(Function.latex("S_{2} = \\frac{S_{1} * P_{2}}{P_{1}}"));
+						steps.add(Function.latex("S_{2} = \\frac{" + s1 + "\\frac{g}{100mL} * " + p2 + "atm}{" + p1 + "atm}"));
 						s2 = s1 * p2 / p1;
-						steps.add(new JLabel("<html>S<sub>2</sub> = " + s2 + " g / 100mL"));
+						steps.add(Function.latex("S_{2} = " + s2 + " \\frac{g}{100mL}"));
 						num = solubility.getBlankAmount(s2 * 10); //Into the standard units of g/L
 						String unit = "g / 100mL";
 						if(s2 != num)
 						{
 							unit = solubility.getDesiredUnit();
-							steps.add(new JLabel(s2 + " g / 100mL = " + num + " " + unit));
+							steps.add(Function.latex(s2 + " \\frac{g}{100mL} = " + num + " " + solubility.getDesiredUnitLatex()));
 						}
 						result.setText("<html>S<sub>2</sub> = " + Function.withSigFigs(num, sigFigs) + " " + unit);
 					}
@@ -91,21 +98,22 @@ public class HenrysLaw extends Function
 							return;
 						}
 						s2 /= 10;
-						steps.add(new JLabel("<html>S<sub>1</sub> = " + s1 + " g / 100mL</html>"));
-						steps.add(new JLabel("<html>P<sub>1</sub> = " + p1 + " atm</html>"));
-						steps.add(new JLabel("<html>S<sub>2</sub> = " + s2 + " g / 100mL</html>"));
-						steps.add(new JLabel("<html>P<sub>1</sub> = ? atm</html>"));
+						steps.add(Function.latex("S_{1} = " + s1 + " \\frac{g}{100mL}"));
+						steps.add(Function.latex("P_{1} = " + p1 + " atm"));
+						steps.add(Function.latex("S_{2} = " + s2 + " \\frac{g}{100mL}"));
+						steps.add(Function.latex("P_{1} = ? atm"));
 						steps.add(Box.createVerticalStrut(5));
 						
-						steps.add(new JLabel("<html>P<sub>2</sub> = P<sub>1</sub> * S<sub>2</sub> / S<sub>1</sub></html>"));
-						p2 = s1 * p2 / s1;
-						steps.add(new JLabel("<html>P<sub>2</sub> = " + p2 + " atm"));
+						steps.add(Function.latex("P_{2} = \\frac{P_{1} * S_{2}}{S_{1}}"));
+						steps.add(Function.latex("P_{2} = \\frac{" + p1 + "atm * " + s2 + "\\frac{g}{100mL}}{" + s1 + "\\frac{g}{100mL}}"));
+						p2 = s2 * p1 / s1;
+						steps.add(Function.latex("P_{2} = " + p2 + " atm"));
 						num = pressure.getBlankAmount(p2);
 						String unit = "atm";
 						if(p2 != num)
 						{
 							unit = pressure.getDesiredUnit();
-							steps.add(new JLabel(p2 + " atm = " + num + " " + unit));
+							steps.add(Function.latex(p2 + " atm = " + num + " " + unit));
 						}
 						result.setText("<html>P<sub>2</sub> = " + Function.withSigFigs(num, sigFigs) + " " + unit);
 					}
@@ -121,23 +129,44 @@ public class HenrysLaw extends Function
 		box.add(calculate);
 		box.add(result);
 		
-		panel = new JPanel();
-		panel.add(box);
-		panel.add(Box.createHorizontalStrut(5));
+		JPanel subpanel = new JPanel(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.anchor = GridBagConstraints.NORTHWEST;
+		c.gridx = 0;
+		subpanel.add(box, c);
+		c.gridx++;
+		subpanel.add(Box.createHorizontalStrut(10), c);
+		c.gridx++;
 		steps = Box.createVerticalBox();
-		panel.add(steps);
+		subpanel.add(steps, c);
+		panel = new JPanel();
+		panel.add(subpanel);
 	}
 	
+	/**
+	 * Returns true as this function can save and use saved numbers.
+	 */
+	@Override
 	public boolean number()
 	{
 		return true;
 	}
 	
+	/**
+	 * Returns the value to save.
+	 * @return The most recently calculated value.
+	 */
+	@Override
 	public double saveNumber()
 	{
 		return num;
 	}
 	
+	/**
+	 * Uses a number previously saved by ChemHelper in this function.
+	 * @param num The saved number.
+	 */
+	@Override
 	public void useSavedNumber(double num)
 	{
 		String[] options = {"Solubility - before", "Solubility - after", "Pressure - before", "Pressure - after"};
@@ -150,6 +179,11 @@ public class HenrysLaw extends Function
 		else pressure.setAfterValue(num);
 	}
 	
+	/**
+	 * Returns the instructions for this function.
+	 * @return The help string.
+	 */
+	@Override
 	public String getHelp()
 	{
 		return "<html>Enter two before values and one after value<br>"
@@ -157,6 +191,11 @@ public class HenrysLaw extends Function
 				+ "to find the remaining after value.</html>";
 	}
 	
+	/**
+	 * Returns the panel containing the equilibrium GUI components.
+	 * @return The JPanel for this function.
+	 */
+	@Override
 	public JPanel getPanel()
 	{
 		return panel;
