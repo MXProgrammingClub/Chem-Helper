@@ -20,7 +20,7 @@ import Equation.Polyatomic;
 
 /**
  * File: Function.java
- * Package: Function
+ * Package: Functions
  * Version: 08/07/2016
  * Authors: Ted Pyne, Hyun Choi, Julia McClellan
  * -----------------------------------------------
