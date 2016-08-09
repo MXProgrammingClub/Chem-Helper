@@ -1,12 +1,3 @@
-/*
- * Calculates missing value of PV=nRT when the others are given and shows calculation steps. Has static methods to perform conversions from kPa or torr to atm
- * and from C or F to K.
- * number() returns true- saves the latest calculated value, can use saved for P, V, n, or T.
- * 
- * Author: Julia McClellan and Luke Giacalone
- * Version: 2/9/2016
- */
-
 package Functions;
 
 import java.awt.event.ActionEvent;
@@ -22,6 +13,16 @@ import javax.swing.JPanel;
 import HelperClasses.EnterField;
 import HelperClasses.Units;
 
+/**
+ * File: IdealGas.java
+ * Package: Functions
+ * Version: 08/09/2016
+ * Authors: Julia McClellan and Luke Giacalone
+ * -----------------------------------------------
+ * Calculates missing value of PV=nRT when the others are given and shows calculation steps. Has static methods to perform conversions from kPa or torr to atm
+ * and from C or F to K.
+ * number() returns true- saves the latest calculated value, can use saved for P, V, n, or T.
+ */
 public class IdealGas extends Function 
 {
 	private static final int UNKNOWN_VALUE = -500, ERROR_VALUE = -501; // Values which none of the entered values could be.
@@ -120,7 +121,7 @@ public class IdealGas extends Function
 		{
 			steps.removeAll();
 			steps.setVisible(false);
-			steps.add(new JLabel("PV=nRT"));
+			steps.add(Function.latex("\\text{PV=nRT}"));
 			steps.add(Box.createVerticalStrut(5));
 			double[] quantities = new double[4];
 			int blank = -1, sigFigs = Integer.MAX_VALUE;
@@ -136,7 +137,7 @@ public class IdealGas extends Function
 				{
 					if(blank == -1)
 					{
-						steps.add(new JLabel(values[index].getName().trim() + " = " + "? " + values[index].getUnitName()));
+						steps.add(Function.latex("\\text{" + values[index].getName() + "} = " + "\\text{? }" + values[index].getUnitName()));
 						blank = index;
 					}
 					else
@@ -147,16 +148,16 @@ public class IdealGas extends Function
 				}
 				else
 				{
-					sigFigs = Math.min(sigFigs, values[index].getSigFigs());
-					String step = values[index].getName() + " = " + quantities[index] + " ";
+					if(!stp.isSelected() || index != 0 && index != 3) sigFigs = Math.min(sigFigs, values[index].getSigFigs());
+					String step = "\\text{" + values[index].getName() + "} = " + quantities[index] + " ";
 					if(index == 0) step += "atm";
 					else if(index == 1) step += "L";
 					else if(index == 2) step += "mol";
 					else step += "K";
-					steps.add(new JLabel(step));
+					steps.add(Function.latex(step));
 				}
 			}
-			steps.add(new JLabel("R = " + Units.R + " (atm * L) / (mol * K)"));
+			steps.add(Function.latex("\\text{R }= " + Units.R + " \\frac{atm * L}{mol * K}"));
 			steps.add(Box.createVerticalStrut(5));
 			double unknown;
 			String base;
@@ -164,31 +165,35 @@ public class IdealGas extends Function
 			{
 				base = "atm";
 				unknown = Units.R * quantities[2] * quantities[3] / quantities[1];
-				steps.add(new JLabel("? = (" + Units.R + " * " + quantities[2] + " * " + quantities[3] + ") / (" + quantities[1] + ") = " + unknown + " atm"));
+				steps.add(Function.latex("\\text{" + VALUES[0] + "}= \\frac{" + Units.R + "\\frac{atm * L}{mol * K} * " + quantities[2] + "mol * " + 
+						quantities[3] + "K}" + "{" + quantities[1] + "L} = " + unknown + " atm"));
 			}
 			else if(blank == 1)
 			{
 				base = "L";
 				unknown = Units.R * quantities[2] * quantities[3] / quantities[0];
-				steps.add(new JLabel("? = (" + Units.R + " * " + quantities[2] + " * " + quantities[3] + ") / (" + quantities[0] + ") = " + unknown + " L"));
+				steps.add(Function.latex("\\text{" + VALUES[1] + "}= \\frac{" + Units.R + "\\frac{atm * L}{mol * K} * " + quantities[2] + "mol * " + 
+						quantities[3] + "K}" + "{" + quantities[0] + "atm} = " + unknown + " L"));
 			}
 			else if(blank == 2)
 			{
 				base = "mol";
 				unknown = quantities[0] * quantities[1] / (Units.R * quantities[3]);
-				steps.add(new JLabel("? = (" + quantities[0] + " * " + quantities[1] + ") / (" + Units.R + " * " + quantities[3] + ") = " + unknown + " mol"));
+				steps.add(Function.latex("\\text{" + VALUES[2] + "}= \\frac{" + quantities[0] + "atm * " + quantities[1] + "L}{" + Units.R + 
+						"\\frac{atm * L}{mol * K} * " + quantities[3] + "K} = " + unknown + " mol"));
 			}
 			else
 			{
 				base = "K";
 				unknown = quantities[0] * quantities[1] / (Units.R * quantities[2]);
-				steps.add(new JLabel("? = (" + quantities[0] + " * " + quantities[1] + ") / (" + Units.R + " * " + quantities[2] + ") = " + unknown + " K"));
+				steps.add(Function.latex("\\text{" + VALUES[3] + "}= \\frac{" + quantities[0] + "atm * " + quantities[1] + "L}{" + Units.R + 
+						"\\frac{atm * L}{mol * K} * " + quantities[2] + "mol} = " + unknown + " K"));
 			}
 			double value = values[blank].getBlankAmount(unknown);
 			String unit = values[blank].getUnitName();
 			if(value != unknown) 
 			{
-				steps.add(new JLabel(unknown + " " + base + " = " + value + " " + unit));
+				steps.add(Function.latex(unknown + " " + base + " = " + value + " " + unit));
 				unknown = value;
 			}
 			result.setText(VALUES[blank].trim() + " = " + Function.withSigFigs(unknown, sigFigs) + " " + unit);
