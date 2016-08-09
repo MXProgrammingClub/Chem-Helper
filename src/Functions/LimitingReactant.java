@@ -143,9 +143,9 @@ public class LimitingReactant extends Function
 					}
 					if(compounds.get(index).unit1()) 
 					{
-						String massString = compound.getMolarMassSteps();
-						steps += "Calculate the molar mass of " + compoundName + ":<br>\u2003" + massString + "<br>";
-						double mass = Double.parseDouble(massString.substring(massString.lastIndexOf("=") + 1, massString.lastIndexOf("g")));
+						StringBuffer[] molarMass = new StringBuffer[2];
+						double mass = compound.getMolarMassSteps(molarMass);
+						steps += "Calculate the molar mass of " + compoundName + ":<br>\u2003" + molarMass[0] + molarMass + "<br>";
 						steps += "Convert grams to moles by dividing grams of " +  compoundName + " by its molar mass:<br>\u2003" + amount + " g / " + mass;
 						amount = amount / mass;
 						steps += " g/mol " + " = " + amount + " mol<br>";
@@ -183,9 +183,9 @@ public class LimitingReactant extends Function
 					String unit = "mol";
 					if(compounds.get(index).unit1()) 
 					{
-						String massString = compound.getMolarMassSteps();
-						steps += "<br>Calculate the molar mass of " + compoundString + "<br>\u2003" + massString;
-						double mass = Double.parseDouble(massString.substring(massString.lastIndexOf('=') + 1, massString.lastIndexOf('g')));
+						StringBuffer[] molarMass = new StringBuffer[2];
+						double mass = compound.getMolarMassSteps(molarMass);
+						steps += "<br>Calculate the molar mass of " + compoundString + "<br>\u2003" + molarMass;
 						steps += "<br>Convert the amount " + compoundString + " leftover to grams<br>\u2003" + amount + " mol * " + mass + " g/mol = ";
 						amount *= compound.getMolarMass();
 						steps += amount + " g";

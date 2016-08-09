@@ -211,9 +211,9 @@ public class Stoichiometry extends Function
 		if(c2.getNum() != 1) c2Name = c2Name.substring(1);
 		if(inGrams1) 
 		{
-			String molarMass = c1.getMolarMassSteps();
+			StringBuffer[] molarMass = new StringBuffer[2];
+			double mass = c1.getMolarMassSteps(molarMass);
 			steps += "Calculate the molar mass of " + c1Name + ":<br>\u2003" + molarMass;
-			double mass = Double.parseDouble(molarMass.substring(molarMass.indexOf('=') + 1, molarMass.lastIndexOf("g/mol")));
 			moles = amount / mass;
 			steps += "<br>Convert " + c1Name + " from grams to moles:<br>\u2003" + amount + " g / " + mass + " g/mol = " + moles + " mol<br>";
 		}
@@ -224,9 +224,9 @@ public class Stoichiometry extends Function
 		if(!inGrams2) return steps;
 		else
 		{
-			String molarMass = c2.getMolarMassSteps();
+			StringBuffer[] molarMass = new StringBuffer[2];
+			double mass = c2.getMolarMassSteps(molarMass), answer = mass * molesC2;
 			steps += "<br>Calculate the molar mass of " + c2Name + ": <br>\u2003" + molarMass;
-			double mass = Double.parseDouble(molarMass.substring(molarMass.indexOf('=') + 1, molarMass.lastIndexOf("g/mol"))), answer = mass * molesC2;
 			steps += "<br>Convert " + c2Name + " from moles to grams:<br>\u2003" + mass + " g/mol * " + molesC2 + " mol = " + answer + " g";
 			return steps;
 		}
