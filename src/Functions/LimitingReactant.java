@@ -1,12 +1,3 @@
-/*
- * Given an equation and amounts of each reactant, determines limiting reactant and calculates leftover amounts of excess reactants. Shows calculation steps.
- * equation() returns true- has an EquationReader as a parameter.
- * number() returns true- can save any of calculated leftovers and use saved for any of the reactants.
- * 
- * Author: Julia McClellan
- * Version: 4/15/2016
- */
-
 package Functions;
 
 import java.awt.GridBagConstraints;
@@ -26,19 +17,30 @@ import Equation.Equation;
 import HelperClasses.RadioEnterField;
 import HelperClasses.Units;
 
+/**
+ * File: LimitingReactant.java
+ * Package: Functions
+ * Version: 08/10/2016
+ * Authors: Julia McClellan
+ * -----------------------------------------------
+ * Given an equation and amounts of each reactant, determines limiting reactant and calculates leftover amounts of excess reactants.
+ */
 public class LimitingReactant extends Function
 {
-	private JPanel panel, stoicPanel, enterPanel, resultPanel, stepsPanel;
+	private JPanel panel, stoicPanel, enterPanel, resultPanel;
 	private EquationReader reader;
 	private JButton calculate, reset;
 	private Equation equation;
 	private JLabel errorMessage, equationDisplay, limitingLabel;
-	private Box box2;
+	private Box box2, steps;
 	private ArrayList<RadioEnterField> compounds;
 	private ArrayList<Compound> list;
 	private ArrayList<Double> toSave;
 	private RadioEnterField leftover;
 	
+	/**
+	 * Constructs the function.
+	 */
 	public LimitingReactant()
 	{
 		super("Limiting Reactant");
@@ -48,6 +50,9 @@ public class LimitingReactant extends Function
 		setPanel();
 	}
 	
+	/**
+	 * Sets up the panel with all components.
+	 */
 	private void setPanel()
 	{
 		reader = new EquationReader(this);
@@ -56,8 +61,8 @@ public class LimitingReactant extends Function
 		calculate.addActionListener(new CalculateListener());
 		reset = new JButton("Reset");
 		reset.addActionListener(new ResetListener());
-		stepsPanel = new JPanel();
-		stepsPanel.setVisible(false);
+		steps = Box.createVerticalBox();
+		steps.setVisible(false);
 		
 		box2 = Box.createVerticalBox();
 		equationDisplay = new JLabel();
@@ -79,12 +84,16 @@ public class LimitingReactant extends Function
 		c.gridx = 0;
 		subpanel.add(stoicPanel, c);
 		c.gridx++;
-		subpanel.add(stepsPanel, c);
+		subpanel.add(steps, c);
 		panel.add(subpanel);
 		
 		toSave = new ArrayList<Double>();
 	}
-
+	
+	/**
+	 * Creates the enter fields to enter compound amounts.
+	 * @return The Box of enter fields.
+	 */
 	private Box generateEnter()
 	{
 		Box enterBox = Box.createVerticalBox();
@@ -110,12 +119,15 @@ public class LimitingReactant extends Function
 		return enterBox;
 	}
 	
+	/**
+	 * An action listener for the calculate.
+	 */
 	private class CalculateListener implements ActionListener
 	{
 		public void actionPerformed(ActionEvent arg0)
 		{
 			double[] amounts = new double[compounds.size()];
-			String steps = "<html>Find which is the limiting reactant by diving moles of each reactant by its coefficient:<br>";
+			steps.add(Function.latex("\\text{Find which is the limiting reactant by diving moles of each reactant by its coefficient:}"));
 			Compound limiting = null;
 			int limitIndex = 0, sigFigs = Integer.MAX_VALUE;
 			double min = Double.MAX_VALUE;
@@ -124,8 +136,7 @@ public class LimitingReactant extends Function
 				if(compounds.get(index).isSelected())
 				{
 					Compound compound = list.get(index);
-					String compoundName = compound.toString();
-					if(compound.getNum() != 1) compoundName = compoundName.substring(1);
+					String compoundString = Function.latex(compound, false);
 					double amount;
 					errorMessage.setText("");
 					panel.repaint();
@@ -144,72 +155,70 @@ public class LimitingReactant extends Function
 					if(compounds.get(index).unit1()) 
 					{
 						StringBuffer[] molarMass = new StringBuffer[2];
-						double mass = compound.getMolarMassSteps(molarMass);
-						steps += "Calculate the molar mass of " + compoundName + ":<br>\u2003" + molarMass[0] + molarMass + "<br>";
-						steps += "Convert grams to moles by dividing grams of " +  compoundName + " by its molar mass:<br>\u2003" + amount + " g / " + mass;
-						amount = amount / mass;
-						steps += " g/mol " + " = " + amount + " mol<br>";
+						double mass = compound.getMolarMassSteps(molarMass), temp = amount / mass;
+						steps.add(Function.latex("\\text{Calculate the molar mass of }" + compoundString + ":"));
+						for(StringBuffer str: molarMass) steps.add(Function.latex("\\hspace{1cm}" + str));
+						steps.add(Function.latex("\\text{Convert grams to moles by dividing grams of }" + Function.latex(compound, false) 
+							+ "\\text{ by its molar mass:}\\frac{" + amount + " g}{" + mass + "\\frac{g}{mol}} = " + temp + "mol"));
+						amount = temp;
 					}
-					steps += " Divide by the coefficient of " + compoundName + ":<br>\u2003" + amount + " mol / " + compound.getNum();
-					amount = amount / compound.getNum();
-					steps += " = " + amount + " mol<br>";
-					amounts[index] = amount;
-					if(amount < min)
+					amounts[index] = amount / compound.getNum();
+					steps.add(Function.latex("\\text{Divide by the coefficient of }" + compoundString + ":\\frac{" + amount + "mol}{"
+							+ compound.getNum() + "} = " + amounts[index] + "mol"));
+					if(amounts[index] < min)
 					{
-						min = amount;
+						min = amounts[index];
 						limitIndex = index;
 						limiting = compound;
 					}
 				}
 			}
-			String limitingString = limiting.toString();
-			if(limiting.getNum() != 1) limitingString = limitingString.substring(1);
-			limitingLabel = new JLabel("<html>Limiting Reactant: " + limitingString + "</html>");
+			String limitingString = Function.latex(limiting, false);
+			limitingLabel = new JLabel("<html>Limiting Reactant: " + limiting.withoutNumState() + "</html>");
 			Box resultBox = Box.createVerticalBox();
 			resultBox.add(limitingLabel);
-			steps += "<br>The smallest of these is " + limitingString + ", so it is the limiting reactant.";
+			steps.add(Function.latex("\\text{The smallest of these is }" + limitingString + "\\text{, so it is the limiting reactant.}"));
 			for(int index = 0; index < amounts.length; index++)
 			{
 				Compound compound = list.get(index);
-				String compoundString = compound.toString();
-				if(compound.getNum() != 1) compoundString = compoundString.substring(1);
+				String compoundString = Function.latex(compound, false);
 				double amount = amounts[index];
 				amount -= min;
 				if(index != limitIndex)
 				{
 					amount *= compound.getNum();
-					steps += "<br>The amount of " + compoundString + " leftover: (" + amounts[index] + " mol - " + min + " mol) * " + compound.getNum() + 
-							" = " + amount + " mol";
+					steps.add(Function.latex("{\\text{The amount of }" + compoundString + "\\text{ leftover:}"));
+					steps.add(Function.latex("(" + amounts[index] + " mol - " + min + " mol)" + " * " + compound.getNum() + " = " + amount + " mol"));
 					String unit = "mol";
 					if(compounds.get(index).unit1()) 
 					{
-						StringBuffer[] molarMass = new StringBuffer[2];
-						double mass = compound.getMolarMassSteps(molarMass);
-						steps += "<br>Calculate the molar mass of " + compoundString + "<br>\u2003" + molarMass;
-						steps += "<br>Convert the amount " + compoundString + " leftover to grams<br>\u2003" + amount + " mol * " + mass + " g/mol = ";
-						amount *= compound.getMolarMass();
-						steps += amount + " g";
+						double mass = compound.getMolarMass(), temp = amount * mass;
+						steps.add(Function.latex("\\text{Convert the amount of }" + compoundString + "\\text{ leftover to grams:}"));
+						steps.add(Function.latex("\\hspace{1cm}" + amount + " mol * " + mass + " \\frac{g}{mol} = " + amount + "g"));
+						amount = temp;
 						unit = leftover.getUnit();
 						if(!unit.equals("g")) 
 						{
-							double temp = leftover.getBlankAmount(amount);
-							steps += "<br>" + amount + " g = " + temp + " " + unit;
+							temp = leftover.getBlankAmount(amount);
+							steps.add(Function.latex(amount + " g = " + temp + " " + unit));
 						}
 					}
 					toSave.add(amount);
 					String amountString = Function.withSigFigs(amount, sigFigs) + " " + unit;
-					resultBox.add(new JLabel("<html>Amount " + compoundString + " remaining: " + amountString));
+					resultBox.add(new JLabel("<html>Amount " + compound.withoutNumState() + " remaining: " + amountString));
 				}
 			}
 			resultPanel.add(resultBox);
 			resultPanel.setVisible(true);
-			stepsPanel.add(new JLabel(steps));
-			stepsPanel.setVisible(true);
+			steps.setVisible(true);
 			box2.add(reset);
 			box2.setVisible(true);
 		}
 	}
 	
+	/**
+	 * An action listener for the reset button.
+	 */
 	private class ResetListener implements ActionListener
 	{
 		public void actionPerformed(ActionEvent arg0)
@@ -221,22 +230,40 @@ public class LimitingReactant extends Function
 		}
 	}
 	
+	/**
+	 * Restores the focus to the equation reader.
+	 */
+	@Override
 	public void resetFocus()
 	{
 		reader.resetFocus();
 	}
 	
+	/**
+	 * Returns true as equations can be saved from this function.
+	 * @return true
+	 */
+	@Override
 	public boolean equation()
 	{
 		return true;
 	}
 	
+	/**
+	 * Gives an equation for the program.
+	 * @return The last equation entered.
+	 */
 	public Equation saveEquation()
 	{
 		reader.resetFocus();
 		return reader.saveEquation();
 	}
 	
+	/**
+	 * Uses the parameter equation in the function.
+	 * @param equation The saved equation to use.
+	 */
+	@Override
 	public void useSaved(Equation equation)
 	{
 		this.equation = equation;
@@ -247,11 +274,21 @@ public class LimitingReactant extends Function
 		panel.repaint();
 	}
 	
+	/**
+	 * Returns true as the function can save and use saved numbers.
+	 * @return true
+	 */
+	@Override
 	public boolean number()
 	{
 		return true;
 	}
 	
+	/**
+	 * Returns a number for the program to save.
+	 * @return The number the user selects to save
+	 */
+	@Override
 	public double saveNumber()
 	{
 		if(toSave.size() == 0) return 0;
@@ -262,6 +299,11 @@ public class LimitingReactant extends Function
 		return 0;
 	}
 	
+	/**
+	 * Allows the user to select where to use the saved number.
+	 * @param num The saved number to use.
+	 */
+	@Override
 	public void useSavedNumber(double num)
 	{
 		ArrayList<String> compoundString = new ArrayList<String>();
@@ -281,6 +323,11 @@ public class LimitingReactant extends Function
 		}
 	}
 	
+	/**
+	 * Returns a help string for this function.
+	 * @return A help message for the user.
+	 */
+	@Override
 	public String getHelp()
 	{
 		return "<html>Enter your reaction. Once it is balanced, click<br>"
@@ -291,6 +338,11 @@ public class LimitingReactant extends Function
 				+ "to find out which is the limiting reactant.</html>";
 	}
 	
+	/**
+	 * Returns the panel for this function.
+	 * @return The panel containing components for the function.
+	 */
+	@Override
 	public JPanel getPanel()
 	{
 		return panel;
