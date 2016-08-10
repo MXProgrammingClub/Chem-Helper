@@ -1,17 +1,21 @@
 package Functions;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
+import ChemHelper.ChemHelper;
 import Equation.Compound;
 import Equation.Equation;
 import HelperClasses.RadioEnterField;
@@ -37,6 +41,7 @@ public class LimitingReactant extends Function
 	private ArrayList<Compound> list;
 	private ArrayList<Double> toSave;
 	private RadioEnterField leftover;
+	private JScrollPane scroll;
 	
 	/**
 	 * Constructs the function.
@@ -84,7 +89,9 @@ public class LimitingReactant extends Function
 		c.gridx = 0;
 		subpanel.add(stoicPanel, c);
 		c.gridx++;
-		subpanel.add(steps, c);
+		scroll = new JScrollPane(steps);
+		scroll.setBorder(BorderFactory.createEmptyBorder());
+		subpanel.add(scroll, c);
 		panel.add(subpanel);
 		
 		toSave = new ArrayList<Double>();
@@ -210,6 +217,9 @@ public class LimitingReactant extends Function
 			}
 			resultPanel.add(resultBox);
 			resultPanel.setVisible(true);
+			scroll.setVisible(false);
+			scroll.setPreferredSize(new Dimension(ChemHelper.dimension.width - panel.getWidth() - 15, panel.getHeight() - 10));
+			scroll.setVisible(true);
 			steps.setVisible(true);
 			box2.add(reset);
 			box2.setVisible(true);

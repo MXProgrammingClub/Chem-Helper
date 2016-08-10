@@ -36,7 +36,7 @@ import HelperClasses.MacMenuChanges;
 import HelperClasses.Preferences;
 
 public class ChemHelper extends JFrame { //Primary GUI class
-	
+	public static Dimension dimension;
 	//place where to save the preferences file -- use extension .prefs to make it harder to edit by hand
 	private static final String PREFS_FILE = "preferences.prefs"; 
 	
@@ -124,6 +124,7 @@ public class ChemHelper extends JFrame { //Primary GUI class
 		
 		pack();
 		this.setPreferredSize(this.getSize());
+		dimension = getPreferredSize();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
 		ld.dispose();
