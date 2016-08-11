@@ -19,11 +19,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import Elements.Element;
@@ -40,6 +42,7 @@ public class Empirical extends Function
 	private Box rowBox, steps;
 	private JButton calculate, addRow;
 	private JLabel error, empirical, mass1, molecular, mass2;
+	private JScrollPane scroll;
 	
 	private Double[] toSave;
 	
@@ -132,6 +135,8 @@ public class Empirical extends Function
 		subpanel.add(mass2, c);
 		
 		steps = Box.createVerticalBox();
+		scroll = new JScrollPane(steps);
+		scroll.setBorder(BorderFactory.createEmptyBorder());
 		
 		JPanel subpanel2 = new JPanel(new GridBagLayout());
 		c.gridy = 0;
@@ -141,7 +146,7 @@ public class Empirical extends Function
 		c.gridx++;
 		subpanel2.add(Box.createHorizontalStrut(10), c);
 		c.gridx++;
-		subpanel2.add(steps, c);
+		subpanel2.add(scroll, c);
 		
 		panel = new JPanel();
 		panel.add(subpanel2);
@@ -287,7 +292,7 @@ public class Empirical extends Function
 					return;
 				}
 				values[rest] = 100 - sum;
-				restLabel.setText(elements[rest] + ": " + values[rest]);
+				restLabel.setIcon(Function.latex("\\text{" + elements[rest] + ": }" + values[rest]).getIcon());
 			}
 			else if(Math.abs(100 - sum) > TOLERANCE)
 			{
@@ -371,7 +376,7 @@ public class Empirical extends Function
 						if(coefficients[index] != 1) formula += "_{" + coefficients[index] + "}";
 					}
 					f = Function.latex(formula);
-					empirical.setIcon(f.getIcon());
+					molecular.setIcon(f.getIcon());
 					steps.add(f);
 					mass2.setIcon(Function.latex("\\text{Molar Mass }= " + mMass + " \\frac{g}{mol}").getIcon());
 					toSave[1] = mMass;
@@ -381,6 +386,8 @@ public class Empirical extends Function
 					molecular.setText("Insuffiecient information to calculate molecular formula.");
 				}
 			}
+			panel.setVisible(true);
+			if(!scrollSet) setScrollSize(scroll);
 			steps.setVisible(true);
 		}
 	}

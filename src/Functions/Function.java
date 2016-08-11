@@ -1,6 +1,7 @@
 package Functions;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
@@ -9,9 +10,11 @@ import java.util.ArrayList;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import org.scilab.forge.jlatexmath.*;
 
+import ChemHelper.ChemHelper;
 import Equation.Equation;
 import Equation.Compound;
 import Equation.Ions;
@@ -21,7 +24,7 @@ import Equation.Polyatomic;
 /**
  * File: Function.java
  * Package: Functions
- * Version: 08/07/2016
+ * Version: 08/11/2016
  * Authors: Ted Pyne, Hyun Choi, Julia McClellan
  * -----------------------------------------------
  * An abstract class representing a function used in ChemHelper. Contains static methods for latex rendering equations, calculating significant figures, 
@@ -30,12 +33,14 @@ import Equation.Polyatomic;
  */
 public abstract class Function {
 	private String name;
+	protected boolean scrollSet; //If there is a scroll pane, whether its size has been set
 	private static int sigFig;
 	public static final double TOLERANCE = .05;
 	
 	public Function(String name)
 	{
 		this.name = name;
+		scrollSet = false;
 	}
 	
 	public abstract JPanel getPanel();		//Return the frame containing all components for that chem function
@@ -334,5 +339,16 @@ public abstract class Function {
 	{
 		int down = (int)num, up = down + 1;
 		return num - down < TOLERANCE || up - num < TOLERANCE;
+	}
+	
+	/**
+	 * Sets the size of the scroll pane.
+	 * @param scroll The scroll pane to set the size of.
+	 */
+	protected void setScrollSize(JScrollPane scroll)
+	{
+		scrollSet = true;
+		scroll.setPreferredSize(new Dimension(ChemHelper.dimension.width - getPanel().getWidth() - 15, getPanel().getHeight() - 10));
+		scroll.setVisible(true);
 	}
 }

@@ -1,6 +1,5 @@
 package Functions;
 
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -15,7 +14,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import ChemHelper.ChemHelper;
 import Equation.Compound;
 import Equation.Equation;
 import HelperClasses.RadioEnterField;
@@ -24,7 +22,7 @@ import HelperClasses.Units;
 /**
  * File: LimitingReactant.java
  * Package: Functions
- * Version: 08/10/2016
+ * Version: 08/11/2016
  * Authors: Julia McClellan
  * -----------------------------------------------
  * Given an equation and amounts of each reactant, determines limiting reactant and calculates leftover amounts of excess reactants.
@@ -94,6 +92,7 @@ public class LimitingReactant extends Function
 		subpanel.add(scroll, c);
 		panel.add(subpanel);
 		
+		scrollSet = false;
 		toSave = new ArrayList<Double>();
 	}
 	
@@ -217,9 +216,7 @@ public class LimitingReactant extends Function
 			}
 			resultPanel.add(resultBox);
 			resultPanel.setVisible(true);
-			scroll.setVisible(false);
-			scroll.setPreferredSize(new Dimension(ChemHelper.dimension.width - panel.getWidth() - 15, panel.getHeight() - 10));
-			scroll.setVisible(true);
+			if(!scrollSet) setScrollSize(scroll);
 			steps.setVisible(true);
 			box2.add(reset);
 			box2.setVisible(true);
