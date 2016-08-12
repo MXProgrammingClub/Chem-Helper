@@ -1,10 +1,3 @@
-/*
- * Calculates the molarity or volume of the acidic or basic solution needed to neutralize another.
- * 
- * Author: Julia McClellan
- * Version: 3/2/16
- */
-
 package Functions;
 
 import java.awt.event.ActionEvent;
@@ -21,6 +14,14 @@ import javax.swing.JPanel;
 import HelperClasses.EnterField;
 import HelperClasses.Units;
 
+/**
+ * File: Neutralization.java
+ * Package: Functions
+ * Version: 08/12/2016
+ * Author: Julia McClellan
+ * -----------------------------------------------
+ * Calculates the molarity or volume of the acidic or basic solution needed to neutralize another.
+ */
 public class Neutralization extends Function 
 {
 	private JPanel panel;
@@ -31,6 +32,9 @@ public class Neutralization extends Function
 	private double number;
 	private String unit;
 	
+	/**
+	 * Constructs the function.
+	 */
 	public Neutralization()
 	{
 		super("Neutralization");
@@ -89,22 +93,38 @@ public class Neutralization extends Function
 					steps.setVisible(true);
 				}
 				
+				/**
+				 * Calculates the missing volume.
+				 * @param main The EnterPanel with the missing value.
+				 * @param other The other EnterPanel.
+				 * @param values An array containing the known values.
+				 * @return The unknown volume.
+				 */
 				private double calculateVolume(EnterPanel main, EnterPanel other, double[] values)
 				{
-					steps.add(new JLabel(main.getName() + " volume = " + other.getName() + " molarity * " + other.getName() + " volume / " + main.getName()
-							+ " molarity"));
+					steps.add(Function.latex("\\text{" + main.getName() + " volume} = \\frac{\\text{" + other.getName() + " molarity} * \\text{" + 
+							other.getName() + " volume}}{\\text{" + main.getName() + " molarity}}"));
 					double result = values[1] * values[2] / values[0];
-					steps.add(new JLabel(main.getName() + " volume = " + values[1] + " * " + values[2] + " / " + values[0] + " = " + result + " L"));
+					steps.add(Function.latex("\\text{" + main.getName() + " volume} = \\frac{" + values[1] + "\\frac{mol}{L} * " + values[2] + "L}{" 
+							+ values[0] + "\\frac{mol}{L}} = " + result + " L"));
 					result = main.getVolume(result);
 					return result;
 				}
 				
+				/**
+				 * Calculates the missing molarity.
+				 * @param main The EnterPanel with the missing value.
+				 * @param other The other EnterPanel.
+				 * @param values An array containing the known values.
+				 * @return The unknown molarity.
+				 */
 				private double calculateMolarity(EnterPanel main, EnterPanel other, double[] values)
 				{
-					steps.add(new JLabel(main.getName() + " molarity = " + other.getName() + " molarity * " + other.getName() + " volume / " + main.getName()
-						+ " volume"));
+					steps.add(Function.latex("\\text{" + main.getName() + " molarity} = \\frac{\\text{" + other.getName() + " molarity} * \\text{" + 
+							other.getName() + " volume}}{\\text{" + main.getName() + " volume}}"));
 					double result = values[1] * values[2] / values[0];
-					steps.add(new JLabel(main.getName() + " molarity = " + values[1] + " * " + values[2] + " / " + values[0] + " = " + result + " mol / L"));
+					steps.add(Function.latex("\\text{" + main.getName() + " molarity} = \\frac{" + values[1] + "\\frac{mol}{L} * " + values[2] + "L}{"
+							+ values[0] + "L = " + result + "\\frac{mol}{L}"));
 					result = main.getMolarity(result);
 					return result;
 				}
@@ -138,11 +158,18 @@ public class Neutralization extends Function
 		panel.add(subpanel2);
 	}
 	
+	/**
+	 * Contains fields for molarity and volume of a solution.
+	 */
 	private class EnterPanel extends JPanel
 	{
 		private EnterField molarity, volume;
 		private String name;
 		
+		/**
+		 * Creates the panel for the given value.
+		 * @param name The name of the solution.
+		 */
 		public EnterPanel(String name)
 		{
 			this.name = name;
@@ -154,53 +181,87 @@ public class Neutralization extends Function
 			add(volume);
 		}
 		
+		/**
+		 * Returns the name of the solution used here.
+		 * @return The name of the solution for this EnterPanel.
+		 */
 		public String getName()
 		{
 			return name;
 		}
 		
+		/**
+		 * Returns the value in the molarity field, or Units.UNKNOWN_VALUE if blank.
+		 * @return The entered molarity.
+		 */
 		public double getMolarity()
 		{
 			double amount = molarity.getAmount();
-			if(amount == Units.UNKNOWN_VALUE) steps.add(new JLabel(name + " molarity =  ?"));
-			else steps.add(new JLabel(name + " molarity = " + amount + " mol / L"));
+			if(amount == Units.UNKNOWN_VALUE) steps.add(Function.latex("\\text{" + name + " molarity} =  ?"));
+			else steps.add(Function.latex("\\text{" + name + " molarity} = " + amount + "\\frac{mol}{L}"));
 			return amount;
 		}
 		
+		/**
+		 * Returns the value in the volume field, or Units.UNKNOWN_VALUE if blank.
+		 * @return The entered volume.
+		 */
 		public double getVolume()
 		{
 			double amount = volume.getAmount();
-			if(amount == Units.UNKNOWN_VALUE) steps.add(new JLabel(name + " volume =  ?"));
-			else steps.add(new JLabel(name + " volume = " + amount + " L"));
+			if(amount == Units.UNKNOWN_VALUE) steps.add(Function.latex("\\text{" + name + " volume} =  ?"));
+			else steps.add(Function.latex("\\text{" + name + " volume} = " + amount + " L"));
 			return amount;
 		}
 		
+		/**
+		 * Sets the value of the molarity enter field.
+		 * @param amount The value to set.
+		 */
 		public void setMolarity(double amount)
 		{
 			molarity.setAmount(amount);
 		}
 		
+		/**
+		 * Sets the value of the volume enter field.
+		 * @param amount The value to set.
+		 */
 		public void setVolume(double amount)
 		{
 			volume.setAmount(amount);
 		}
 		
+		/**
+		 * Converts the volume to the desired unit.
+		 * @param before The volume in L
+		 * @return The volume in the desired unit.
+		 */
 		public double getVolume(double before)
 		{
 			double after = volume.getBlankAmount(before);
 			unit = volume.getUnitName();
-			if(after != before) steps.add(new JLabel(before + " L = " + after + " " + unit));
+			if(after != before) steps.add(Function.latex(before + " L = " + after + " " + unit));
 			return after;
 		}
 		
+		/**
+		 * Converts the molarity to the desired unit.
+		 * @param before The molarity in mol/L
+		 * @return The molarity in the desired unit.
+		 */
 		public double getMolarity(double before)
 		{
 			double after = molarity.getBlankAmount(before);
-			unit = molarity.getUnitName() + " / " + molarity.getUnit2Name();
-			if(after != before) steps.add(new JLabel(before + " mol / L = " + after + " " + unit));
+			if(after != before) steps.add(Function.latex(before + " \\{mol}{L} = " + after + "\\frac{" + molarity.getUnitName() + "}{" + 
+					molarity.getUnit2Name() + "}"));
 			return after;
 		}
 		
+		/**
+		 * Returns the smallest number of sig figs in these fields.
+		 * @return The sig fig number to use.
+		 */
 		public int getSigFigs()
 		{
 			int sigFigs1 = volume.getSigFigs(), sigFigs2 = molarity.getSigFigs();
@@ -208,16 +269,31 @@ public class Neutralization extends Function
 		}
 	}
 	
+	/**
+	 * Returns true as this function can save numbers.
+	 * @return true
+	 */
+	@Override
 	public boolean number()
 	{
 		return true;
 	}
 	
+	/**
+	 * Saves the most recently calculated number.
+	 * @return The most recently calculated number.
+	 */
+	@Override
 	public double saveNumber()
 	{
 		return number;
 	}
 	
+	/**
+	 * Allows the user to select where to use the selected number.
+	 * @param num The saved number to use.
+	 */
+	@Override
 	public void useSavedNumber(double num)
 	{
 		String option = (String)JOptionPane.showInputDialog(panel, "Choose where to use the number.", "Choose number", JOptionPane.QUESTION_MESSAGE, null,
@@ -229,6 +305,11 @@ public class Neutralization extends Function
 		else base.setVolume(num);
 	}
 	
+	/**
+	 * Returns a string with instructions.
+	 * @return The help message.
+	 */
+	@Override
 	public String getHelp()
 	{
 		return "<html>Enter all known quantities from the acid-base<br>"
@@ -236,6 +317,11 @@ public class Neutralization extends Function
 				+ "find the remaining value.</html>";
 	}
 	
+	/**
+	 * Returns the panel with components for this function.
+	 * @return The panel for this function.
+	 */
+	@Override
 	public JPanel getPanel()
 	{
 		return panel;
