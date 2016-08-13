@@ -1,10 +1,3 @@
-/*
- * Calculates the pH/pOH/concentration H+/concentration OH.
- * 
- * Author: Julia McClellan
- * Version: 2/27/2016
- */
-
 package Functions;
 
 import java.awt.GridBagConstraints;
@@ -22,6 +15,14 @@ import javax.swing.JPanel;
 import HelperClasses.EnterField;
 import HelperClasses.Units;
 
+/**
+ * File: pHCalculator.java
+ * Package: Functions
+ * Version: 08/12/2016
+ * Authors: Julia McClellan
+ * -----------------------------------------------
+ * Calculates the pH/pOH/concentration H+/concentration OH.
+ */
 public class pHCalculator extends Function
 {
 	private JPanel panel;
@@ -30,6 +31,9 @@ public class pHCalculator extends Function
 	private Box result, steps;
 	private ArrayList<Double> nums;
 	
+	/**
+	 * Constructs the function.
+	 */
 	public pHCalculator()
 	{
 		super("pH Calculator");
@@ -61,7 +65,7 @@ public class pHCalculator extends Function
 						double pH = getP(false, H), pOH = betweenP(false, pH), OH = fromP(true, pOH), temp = oh.getBlankAmount(OH);
 						if(temp != OH)
 						{
-							steps.add(new JLabel(OH + " mol / L = " + temp + " " + oh.getUnitName() + " / " + oh.getUnit2Name()));
+							steps.add(Function.latex(OH + "\\frac{mol}{L} = " + temp + "\\frac{" + oh.getUnitName() + "}{" + oh.getUnit2Name() + "}"));
 							OH = temp;
 						}
 						
@@ -88,7 +92,7 @@ public class pHCalculator extends Function
 						double pOH = getP(true, OH), pH = betweenP(true, pOH), H = fromP(false, pH), temp = h.getBlankAmount(H);
 						if(temp != H)
 						{
-							steps.add(new JLabel(H + " mol / L = " + temp + " " + h.getUnitName() + " / " + h.getUnit2Name()));
+							steps.add(Function.latex(H + "\\frac{mol}{L} = " + temp + "\\frac{" + h.getUnitName() + "}{" + h.getUnit2Name() + "}"));
 							H = temp;
 						}
 						
@@ -115,12 +119,12 @@ public class pHCalculator extends Function
 						double H = fromP(false, pH), temp = h.getBlankAmount(H);
 						if(temp != H)
 						{
-							steps.add(new JLabel(H + " mol / L = " + temp + " " + h.getUnitName() + " / " + h.getUnit2Name()));
+							steps.add(Function.latex(H + "\\frac{mol}{L} = " + temp + "\\frac{" + h.getUnitName() + "}{" + h.getUnit2Name() + "}"));
 						}
 						double pOH = betweenP(false, pH), OH = fromP(true, pOH), temp2 = oh.getBlankAmount(OH);
 						if(temp2 != OH)
 						{
-							steps.add(new JLabel(OH + " mol / L = " + temp2 + " " + oh.getUnitName() + " / " + oh.getUnit2Name()));
+							steps.add(Function.latex(OH + "\\frac{mol}{L} = " + temp2 + "\\frac{" + oh.getUnitName() + "}{" + oh.getUnit2Name() + "}"));
 							OH = temp2;
 						}
 						
@@ -148,13 +152,13 @@ public class pHCalculator extends Function
 						double OH = fromP(true, pOH), temp = oh.getBlankAmount(OH);
 						if(temp != OH)
 						{
-							steps.add(new JLabel(OH + " mol / L = " + temp + " " + oh.getUnitName() + " / " + oh.getUnit2Name()));
+							steps.add(Function.latex(OH + "\\frac{mol}{L} = " + temp + "\\frac{" + oh.getUnitName() + "}{" + oh.getUnit2Name() + "}"));
 							OH = temp;
 						}
 						double pH = betweenP(true, pOH), H = fromP(false, pH), temp2 = h.getBlankAmount(H);
 						if(temp2 != H)
 						{
-							steps.add(new JLabel(H + " mol / L = " + temp2 + " " + h.getUnitName() + " / " + h.getUnit2Name()));
+							steps.add(Function.latex(H + "\\frac{mol}{L} = " + temp2 + "\\frac{" + h.getUnitName() + "}{" + h.getUnit2Name() + "}"));
 						}
 						
 						nums = new ArrayList<Double>();
@@ -178,24 +182,42 @@ public class pHCalculator extends Function
 					result.setVisible(true);
 				}
 				
+				/**
+				 * Calculates either the pH or pOH.
+				 * @param o Whether it is pOH or pH.
+				 * @param amount The concentration the calculation is based on.
+				 * @return The pH or pOH calculated.
+				 */
 				public double getP(boolean o, double amount)
 				{
 					double answer = -Math.log10(amount);
-					steps.add(new JLabel("p" + (o ? "O" : "") + "H = -log(" + amount + ") = " + answer));
+					steps.add(Function.latex("\\text{p" + (o ? "O" : "") + "H} = -log(" + amount + ") = " + answer));
 					return answer;
 				}
 				
+				/**
+				 * Converts from pH or pOH to the other.
+				 * @param o Whether the original is pOH or pH.
+				 * @param amount The known value, either pH or pOH.
+				 * @return The pH or pOH calculated.
+				 */
 				public double betweenP(boolean o, double amount)
 				{
 					double answer = 14 - amount;
-					steps.add(new JLabel("p" + (o ? "" : "O") + "h = 14 - " + amount + " = " + answer));
+					steps.add(Function.latex("\\text{p" + (o ? "" : "O") + "h} = 14 - " + amount + " = " + answer));
 					return answer;
 				}
 				
+				/**
+				 * Calculates the concentration of OH- or H+.
+				 * @param o Whether it is OH- or H+.
+				 * @param amount The pH or pOH.
+				 * @return The calculated concentration.
+				 */
 				public double fromP(boolean o, double amount)
 				{
 					double answer = Math.pow(10, -amount);
-					steps.add(new JLabel("<html>" + (o ? "OH<sup>-</sup>" : "H<sup>+</sup>") + " = 10<sup>-" + amount + "</sup> = " + answer + " mol / L"));
+					steps.add(Function.latex((o ? "\\text{OH}^{-}" : "\\text{H}^{+}") + " = 10^{-" + amount + "} = " + answer + "\\frac{mol}{L}"));
 					return answer;
 				}
 			});
@@ -236,11 +258,21 @@ public class pHCalculator extends Function
 		panel.add(subpanel2);
 	}
 	
+	/**
+	 * Returns true as numbers can be saved for this function.
+	 * @return true
+	 */
+	@Override
 	public boolean number()
 	{
 		return true;
 	}
 	
+	/**
+	 * Has the user select a recently calculated number to save.
+	 * @return The selcted number to save.
+	 */
+	@Override
 	public double saveNumber()
 	{
 		if(nums == null || nums.size() == 0) return 0;
@@ -250,6 +282,11 @@ public class pHCalculator extends Function
 		return (Double)choice;
 	}
 	
+	/**
+	 * Has the user choose where to use the saved number.
+	 * @param num The saved number to use.
+	 */
+	@Override
 	public void useSavedNumber(double num)
 	{
 		Object option = JOptionPane.showInputDialog(panel, "Choose where to use the number.", "Choose Number", JOptionPane.QUESTION_MESSAGE, null, 
@@ -271,6 +308,11 @@ public class pHCalculator extends Function
 		}
 	}
 	
+	/**
+	 * Returns a help message for this function.
+	 * @return The help string.
+	 */
+	@Override
 	public String getHelp()
 	{
 		return "<html>Enter the known value for the acidic or basic<br>"
@@ -278,6 +320,11 @@ public class pHCalculator extends Function
 				+ "will calculate the rest.</html>";
 	}
 	
+	/**
+	 * Returns the panel with components for this function.
+	 * @return The function's panel.
+	 */
+	@Override
 	public JPanel getPanel()
 	{
 		return panel;
