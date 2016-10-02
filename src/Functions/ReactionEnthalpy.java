@@ -1,10 +1,3 @@
-/*
- * Calculates the enthalpy of reaction for the given equation.
- * 
- * Author: Julia McClellan
- * Version: 2/24/2016
- */
-
 package Functions;
 
 import java.awt.GridBagConstraints;
@@ -20,6 +13,14 @@ import javax.swing.JPanel;
 import Equation.Compound;
 import Equation.Equation;
 
+/**
+ * File: ReactionEnthalpy.java
+ * Package: Functions
+ * Version: 10/1/2016
+ * Authors: Julia McClellan
+ * -----------------------------------------------
+ * Calculates the enthalpy of reaction for the given equation.
+ */
 public class ReactionEnthalpy extends Function
 {
 	private static final TreeMap<String, Double> HEAT = generateMap();
@@ -64,7 +65,8 @@ public class ReactionEnthalpy extends Function
 	{
 		steps.setVisible(false);
 		steps.removeAll();
-		steps.add(new JLabel("<html>" + equation + "</html>"));
+		steps.add(Function.latex(equation));
+		result.setText("");
 		
 		ArrayList<Compound> left = equation.getLeft(), right = equation.getRight();
 		StringBuffer step = new StringBuffer("(");
@@ -103,9 +105,8 @@ public class ReactionEnthalpy extends Function
 		
 		step.delete(step.length() - 3, step.length());
 		num = amount2 - amount1;
-		step.append(") = " + num + " kJ / mol");
-		steps.add(new JLabel(step.toString()));
-		result.setText(num + " kJ / mol");
+		step.append(") = " + num + "\\text{ kJ}");
+		steps.add(Function.latex(step.toString()));
 		steps.setVisible(true);
 	}
 	
@@ -133,8 +134,8 @@ public class ReactionEnthalpy extends Function
 			}
 			else throw new NullPointerException();
 		}
-		steps.add(new JLabel("<html>" + c.withoutNum() + " = " + value));
-		step.append("(" + num + " * " + value + ")");
+		steps.add(Function.latex(Function.latex(c, false) + " = " + value + "\\frac{kJ}{mol}"));
+		step.append("(" + num + "\\text{ mol } * " + value + "\\frac{kJ}{mol})");
 		amount += num * value;
 		return amount;
 	}

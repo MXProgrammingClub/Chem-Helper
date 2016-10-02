@@ -1,19 +1,13 @@
-/*
- * Given an amount of a product and of a reactant, calculates the percent yield of a reaction. Shows calculation steps.
- * equation() returns true- has an EquationReader as an instance variable.
- * number() returns true - saves most recently calculated value, uses saved as product or reactant amount.
- * 
- * Author: Julia McClellan
- * Version: 2/13/2015
- */
-
 package Functions;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -27,9 +21,17 @@ import HelperClasses.RadioEnterField;
 import HelperClasses.TextField;
 import HelperClasses.Units;
 
+/**
+ * File: PercentYield.java
+ * Package: Functions
+ * Version: 10/1/2016
+ * Authors: Julia McClellan
+ * -----------------------------------------------
+ * Given an amount of a product and of a reactant, calculates the percent yield of a reaction.
+ */
 public class PercentYield extends Function 
 {
-	private JPanel panel, stoicPanel, displayEquation, reactantPanel, productPanel, resultPanel, stepsPanel;
+	private JPanel panel, stoicPanel, displayEquation, reactantPanel, productPanel, resultPanel;
 	private EquationReader reader;
 	private JButton calculate, reset;
 	private Equation equation;
@@ -37,7 +39,7 @@ public class PercentYield extends Function
 	private boolean onReactant, done;
 	private RadioEnterField fieldR, fieldP;
 	private Compound reactant, product;
-	private Box box2;
+	private Box box2, steps;
 	private double toSave;
 	
 	public PercentYield()
@@ -64,8 +66,7 @@ public class PercentYield extends Function
 		reset = new JButton("Reset");
 		reset.addActionListener(new ResetListener());
 		reset.setVisible(false);
-		stepsPanel = new JPanel();
-		stepsPanel.setVisible(false);
+		steps = Box.createVerticalBox();		
 		errorMessage = new JLabel();
 		
 		box2 = Box.createVerticalBox();
@@ -81,8 +82,16 @@ public class PercentYield extends Function
 		stoicPanel.setVisible(false);
 		
 		panel.add(reader.getPanel());
-		panel.add(stoicPanel);
-		panel.add(stepsPanel);
+		JPanel subpanel = new JPanel(new GridBagLayout());
+		GridBagConstraints g = new GridBagConstraints();
+		g.gridx = 0;
+		g.anchor = GridBagConstraints.NORTHWEST;
+		subpanel.add(stoicPanel, g);
+		g.gridy++;
+		subpanel.add(Box.createHorizontalStrut(10), g);
+		g.gridx++;
+		subpanel.add(steps, g);
+		panel.add(subpanel);
 		
 		onReactant = true;
 		done = false;
@@ -183,8 +192,9 @@ public class PercentYield extends Function
 	{
 		public void actionPerformed(ActionEvent arg0)
 		{
+			if(fieldR.isEmpty() ||fieldP.isEmpty()) return; 
 			resultPanel.setVisible(false);
-			
+			steps.removeAll();
 			double amount = fieldR.getAmount(), actual = fieldP.getAmount();
 			if(amount == Units.ERROR_VALUE || amount == Units.UNKNOWN_VALUE)
 			{
@@ -193,26 +203,28 @@ public class PercentYield extends Function
 			}
 			
 			int sigFigs = Math.min(fieldR.getSigFigs(), fieldP.getSigFigs());
-			String steps = "<html>First, find the theoretical yield-<br>" + Stoichiometry.calculate(reactant, amount, fieldR.unit1(), product, fieldP.unit1());
-			double expected;
+			steps.add(Function.latex("\\text{First, find the theoretical yield:}"));
+			LinkedList<String> stepList = new LinkedList<String>();
+			double expected = Stoichiometry.calculate(reactant, amount, fieldR.unit1(), product, fieldP.unit1(), stepList);
+			for(String step: stepList)
+			{
+				steps.add(Function.latex("\\hspace{1cm}" + step));
+			}
 			if(fieldP.unit1())
 			{
-				expected = Double.parseDouble(steps.substring(steps.lastIndexOf("=") + 1, steps.lastIndexOf("g")));
 				double temp = fieldR.getBlankAmount(expected);
-				if(temp != expected) steps += "<br>" + expected + " g = " + temp + " " + fieldR.getUnit();
+				if(temp != expected) steps.add(Function.latex(expected + " g = " + temp + " " + fieldR.getUnit()));
 			}
-			else expected = Double.parseDouble(steps.substring(steps.lastIndexOf("=") + 1, steps.lastIndexOf("mol"))); 
 			double percent = 100 * actual / expected;
 			toSave = percent;
 			String percentString = Function.withSigFigs(percent, sigFigs) + "%", unit = fieldR.getUnit();
-			steps += "<br>Then divide the actual yield by the theoretical to find the percent yield:<br>\u2003" + actual + " " + unit + " / " + expected + 
-					" " + unit + " * 100 = " + percent + "%</html>";
+			steps.add(Function.latex("\\text{Then divide the actual yield by the theoretical to find the percent yield:}"));
+			steps.add(Function.latex("\\frac{" + actual + unit + "}{" + expected + unit + "} * 100 = " + percent + "\\%"));
 			resultPanel.removeAll();
 			resultPanel.add(new JLabel(percentString));
 			reset.setVisible(true);
 			resultPanel.setVisible(true);
-			stepsPanel.add(new JLabel(steps));
-			stepsPanel.setVisible(true);
+			steps.setVisible(true);
 		}
 	}
 	

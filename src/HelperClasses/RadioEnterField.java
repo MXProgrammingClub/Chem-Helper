@@ -105,4 +105,9 @@ public class RadioEnterField extends JPanel
 	{
 		return check == null ? false : check.isSelected();
 	}
+	
+	public boolean isEmpty()
+	{
+		return text.getText().trim().equals("");
+	}
 }

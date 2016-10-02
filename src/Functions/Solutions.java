@@ -1,10 +1,3 @@
-/*
- * Calculates properties of solutions.
- * 
- * Author: Julia McClellan
- * Version: 2/15/16
- */
-
 package Functions;
 
 import java.awt.event.ActionEvent;
@@ -22,6 +15,14 @@ import javax.swing.JOptionPane;
 import HelperClasses.EnterField;
 import HelperClasses.Units;
 
+/**
+ * File: Solutions.java
+ * Package: Functions
+ * Version: 10/01/2016
+ * Authors: Julia McClellan
+ * -----------------------------------------------
+ * Calculates properties of solutions.
+ */
 public class Solutions extends Function
 {
 	private JPanel panel;
@@ -116,12 +117,12 @@ public class Solutions extends Function
 					{
 						double result = 100 * values[0] / values[6];
 						int sigFigs = Math.min(sol[0][0].getSigFigs(), sol[2][0].getSigFigs());
-						steps.add(new JLabel("Percent by Mass = (Mass Solute / Mass Solution) * 100"));
-						steps.add(new JLabel("Percent by Mass = ?"));
-						steps.add(new JLabel("Mass Solute = " + values[0] + " g"));
-						steps.add(new JLabel("Mass Solution = " + values[6] + " g"));
-						steps.add(new JLabel("Percent by Mass = (" + values[0] + " / " + values[6] + ") * 100 = " + result + "%"));
-						steps.add(new JLabel("Percent by Mass = " + Function.withSigFigs(result, sigFigs) + "%"));
+						steps.add(Function.latex("\\text{Percent by Mass} = \\frac{\\text{Mass Solute}}{\\text{Mass Solution}} * 100"));
+						steps.add(Function.latex("\\text{Percent by Mass} = ? \\%"));
+						steps.add(Function.latex("\\text{Mass Solute} = " + values[0] + " g"));
+						steps.add(Function.latex("\\text{Mass Solution} = " + values[6] + " g"));
+						steps.add(Function.latex("\\text{Percent by Mass} = \\frac{" + values[0] + " g}{" + values[6] + " g} * 100 = " + result + "\\%"));
+						steps.add(Function.latex("\\text{Percent by Mass} = " + Function.withSigFigs(result, sigFigs) + "\\%"));
 						steps.add(Box.createVerticalStrut(10));
 						numbers.add(result);
 						percent[0].setAmount(result);
@@ -130,13 +131,13 @@ public class Solutions extends Function
 					{
 						double result = values[9] * values[6] / 100;
 						int sigFigs = Math.min(percent[0].getSigFigs(), sol[2][0].getSigFigs());
-						steps.add(new JLabel("Percent by Mass = (Mass Solute / Mass Solution) * 100"));
-						steps.add(new JLabel("Percent by Mass = " + values[9] + "%"));
-						steps.add(new JLabel("Mass Solute = ? g"));
-						steps.add(new JLabel("Mass Solution = " + values[6] + " g"));
-						steps.add(new JLabel("Mass Solute = (" + values[9] + " * " + values[6] + ") / 100 = " + result + " g"));
+						steps.add(Function.latex("\\text{Percent by Mass} = \\frac{\\text{Mass Solute}{\\text{Mass Solution}} * 100"));
+						steps.add(Function.latex("\\text{Percent by Mass} = " + values[9] + "\\%"));
+						steps.add(Function.latex("\\text{Mass Solute} = ? g"));
+						steps.add(Function.latex("\\text{Mass Solution} = " + values[6] + " g"));
+						steps.add(Function.latex("\\text{Mass Solute} = \\frac{" + values[9] + " * " + values[6] + " g}{100} = " + result + " g"));
 						result = sol[0][0].getBlankAmount(result);
-						steps.add(new JLabel("Mass Solute = " + Function.withSigFigs(result, sigFigs) + " " + sol[0][0].getUnitName()));
+						steps.add(Function.latex("\\text{Mass Solute} = " + Function.withSigFigs(result, sigFigs) + " " + sol[0][0].getUnitName()));
 						steps.add(Box.createVerticalStrut(10));
 						numbers.add(result);
 						sol[0][0].setAmount(result);
@@ -145,13 +146,13 @@ public class Solutions extends Function
 					{
 						double result = values[0] / values[9] * 100;
 						int sigFigs = Math.min(percent[0].getSigFigs(), sol[0][0].getSigFigs());
-						steps.add(new JLabel("Percent by Mass = (Mass Solute / Mass Solution) * 100"));
-						steps.add(new JLabel("Percent by Mass = " + values[9] + "%"));
-						steps.add(new JLabel("Mass Solute = " + values[0] + " g"));
-						steps.add(new JLabel("Mass Solution = ? g"));
-						steps.add(new JLabel("Mass Solution = (" + values[0] + " / " + values[9] + ") * 100 = " + result + " g"));
+						steps.add(Function.latex("\\text{Percent by Mass} = \\frac{\\text{Mass Solute}{\\text{Mass Solution}} * 100"));
+						steps.add(Function.latex("\\text{Percent by Mass} = " + values[9] + "\\%"));
+						steps.add(Function.latex("\\text{Mass Solute} = " + values[0] + " g"));
+						steps.add(Function.latex("\\text{Mass Solution} = ? g"));
+						steps.add(Function.latex("\\text{Mass Solution} = \\frac{" + values[0] + " g}{" + values[9] + "} * 100 = " + result + " g"));
 						result = sol[2][0].getBlankAmount(result);
-						steps.add(new JLabel("Mass Solute = " + Function.withSigFigs(result, sigFigs) + " " + sol[2][0].getUnitName()));
+						steps.add(Function.latex("\\text{Mass Solute} = " + Function.withSigFigs(result, sigFigs) + " " + sol[2][0].getUnitName()));
 						steps.add(Box.createVerticalStrut(10));
 						numbers.add(result);
 						sol[2][0].setAmount(result);
@@ -162,12 +163,12 @@ public class Solutions extends Function
 					{
 						double result = 100 * values[1] / values[7];
 						int sigFigs = Math.min(sol[0][1].getSigFigs(), sol[2][1].getSigFigs());
-						steps.add(new JLabel("Percent by Volume = (Volume Solute / Volume Solution) * 100"));
-						steps.add(new JLabel("Percent by Volume = ?"));
-						steps.add(new JLabel("Volume Solute = " + values[1] + " L"));
-						steps.add(new JLabel("Volume Solution = " + values[7] + " L"));
-						steps.add(new JLabel("Percent by Volume = (" + values[1] + " / " + values[7] + ") * 100 = " + result + "%"));
-						steps.add(new JLabel("Percent by Volume = " + Function.withSigFigs(result, sigFigs) + "%"));
+						steps.add(Function.latex("\\text{Percent by Volume} = \\frac{\\text{Volume Solute}{\\text{Volume Solution} * 100"));
+						steps.add(Function.latex("\\text{Percent by Volume} = ? \\%"));
+						steps.add(Function.latex("\\text{Volume Solute} = " + values[1] + " L"));
+						steps.add(Function.latex("\\text{Volume Solution} = " + values[7] + " L"));
+						steps.add(Function.latex("\\text{Percent by Volume} = \\frac{" + values[1] + " L}{" + values[7] + " L} * 100 = " + result + "\\%"));
+						steps.add(Function.latex("\\text{Percent by Volume} = " + Function.withSigFigs(result, sigFigs) + "\\%"));
 						steps.add(Box.createVerticalStrut(10));
 						numbers.add(result);
 						percent[1].setAmount(result);
@@ -176,13 +177,13 @@ public class Solutions extends Function
 					{
 						double result = values[10] * values[7] / 100;
 						int sigFigs = Math.min(percent[1].getSigFigs(), sol[2][1].getSigFigs());
-						steps.add(new JLabel("Percent by Volume = (Volume Solute / Volume Solution) * 100"));
-						steps.add(new JLabel("Percent by Volume = " + values[10] + "%"));
-						steps.add(new JLabel("Volume Solute = ? L"));
-						steps.add(new JLabel("Volume Solution = " + values[7] + " L"));
-						steps.add(new JLabel("Volume Solute = (" + values[10] + " * " + values[7] + ") / 100 = " + result + " L"));
+						steps.add(Function.latex("\\text{Percent by Volume} = \\frac{\\text{Volume Solute}}{\\text{Volume Solution}} * 100"));
+						steps.add(Function.latex("\\text{Percent by Volume} = " + values[10] + "\\%"));
+						steps.add(Function.latex("\\text{Volume Solute} = ? L"));
+						steps.add(Function.latex("\\text{Volume Solution} = " + values[7] + " L"));
+						steps.add(Function.latex("\\text{Volume Solute} = \\frac{" + values[10] + " * " + values[7] + " L}{100} = " + result + " L"));
 						result = sol[0][1].getBlankAmount(result);
-						steps.add(new JLabel("Volume Solute = " + Function.withSigFigs(result, sigFigs) + " " + sol[0][1].getUnitName()));
+						steps.add(Function.latex("\\text{Volume Solute} = " + Function.withSigFigs(result, sigFigs) + " " + sol[0][1].getUnitName()));
 						steps.add(Box.createVerticalStrut(10));
 						numbers.add(result);
 						sol[0][1].setAmount(result);
@@ -191,13 +192,13 @@ public class Solutions extends Function
 					{
 						double result = values[1] / values[10] * 100;
 						int sigFigs = Math.min(percent[1].getSigFigs(), sol[0][1].getSigFigs());
-						steps.add(new JLabel("Percent by Volume = (Volume Solute / Volume Solution) * 100"));
-						steps.add(new JLabel("Percent by Volume = " + values[10] + "%"));
-						steps.add(new JLabel("Volume Solute = " + values[1] + " L"));
-						steps.add(new JLabel("Volume Solution = ? L"));
-						steps.add(new JLabel("Volume Solution = (" + values[1] + " / " + values[10] + ") * 100 = " + result + " L"));
+						steps.add(Function.latex("\\text{Percent by Volume} = \\frac{\\text{Volume Solute}}{\\text{Volume Solution}} * 100"));
+						steps.add(Function.latex("\\text{Percent by Volume} = " + values[10] + "\\%"));
+						steps.add(Function.latex("\\text{Volume Solute} = " + values[1] + " L"));
+						steps.add(Function.latex("\\text{Volume Solution} = ? L"));
+						steps.add(Function.latex("\\text{Volume Solution} = \\frac{" + values[1] + "L}{" + values[10] + "} * 100 = " + result + " L"));
 						result = sol[2][1].getBlankAmount(result);
-						steps.add(new JLabel("Mass Solute = " + Function.withSigFigs(result, sigFigs) + " " + sol[2][1].getUnitName()));
+						steps.add(Function.latex("\\text{Volume Solute} = " + Function.withSigFigs(result, sigFigs) + " " + sol[2][1].getUnitName()));
 						steps.add(Box.createVerticalStrut(10));
 						numbers.add(result);
 						sol[2][1].setAmount(result);
@@ -208,14 +209,14 @@ public class Solutions extends Function
 					{
 						double result = values[2] / values[7];
 						int sigFigs = Math.min(sol[0][2].getSigFigs(), sol[2][1].getSigFigs());
-						steps.add(new JLabel("Molarity = Moles Solute / Volume Solution"));
-						steps.add(new JLabel("Molarity = ?"));
-						steps.add(new JLabel("Moles Solute = " + values[2] + " mol"));
-						steps.add(new JLabel("Volume Solution = " + values[7] + " L"));
-						steps.add(new JLabel("Molarity = " + values[2] + " / " + values[7] + " = " + result + " mol / L"));
+						steps.add(Function.latex("\\text{Molarity} = \\frac{\\text{Moles Solute}{Volume Solution}"));
+						steps.add(Function.latex("\\text{Molarity} = ? \\frac{mol}{L}"));
+						steps.add(Function.latex("\\text{Moles Solute} = " + values[2] + " mol"));
+						steps.add(Function.latex("\\text{Volume Solution} = " + values[7] + " L"));
+						steps.add(Function.latex("\\text{Molarity} = \\frac{" + values[2] + "mol}{" + values[7] + "L} = " + result + "\\frac{mol}{L}"));
 						result = mole[0].getBlankAmount(result);
-						steps.add(new JLabel("Molarity = " + Function.withSigFigs(result, sigFigs) + " " + mole[0].getUnitName() + " / " +
-								mole[0].getUnit2Name()));
+						steps.add(Function.latex("\\text{Molarity} = " + Function.withSigFigs(result, sigFigs) + "\\frac{" + mole[0].getUnitName() + "}{" +
+								mole[0].getUnit2Name() + "}"));
 						steps.add(Box.createVerticalStrut(10));
 						numbers.add(result);
 						mole[0].setAmount(result);
@@ -224,13 +225,13 @@ public class Solutions extends Function
 					{
 						double result = values[2] / values[11];
 						int sigFigs = Math.min(sol[0][2].getSigFigs(), mole[0].getSigFigs());
-						steps.add(new JLabel("Molarity = Moles Solute / Volume Solution"));
-						steps.add(new JLabel("Molarity = " + values[11] + " mol / L"));
-						steps.add(new JLabel("Moles Solute = " + values[2] + " mol"));
-						steps.add(new JLabel("Volume Solution = ? L"));
-						steps.add(new JLabel("Volume Solution = " + values[2] + " / " + values[11] + " = " + result + " L"));
+						steps.add(Function.latex("\\text{Molarity} = \\frac{\\text{Moles Solute}{Volume Solution}"));
+						steps.add(Function.latex("\\text{Molarity} = " + values[11] + "\\frac{mol}{L}"));
+						steps.add(Function.latex("\\text{Moles Solute} = " + values[2] + " mol"));
+						steps.add(Function.latex("\\text{Volume Solution} = ? L"));
+						steps.add(Function.latex("\\text{Volume Solution} = \\frac{" + values[2] + "mol}{" + values[11] + "\\frac{mol}{L} = " + result + " L"));
 						result = sol[2][1].getBlankAmount(result);
-						steps.add(new JLabel("Volume Solution = " + Function.withSigFigs(result, sigFigs) + " " + sol[2][1].getUnitName()));
+						steps.add(Function.latex("\\text{Volume Solution} = " + Function.withSigFigs(result, sigFigs) + " " + sol[2][1].getUnitName()));
 						steps.add(Box.createVerticalStrut(10));
 						numbers.add(result);
 						sol[2][1].setAmount(result);
@@ -239,13 +240,13 @@ public class Solutions extends Function
 					{
 						double result = values[7] * values[11];
 						int sigFigs = Math.min(sol[2][1].getSigFigs(), mole[0].getSigFigs());
-						steps.add(new JLabel("Molarity = Moles Solute / Volume Solution"));
-						steps.add(new JLabel("Molarity = " + values[11] + " mol / L"));
-						steps.add(new JLabel("Moles Solute = ? mol"));
-						steps.add(new JLabel("Volume Solution = " + values[7] + " L"));
-						steps.add(new JLabel("Moles Solution = " + values[7] + " * " + values[11] + " = " + result + " mol"));
+						steps.add(Function.latex("\\text{Molarity} = \\frac{\\text{Moles Solute}{Volume Solution}"));
+						steps.add(Function.latex("\\text{Molarity} = " + values[11] + "\\frac{mol}{L}"));
+						steps.add(Function.latex("\\text{Moles Solute} = ? mol"));
+						steps.add(Function.latex("\\text{Volume Solution} = " + values[7] + " L"));
+						steps.add(Function.latex("\\text{Moles Solution} = " + values[7] + " L * " + values[11] + "\\frac{mol}{L} = " + result + " mol"));
 						result = sol[0][2].getBlankAmount(result);
-						steps.add(new JLabel("Moles Solution = " + Function.withSigFigs(result, sigFigs) + " " + sol[0][2].getUnitName()));
+						steps.add(Function.latex("\\text{Moles Solution} = " + Function.withSigFigs(result, sigFigs) + " " + sol[0][2].getUnitName()));
 						steps.add(Box.createVerticalStrut(10));
 						numbers.add(result);
 						sol[0][2].setAmount(result);
@@ -256,14 +257,14 @@ public class Solutions extends Function
 					{
 						double result = values[2] / (values[3] / 1000); //the base unit of mass is kg, not g
 						int sigFigs = Math.min(sol[0][2].getSigFigs(), sol[1][0].getSigFigs());
-						steps.add(new JLabel("Molality = Moles Solute / Mass Solution"));
-						steps.add(new JLabel("Molality = ?"));
-						steps.add(new JLabel("Moles Solute = " + values[2] + " mol"));
-						steps.add(new JLabel("Mass Solution = " + (values[3] / 1000) + " kg"));
-						steps.add(new JLabel("Molality = " + values[2] + " / " + (values[3] / 1000) + " = " + result + " mol / kg"));
+						steps.add(Function.latex("\\text{Molality} = \\frac{\\text{Moles Solute}}{\\text{Mass Solution}}"));
+						steps.add(Function.latex("\\text{Molality} = ? \\frac{mol}{kg}"));
+						steps.add(Function.latex("\\text{Moles Solute} = " + values[2] + " mol"));
+						steps.add(Function.latex("\\text{Mass Solution} = " + (values[3] / 1000) + " kg"));
+						steps.add(Function.latex("\\text{Molality} = \\frac{" + values[2] + "mol}{" + (values[3] / 1000) + "kg} = " + result + "\\frac{mol}{kg}"));
 						result = mole[1].getBlankAmount((result / 1000)); //Convert from mol / kg to mol / g to the desired unit
-						steps.add(new JLabel("Molality = " + Function.withSigFigs(result, sigFigs) + " " + mole[1].getUnitName() + " / " +
-								mole[1].getUnit2Name()));
+						steps.add(Function.latex("\\text{Molality} = " + Function.withSigFigs(result, sigFigs) + "\\frac{" + mole[1].getUnitName() + "}{" +
+								mole[1].getUnit2Name() + "}"));
 						steps.add(Box.createVerticalStrut(10));
 						numbers.add(result);
 						mole[1].setAmount(result);
@@ -272,13 +273,13 @@ public class Solutions extends Function
 					{
 						double result = values[2] / (values[12] * 1000); //From mol / g to mol / kg
 						int sigFigs = Math.min(sol[0][2].getSigFigs(), mole[1].getSigFigs());
-						steps.add(new JLabel("Molality = Moles Solute / Mass Solution"));
-						steps.add(new JLabel("Molality = " + (values[12] * 1000) + " mol / kg"));
-						steps.add(new JLabel("Moles Solute = " + values[2] + " mol"));
-						steps.add(new JLabel("Mass Solution = ? kg"));
-						steps.add(new JLabel("Mass Solution = " + values[2] + " / " + (values[12] * 1000) + " = " + result + " kg"));
+						steps.add(Function.latex("\\text{Molality} = \\frac{\\text{Moles Solute}}{\\text{Mass Solution}}"));
+						steps.add(Function.latex("\\text{Molality} = " + (values[12] * 1000) + "\\frac{mol}{kg}"));
+						steps.add(Function.latex("\\text{Moles Solute} = " + values[2] + " mol"));
+						steps.add(Function.latex("\\text{Mass Solution} = ? kg"));
+						steps.add(Function.latex("\\text{Mass Solution} = \\frac{" + values[2] + "mol}{" + (values[12] * 1000) + "\\frac{mol}{kg}} = " + result + " kg"));
 						result = sol[1][0].getBlankAmount((result * 1000)); //From kg to g to desired unit
-						steps.add(new JLabel("Mass Solution = " + Function.withSigFigs(result, sigFigs) + " " + sol[1][0].getUnitName()));
+						steps.add(Function.latex("\\text{Mass Solution} = " + Function.withSigFigs(result, sigFigs) + " " + sol[1][0].getUnitName()));
 						steps.add(Box.createVerticalStrut(10));
 						numbers.add(result);
 						sol[1][0].setAmount(result);
@@ -287,13 +288,13 @@ public class Solutions extends Function
 					{
 						double result = values[3] * values[12];
 						int sigFigs = Math.min(sol[1][0].getSigFigs(), mole[1].getSigFigs());
-						steps.add(new JLabel("Molality = Moles Solute / Mass Solution"));
-						steps.add(new JLabel("Molality = " + (values[12] / 1000) + " mol / kg"));
-						steps.add(new JLabel("Moles Solute = ? mol"));
-						steps.add(new JLabel("Mass Solution = " + (values[3] / 1000) + " kg"));
-						steps.add(new JLabel("Moles Solution = " + (values[3] / 1000) + " * " + (values[12] / 1000) + " = " + result + " mol"));
+						steps.add(Function.latex("\\text{Molality} = \\frac{\\text{Moles Solute}{\\text{Mass Solution}}"));
+						steps.add(Function.latex("\\text{Molality} = " + (values[12] / 1000) + "\\frac{mol}{kg}"));
+						steps.add(Function.latex("\\text{Moles Solute} = ? mol"));
+						steps.add(Function.latex("\\text{Mass Solution} = " + (values[3] / 1000) + " kg"));
+						steps.add(Function.latex("\\text{Moles Solution} = " + (values[3] / 1000) + "kg * " + (values[12] / 1000) + "\\frac{mol}{kg} = " + result + " mol"));
 						result = sol[0][2].getBlankAmount(result);
-						steps.add(new JLabel("Moles Solution = " + Function.withSigFigs(result, sigFigs) + " " + sol[0][2].getUnitName()));
+						steps.add(Function.latex("\\text{Moles Solution} = " + Function.withSigFigs(result, sigFigs) + " " + sol[0][2].getUnitName()));
 						steps.add(Box.createVerticalStrut(10));
 						numbers.add(result);
 						sol[0][2].setAmount(result);
@@ -304,12 +305,12 @@ public class Solutions extends Function
 					{
 						double result = values[2] / values[8];
 						int sigFigs = Math.min(sol[0][2].getSigFigs(), sol[2][2].getSigFigs());
-						steps.add(new JLabel("Mole Fraction = Moles Solute / Moles Solution"));
-						steps.add(new JLabel("Mole Fraction = ?"));
-						steps.add(new JLabel("Moles Solute = " + values[2] + " mol"));
-						steps.add(new JLabel("Moles Solution = " + values[8] + " mol"));
-						steps.add(new JLabel("Mole Fraction = " + values[2] + " / " + values[8] + " = " + result));
-						steps.add(new JLabel("Mole Fraction = " + Function.withSigFigs(result, sigFigs)));
+						steps.add(Function.latex("\\text{Mole Fraction} = \\frac{\\text{Moles Solute}{\\text{Moles Solution}}"));
+						steps.add(Function.latex("\\text{Mole Fraction} = ?"));
+						steps.add(Function.latex("\\text{Moles Solute} = " + values[2] + " mol"));
+						steps.add(Function.latex("\\text{Moles Solution} = " + values[8] + " mol"));
+						steps.add(Function.latex("\\text{Mole Fraction} = \\frac{" + values[2] + "mol}{" + values[8] + "mol} = " + result));
+						steps.add(Function.latex("\\text{Mole Fraction} = " + Function.withSigFigs(result, sigFigs)));
 						steps.add(Box.createVerticalStrut(10));
 						numbers.add(result);
 						mole[2].setAmount(result);
@@ -318,12 +319,12 @@ public class Solutions extends Function
 					{
 						double result = values[2] / values[13];
 						int sigFigs = Math.min(sol[0][2].getSigFigs(), mole[2].getSigFigs());
-						steps.add(new JLabel("Mole Fraction = Moles Solute / Moles Solution"));
-						steps.add(new JLabel("Mole Fraction = " + values[13]));
-						steps.add(new JLabel("Moles Solute = " + values[2] + " mol"));
-						steps.add(new JLabel("Moles Solution = ? mol"));
-						steps.add(new JLabel("Moles Solution = " + values[2] + " / " + values[13] + " = " + result + " mol"));
-						steps.add(new JLabel("Moles Solution = " + Function.withSigFigs(result, sigFigs) + " mol"));
+						steps.add(Function.latex("\\text{Mole Fraction} = \\frac{\\text{Moles Solute}{\\text{Moles Solution}}"));
+						steps.add(Function.latex("\\text{Mole Fraction} = " + values[13]));
+						steps.add(Function.latex("\\text{Moles Solute} = " + values[2] + " mol"));
+						steps.add(Function.latex("\\text{Moles Solution} = ? mol"));
+						steps.add(Function.latex("\\text{Moles Solution} = \\frac{" + values[2] + "mol}{" + values[13] + "} = " + result + " mol"));
+						steps.add(Function.latex("\\text{Moles Solution} = " + Function.withSigFigs(result, sigFigs) + " mol"));
 						steps.add(Box.createVerticalStrut(10));
 						numbers.add(result);
 						sol[2][2].setAmount(result);
@@ -332,12 +333,12 @@ public class Solutions extends Function
 					{
 						double result = values[8] * values[13];
 						int sigFigs = Math.min(sol[2][2].getSigFigs(), mole[2].getSigFigs());
-						steps.add(new JLabel("Mole Fraction = Moles Solute / Moles Solution"));
-						steps.add(new JLabel("Mole Fraction = " + values[13]));
-						steps.add(new JLabel("Moles Solute = ? mol"));
-						steps.add(new JLabel("Moles Solution = " + values[8] + " mol"));
-						steps.add(new JLabel("Moles Solute = " + values[8] + " * " + values[13] + " = " + result + " mol"));
-						steps.add(new JLabel("Moles Solute = " + Function.withSigFigs(result, sigFigs) + " mol"));
+						steps.add(Function.latex("\\text{Mole Fraction} = \\frac{\\text{Moles Solute}{\\text{Moles Solution}}"));
+						steps.add(Function.latex("\\text{Mole Fraction} = " + values[13]));
+						steps.add(Function.latex("\\text{Moles Solute} = ? mol"));
+						steps.add(Function.latex("\\text{Moles Solution} = " + values[8] + " mol"));
+						steps.add(Function.latex("\\text{Moles Solute} = " + values[8] + "mol * " + values[13] + " = " + result + " mol"));
+						steps.add(Function.latex("\\text{Moles Solute} = " + Function.withSigFigs(result, sigFigs) + " mol"));
 						steps.add(Box.createVerticalStrut(10));
 						numbers.add(result);
 						sol[0][2].setAmount(result);
