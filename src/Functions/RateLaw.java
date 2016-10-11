@@ -1,11 +1,3 @@
-/*
- * Determines the rate law of a reaction given several trials.
- * equation() returns true- has an EquationReader as an instance variable.
- * 
- * Author: Julia McClellan
- * Version: 3/27/2015
- */
-
 package Functions;
 
 import java.awt.Color;
@@ -27,6 +19,13 @@ import javax.swing.JTextField;
 import Equation.Compound;
 import Equation.Equation;
 
+/**
+ * File: RateLaw.java
+ * Package: Functions
+ * Version: 10/10/2016
+ * Authors: Julia McClellan
+ * Determines the rate law of a reaction given several trials.
+ */
 public class RateLaw extends Function 
 {
 	private JPanel panel, subpanel, table;
@@ -218,17 +217,17 @@ public class RateLaw extends Function
 			double[] kValue = new double[1]; //Will hold the value of k once calculated
 			int[] values = calculate(table, compounds.size(), kValue, stepList);
 			
-			String law = "<html>Rate = k";
+			String law = "\\text{Rate} = k";
 			for(int index = 0; index < values.length; index++) 
 			{
-				law += "[" + compounds.get(index).withoutNum() + "]<sup>" + values[index] + "</sup>";
+				law += "[" + Function.latex(compounds.get(index), false) + "]^{" + values[index] + "}";
 			}
-			rate.setText(law);
-			k.setText("<html>k = " + Function.withSigFigs(kValue[0], sigFigs) + " " + stepList.remove(stepList.size() - 1));
+			rate.setIcon(Function.latex(law).getIcon());
+			k.setIcon(Function.latex("k = " + Function.withSigFigs(kValue[0], sigFigs) + " " + stepList.remove(stepList.size() - 1)).getIcon());
 			for(String step: stepList)
 			{
 				if(step.equals("")) steps.add(Box.createVerticalStrut(10));
-				else steps.add(new JLabel(step));
+				else steps.add(Function.latex(step));
 			}
 			results.setVisible(true);
 			steps.setVisible(true);
@@ -250,8 +249,11 @@ public class RateLaw extends Function
 			{
 				if(i != j)
 				{
-					String step = "<html>Trials " + (i + 1) + " and " + (j + 1) + ":<br>" + Arrays.toString(table[i]) + "<br>" + Arrays.toString(table[j]);
-					String product = "<html>";
+					steps.add("\\text{Trials " + (i + 1) + " and " + (j + 1) + ":}");
+					steps.add(Arrays.toString(table[i]));
+					steps.add(Arrays.toString(table[j]));
+					String step = "";
+					String product = "";
 					int changed = -1;
 					double value = table[j][table[0].length - 1];
 					for(int index = 0; index < values.length; index++)
@@ -262,12 +264,12 @@ public class RateLaw extends Function
 							{
 								//The value for another can still be calculated if the rate is adjusted to provide for the other changed values
 								value /= Math.pow(table[j][index] / table[i][index], values[index]); 
-								product += "(" + table[j][index] + " / " + table[i][index] + ")<sup>" + values[index] + "</sup>";
+								product += "\\frac{" + table[j][index] + "}{" + table[i][index] + "}^{" + values[index] + "}";
 							}
 							else if(changed == -1)
 							{
 								changed = index;
-								product += "(" + table[j][index] + " / " + table[i][index] + ")<sup>x</sup> * ";
+								product += "\\frac{" + table[j][index] + "}{" + table[i][index] + "}^{x} * ";
 							}
 							else
 							{
@@ -280,10 +282,10 @@ public class RateLaw extends Function
 					if(changed != -1)
 					{
 						steps.add(step);
-						product = product.substring(0, product.length() - 3) + " = " + table[j][table[0].length - 1] + " / " + table[i][table[0].length - 1];
+						product = product.substring(0, product.length() - 3) + " = \\frac{" + table[j][table[0].length - 1] + "}{" + table[i][table[0].length - 1] + "}";
 						steps.add(product);
 						double left = table[j][changed] / table[i][changed], right = value / table[i][table[0].length - 1];
-						steps.add("<html>" + left + "<sup>x</sup> = " + right);
+						steps.add(left + "^{x} = " + right);
 						values[changed] = (int)Math.round((Math.log(right) / Math.log(left))); // Equivalent to the log base left of right-> a^x=b, x=log(a)b
 						steps.add("x = " + values[changed]);
 						steps.add(""); //To create an extra line between trials.
@@ -310,25 +312,25 @@ public class RateLaw extends Function
 		}
 		
 		//Calculates the value of k
-		String kStep = "<html>k * ";
+		String kStep = "k * ";
 		double value = 1;
 		for(int index = 0; index < values.length; index++)
 		{
 			value *= Math.pow(table[0][index], values[index]);
-			kStep += "(" + table[0][index] + ")<sup>" + values[index] + "</sup> * ";
+			kStep += table[0][index] + "^{" + values[index] + "} * ";
 		}
-		kStep = kStep.substring(0, kStep.length() - 3) + " = " + table[0][table[0].length - 1] + "</html>";
+		kStep = kStep.substring(0, kStep.length() - 3) + " = " + table[0][table[0].length - 1];
 		steps.add(kStep);
 		steps.add("k * " + value + " = " + table[0][table[0].length - 1]);
 		k[0] = table[0][table[0].length - 1] / value;
-		steps.add("k = " + table[0][table[0].length - 1] + " / " + value + " = " + k[0]);
+		steps.add("k = \\frac{" + table[0][table[0].length - 1] + "}{" + value + "} = " + k[0]);
 		
 		//Finds the unit of k
 		int sum = 0;
 		for(int num: values) sum += num;
 		sum -= 1;
-		String unit = "L<sup>" + sum + "</sup> / (mol<sup>" + sum + "</sup> * s)";
-		steps.add("<html>k = " + k[0] + " " + unit);
+		String unit = "\\frac{L^{" + sum + "}}{mol^{" + sum + "} * s}";
+		steps.add("k = " + k[0] + " " + unit);
 		steps.add(unit); //So the value an be used later
 		
 		return values;
