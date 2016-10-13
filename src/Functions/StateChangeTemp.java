@@ -36,7 +36,7 @@ public class StateChangeTemp extends Function {
 	private double number;
 	
 	public StateChangeTemp() {
-		super("Colligative Properties");
+		super("Boiling Point Elevation/Freezing Point Depression");
 		
 		Box iBox = Box.createHorizontalBox();
 		togetherI = new JRadioButton("<html><i>i</i> as One Value</html>");
@@ -130,7 +130,7 @@ public class StateChangeTemp extends Function {
 			int sigFigs = Integer.MAX_VALUE;
 			
 			values[0] = deltaT.getAmount();
-			steps.add(new JLabel("\u0394t = " + (values[0] == Units.UNKNOWN_VALUE ? "?" : values[0]) + " K"));
+			steps.add(Function.latex("\u0394t = " + (values[0] == Units.UNKNOWN_VALUE ? "?" : values[0]) + " K"));
 			if(values[0] != Units.UNKNOWN_VALUE) sigFigs = deltaT.getSigFigs();
 			
 			if(togetherI.isSelected())
@@ -146,10 +146,10 @@ public class StateChangeTemp extends Function {
 					values[1] = iIon.getAmount() / iSolute.getAmount();
 					sigFigs = Math.min(Math.min(iIon.getSigFigs(), iSolute.getSigFigs()), sigFigs);
 				}
-			steps.add(new JLabel("<html><i>i</i> = " + (values[1] == Units.UNKNOWN_VALUE ? "?" : values[1]) + "</html>"));	
+			steps.add(Function.latex("i = " + (values[1] == Units.UNKNOWN_VALUE ? "?" : values[1])));	
 			
 			values[2] = k.getAmount();
-			steps.add(new JLabel("k = " + (values[2] == Units.UNKNOWN_VALUE ? "?" : values[2])));
+			steps.add(Function.latex("k = " + (values[2] == Units.UNKNOWN_VALUE ? "?" : values[2])));
 			if(values[2] != Units.UNKNOWN_VALUE) sigFigs = Math.min(sigFigs, k.getSigFigs());
 			
 			values[3] = m.getAmount(); 
@@ -158,9 +158,9 @@ public class StateChangeTemp extends Function {
 				values[3] *= 1000; //Conversion from base of mol / g to desired of mol / kg
 				sigFigs = Math.min(sigFigs, m.getSigFigs());
 			}
-			steps.add(new JLabel("m = " + (values[3] == Units.UNKNOWN_VALUE ? "?" : values[3]) + " mol / kg"));
+			steps.add(Function.latex("m = " + (values[3] == Units.UNKNOWN_VALUE ? "?" : values[3]) + " \\frac{mol}{kg}"));
 			
-			steps.add(new JLabel("<html>\u0394t = <i>i</i> * k * m</html>"));
+			steps.add(Function.latex("\u0394t = i * k * m"));
 			int blank = -1;
 			
 			for(int index = 0; index < values.length; index++) {
@@ -181,27 +181,27 @@ public class StateChangeTemp extends Function {
 			if(blank == -1) result.setText("Leave one value blank");
 			else if(blank == 0) {
 				number = values[1] * values[2] * values[3];
-				steps.add(new JLabel("\u0394t = " + values[1] + " * " + values[2] + " * " + values[3] + " = " + number + " K"));
+				steps.add(Function.latex("\u0394t = " + values[1] + " * " + values[2] + " * " + values[3] + " = " + number + " K"));
 				number = deltaT.getBlankAmount(number);
-				steps.add(new JLabel("\u0394t = " + number + " " + deltaT.getUnitName()));
+				steps.add(Function.latex("\u0394t = " + number + " " + deltaT.getUnitName()));
 				result.setText("\u0394t = " + Function.withSigFigs(number, sigFigs) + " " + deltaT.getUnitName());
 			}
 			else if(blank == 1) {
 				number = values[0] / values[2] / values[3];
-				steps.add(new JLabel("<html><i>i</i> = " + values[0] + " / " + values[2] + " / " + values[3] + " = " + number + "</html>"));
+				steps.add(Function.latex("i = \\frac{\\frac{" + values[0] + "}{" + values[2] + "}{" + values[3] + "} = " + number));
 				result.setText("<html><i>i</i> = " + Function.withSigFigs(number, sigFigs) + "</html>");
 			}
 			else if(blank == 2) {
 				number = values[0] / values[1] / values[3];
-				steps.add(new JLabel("k = " + values[0] + " / " + values[1] + " / " + values[3] + " = " + number));
+				steps.add(Function.latex("k = \\frac{\\frac{" + values[0] + "}{" + values[1] + "}{" + values[3] + "} = " + number));
 				result.setText("k = " + Function.withSigFigs(number, sigFigs));
 			}
 			else if (blank == 3) {
 				number = values[0] / values[1] / values[2];
-				steps.add(new JLabel("m = " + values[0] + " / " + values[1] + " / " + values[2] + " = " + number + " mol / kg"));
+				steps.add(Function.latex("m = \\frac{\\frac{" + values[0] + "}{" + values[1] + "}{" + values[2] + "} = " + number + " \\frac{mol}{kg}"));
 				number /= 1000; //Converting from mol / kg to base of mol / g
 				number = m.getBlankAmount(number);
-				steps.add(new JLabel("m = " + number + " mol / " + m.getUnit2Name()));
+				steps.add(Function.latex("m = " + number + " \\frac{mol}{" + m.getUnit2Name() + "}"));
 				result.setText("m = " + Function.withSigFigs(number, sigFigs) + " mol / " + m.getUnit2Name());
 			}
 			
