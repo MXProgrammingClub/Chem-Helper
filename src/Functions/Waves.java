@@ -89,62 +89,62 @@ public class Waves extends Function {
 				if(input[0].isEmpty() && !input[1].isEmpty() && !input[5].isEmpty()) { //wavelength
 					double newAmount = input[5].getAmount() / input[1].getAmount();
 					input[0].setAmount(newAmount);
-					steps.add(new JLabel("c = \u03BB\u22C5f \u2192 " + input[5].getAmount() +  "m/s / " + input[1].getAmount() 
-							+ "Hz = " + newAmount + "m"));
+					steps.add(Function.latex("c = \u03BB\u22C5f \u2192 " + input[5].getAmount() +  "\\frac{m}{s} * \\frac{1}{" + input[1].getAmount() 
+							+ "Hz} = " + newAmount + "m"));
 				}
-				else if(input[0].isEmpty() && !input[3].isEmpty() && !input[3].isEmpty()) { //wavelength
+				else if(input[0].isEmpty() && !input[6].isEmpty() && !input[3].isEmpty() && !input[4].isEmpty()) { //wavelength
 					double newAmount = input[6].getAmount() / (input[3].getAmount() * input[4].getAmount());
 					input[0].setAmount(newAmount);
-					steps.add(new JLabel("\u03BB = h/(m\u22C5v) \u2192 " + input[6].getAmount() + "J\u00B7s / (" 
-							+ input[3].getAmount() + "g * " + input[4].getAmount() + "m/s) =" + newAmount + "m"));
+					steps.add(Function.latex("\u03BB = \\frac{h}{m\u22C5v} \u2192 \\frac{" + input[6].getAmount() + " J\u00B7s}{" 
+							+ input[3].getAmount() + " g * " + input[4].getAmount() + " \\frac{m}{s}} =" + newAmount + "m"));
 				}
 				else if(input[1].isEmpty() && !input[0].isEmpty() && !input[5].isEmpty()) { //frequency
 					double newAmount = input[5].getAmount() / input[0].getAmount();
 					input[1].setAmount(newAmount);
-					steps.add(new JLabel("c = \u03BB\u22C5f \u2192 " + input[5].getAmount() + "m/s / " + input[0].getAmount() 
-							+ "m = " + newAmount + "Hz"));
+					steps.add(Function.latex("c = \u03BB\u22C5f \u2192 \\frac{" + input[5].getAmount() + " \\frac{m}{s}}{" + input[0].getAmount() 
+							+ " m} = " + newAmount + " Hz"));
 				}
 				else if(input[1].isEmpty() && !input[2].isEmpty() && !input[6].isEmpty()) { //frequency
 					double newAmount = input[2].getAmount() / input[6].getAmount();
 					input[1].setAmount(newAmount);
-					steps.add(new JLabel("E = h\u22C5f" + input[2].getAmount() + "J / " + input[6].getAmount() + "J\u00B7s = " 
+					steps.add(Function.latex("E = f * h \u2192 \\frac{" + input[2].getAmount() + " J}{" + input[6].getAmount() + "J\u00B7s} = " 
 							+ newAmount + "Hz"));
 				}
-				else if(input[2].isEmpty() && !input[0].isEmpty() && !input[5].isEmpty()) { //energy
-					double newAmount = input[5].getAmount() / input[0].getAmount();
+				else if(input[2].isEmpty() && !input[1].isEmpty() && !input[6].isEmpty()) { //energy
+					double newAmount = input[6].getAmount() / input[1].getAmount();
 					input[2].setAmount(newAmount);
-					steps.add(new JLabel("E = h\u22C5f" + input[5].getAmount() + "m/s / " + input[0].getAmount() + "m = " 
+					steps.add(Function.latex("E = h\u22C5f \u2192 " + input[6].getAmount() + " J\u00B7S * " + input[1].getAmount() + "Hz = " 
 							+ newAmount + "J"));
 				}
 				else if(input[3].isEmpty() && !input[0].isEmpty() && !input[4].isEmpty() && !input[6].isEmpty()) { //mass
 					double newAmount = input[6].getAmount() / (input[0].getAmount() * input[4].getAmount());
 					input[3].setAmount(newAmount);
-					steps.add(new JLabel("\u03BB = h/(m\u22C5v) \u2192 " + input[6].getAmount() + "J\u00B7s / (" 
-							+ input[0].getAmount() + "m * " + input[4].getAmount() + "m/s) = " + newAmount + "g"));
+					steps.add(Function.latex("\u03BB = \\frac{h}{m\u22C5v} \u2192 \\frac{" + input[6].getAmount() + " J\u00B7s}{" 
+							+ input[0].getAmount() + " m * " + input[4].getAmount() + " \\frac{m}{s}} = " + newAmount + "g"));
 				}
 				else if(input[4].isEmpty() && !input[0].isEmpty() && !input[3].isEmpty() && !input[6].isEmpty()) { //velocity
 					double newAmount = input[6].getAmount() / (input[0].getAmount() * input[3].getAmount());
 					input[4].setAmount(newAmount);
-					steps.add(new JLabel("\u03BB = h/(m\u22C5v) \u2192 " + input[6].getAmount() + "J\u00B7s / (" 
-							+ input[0].getAmount() + "m * " + input[3].getAmount() + "g) = " + newAmount + "m/s"));
+					steps.add(Function.latex("\u03BB = h/(m\u22C5v) \u2192 \\frac{" + input[6].getAmount() + " J\u00B7s}{" 
+							+ input[0].getAmount() + " m * " + input[3].getAmount() + " g} = " + newAmount + " \\frac{m}{s}"));
 				}
 				else if(input[5].isEmpty() && !input[0].isEmpty() && !input[1].isEmpty()) { //speed of light
 					double newAmount = input[0].getAmount() * input[1].getAmount();
 					input[5].setAmount(newAmount);
-					steps.add(new JLabel("c = \u03BB\u22C5f \u2192 " + input[0].getAmount() + "m * " + input[1].getAmount() 
-							+ "Hz = " + newAmount + "m/s"));
+					steps.add(Function.latex("c = \u03BB\u22C5f \u2192 " + input[0].getAmount() + " m * " + input[1].getAmount() 
+							+ " Hz = " + newAmount + " \\frac{m}{s}"));
 				}
 				else if(input[6].isEmpty() && !input[1].isEmpty() && !input[2].isEmpty()) { //planck's constant
 					double newAmount = input[2].getAmount() / input[1].getAmount();
 					input[6].setAmount(newAmount);
-					steps.add(new JLabel("E = h\u22C5f" + input[2].getAmount() + "J / " + input[1].getAmount() + "Hz = " 
-							+ newAmount + "m/s"));
+					steps.add(Function.latex("E = h\u22C5f \u2192 \\frac{" + input[2].getAmount() + " J}{" + input[1].getAmount() + " Hz} = " 
+							+ newAmount + " \\frac{m}{s}"));
 				}
 				else if(input[6].isEmpty() && !input[0].isEmpty() && !input[3].isEmpty() && !input[4].isEmpty()) {
 					double newAmount = input[0].getAmount() * input[3].getAmount() * input[4].getAmount();
 					input[6].setAmount(newAmount);
-					steps.add(new JLabel("\u03BB = h/(m\u22C5v) \u2192 " + input[0].getAmount() + "m * " + input[3].getAmount() 
-							+ "g * " + input[4].getAmount() + "m/s = "+ newAmount + "J\u00B7s"));
+					steps.add(Function.latex("\u03BB = h/(m\u22C5v) \u2192 " + input[0].getAmount() + " m * " + input[3].getAmount() 
+							+ " g * " + input[4].getAmount() + " \\frac{m}{s} = "+ newAmount + "J\u00B7s"));
 				}
 				else break;
 			}
