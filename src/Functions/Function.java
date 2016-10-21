@@ -31,6 +31,7 @@ import Equation.Polyatomic;
  * and rounds numbers to a given number of significant figures. Provides default operations for equation and number saving, to be implemented by child
  * classes that need them.
  */
+
 public abstract class Function {
 	private String name;
 	protected boolean scrollSet; //If there is a scroll pane, whether its size has been set

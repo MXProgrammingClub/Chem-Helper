@@ -425,126 +425,10 @@ public class Equation
 		return e;
 	}
 	
-	//creates equations for each ion
-	private String[] createEquations() {
-		String skeleton = "";
-		ArrayList<Monatomic> ions = new ArrayList<Monatomic>();
-		int var = 1;
-		for(Compound c: left) { //getting and assigning vars to left side compounds
-			for(Monatomic e: c.getNoPoly()) //getting all the different ions in the equation
-				if(!ions.contains(e)) ions.add(new Monatomic(e));
-			if(!skeleton.equals("")) skeleton += "+";
-			skeleton += getNextVar(var);
-			var++;
-		}
-		//System.out.println(ions);
-		skeleton += "=";
-		for(Compound c: right) { //getting and assigning vars to right side compounds
-			if(skeleton.charAt(skeleton.length() - 1) != '=') skeleton += "+";
-			skeleton += getNextVar(var);
-			var++;
-		}
-		
-		String[] equations = new String[ions.size()];
-		int index = 0;
-		//goes and adds coefficients to the equations when needed. Vars w/o coefficients have a coefficient of 0.
-		for(Monatomic e: ions) {
-			int var2 = 1;
-			String eq = skeleton;
-			for(Compound c: left) {
-				for(Monatomic i: c.getNoPoly()) {
-					if(i.getElement().equals(e.getElement())) {
-						eq = eq.substring(0, eq.indexOf(getNextVar(var2))) + i.getNum() + eq.substring(eq.indexOf(getNextVar(var2)));
-						break;
-					}
-				}
-				var2++;
-			}
-			for(Compound c: right) {
-				for(Monatomic i: c.getNoPoly()) {
-					if(i.getElement().equals(e.getElement())) {
-						eq = eq.substring(0, eq.indexOf(getNextVar(var2))) + i.getNum() + eq.substring(eq.indexOf(getNextVar(var2)));
-						break;
-					}
-				}
-				var2++;
-			}
-			equations[index] = eq;
-			index++;
-		}
-		
-		//now add 0s in where needed
-		for(int i = 0; i < equations.length; i++) {
-			String eq = equations[i];
-			for(int j = eq.length() - 1; j > 0; j--) { //everywhere except index 0
-				if(Character.isLetter(eq.charAt(j)) && eq.charAt(j - 1) == '+') {
-					eq = eq.substring(0, j) + "0" + eq.substring(j);
-					j++;
-				}
-			}
-			while(Character.isLetter(eq.charAt(0)) || eq.charAt(0) == '+') //at the beginning
-				eq = "0" + eq;
-			
-			if(Character.isLetter(eq.charAt(1 + eq.indexOf("="))))
-				eq = eq.substring(0, eq.indexOf("=") + 1) + "0" + eq.substring(eq.indexOf("=") + 1);//weird fix for 0 just after =
-			
-			equations[i] = eq;
-		}
-		
-		return equations;
-	}
-	
-	//substitutes 1 for variable a and then rearranges the equations to be vars = constant 
-	private String[] subForA(String[] equations) {
-		String[] newEq = new String[equations.length];
-		
-		int index = 0;
-		for(String eq: equations) {
-			eq = eq.substring(0, eq.indexOf("a")) + eq.substring(eq.indexOf("a")); //a will be the first variable used
-			String firstHalf = eq.substring(0, eq.indexOf("="));
-			String secondHalf = eq.substring(eq.indexOf("=") + 1);
-			String[] firstHalfStuff = firstHalf.split("\\+");
-			while(firstHalfStuff.length > 1) {
-				secondHalf = "-" + firstHalfStuff[firstHalfStuff.length - 1] + "+" + secondHalf;
-				String[] temp = new String[firstHalfStuff.length - 1];
-				temp[0] = firstHalfStuff[0];
-				for(int i = 2; i < firstHalfStuff.length; i++)
-					temp[i - 1] = firstHalfStuff[i];
-				firstHalfStuff = temp;
-			}
-			
-			firstHalf = firstHalfStuff[0].substring(0, firstHalfStuff[0].length() - 1);
-			newEq[index] = secondHalf + "=" + firstHalf;
-			index++;
-		}
-		
-		return newEq;
-	}
-	
-	//provides a new variable
-	//BUG: the variables past the alphabet dont work right  
-	private static String getNextVar(int prev) {
-		ArrayList<Integer> nums = new ArrayList<Integer>();
-		for(; prev > 26; prev -= 26) 
-			nums.add(prev % 26);
-		nums.add(prev);
-		String var = "";
-		for(int i = nums.size() - 1; i >= 0; i--)
-			var += alphabet.charAt(nums.get(i) - 1);
-		return var;
-	}
-	
-	//takes an array of Fractions and makes them into integers
-	private static int[] integerize(double[] c) {
-		double[] c2 = c.clone();
-		int times = Function.integerize(c2);
-		
-		int[] newCo = new int[c.length];
-		for(int i = 0; i < newCo.length; i++)
-			newCo[i] = (int) (c[i] * times);
-		return newCo;
-	}
-	
+	/**
+	 * Takes this equation and counts the elements on either side to see if the equation is balanced
+	 * @return Whether the equation is balanced or not.
+	 */
 	private boolean isBalanced()
 	{
 		ArrayList<Monatomic> leftIons = toIons(left), rightIons = toIons(right);
@@ -587,4 +471,5 @@ public class Equation
 		}
 		return ions;
 	}
+	
 }

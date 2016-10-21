@@ -4,7 +4,7 @@
  * Represents the q=mc(dT) equation.
  * 
  * Author: Luke Giacalone
- * Version: 03/12/2016
+ * Version: 10/21/2016
  */
 
 package Functions;
@@ -14,6 +14,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -26,6 +27,7 @@ import HelperClasses.Units;
 public class HeatEquation extends Function {
 	
 	private JPanel panel;
+	private Box steps;
 	private JRadioButton togetherTemp, seperatedTemp;
 	private EnterField[] input;
 	private JButton calculate;
@@ -76,8 +78,11 @@ public class HeatEquation extends Function {
 		c.gridy++;
 		subpanel.add(result, c);
 		
+		steps = Box.createVerticalBox();
+		
 		panel = new JPanel();
 		panel.add(subpanel);
+		panel.add(steps);
 		
 		togetherTemp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -107,11 +112,14 @@ public class HeatEquation extends Function {
 	
 	private class Calculate implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
+			steps.setVisible(false);
+			steps.removeAll();
 			int blank = -1;
 			if(!input[4].isEmpty() && !input[5].isEmpty() && input[3].isEmpty()) {
 				input[3].setAmount(Units.toKelvin(input[5].getAmount(), input[5].getUnit()) 
 						- Units.toKelvin(input[4].getAmount(), input[4].getUnit()));
 				input[3].setUnit(0);
+				steps.add(Function.latex("\\Delta T = " + input[5].getAmount() + " K - " + input[4].getAmount() + " K"));
 			}
 			for(int i = 0; i < 4; i++) { //dont traverse the seperated temp
 				if(input[i].isEmpty()) 
@@ -122,28 +130,46 @@ public class HeatEquation extends Function {
 						return;
 					}
 			}
-			if(!input[2].isEmpty()) input[2].setAmount(Units.toBaseUnit(input[2].getAmount(), input[2].getUnit()));
-			if(!input[3].isEmpty()) input[3].setAmount(Units.toKelvin(input[3].getAmount(), input[3].getUnit()));
+			if(!input[2].isEmpty()) {
+				double temp = Units.toBaseUnit(input[2].getAmount(), input[2].getUnit());
+				input[2].setAmount(temp);
+				steps.add(Function.latex(temp + " g = " + input[2].getAmount() + " " + input[2].getUnitName()));
+			}
+			if(!input[3].isEmpty()) {
+				double temp = Units.toKelvin(input[3].getAmount(), input[3].getUnit());
+				input[3].setAmount(temp);
+				steps.add(Function.latex(temp + " K = " + input[3].getAmount() + " " + input[3].getUnitName()));
+			}
 			if(blank == 0) {
 				answer = input[1].getAmount() * input[2].getAmount() * input[3].getAmount();
 				result.setText("q = " + answer + " J");
+				steps.add(Function.latex("q = mc\\Delta T \u2192 " + input[1].getAmount() + "\\frac{J}{g*K} * " + input[2].getAmount()
+						+ " g " + input[3].getAmount() + " K "));
 			}
 			else if(blank == 1) {
 				answer = input[0].getAmount() / input[2].getAmount() / input[3].getAmount();
 				result.setText("c = " + answer + " J/(" + input[1].getUnit2Name() + ")");
+				steps.add(Function.latex("q = mc\\Delta T \u2192 c = \\frac{" + input[0].getAmount() + " g}{" + input[2].getAmount()
+						+ " g * " + input[3].getAmount() + " K}"));
 			}
 			else if(blank == 2) {
 				answer = input[0].getAmount() / input[1].getAmount() / input[3].getAmount();
 				answer = Units.fromBaseUnit(answer, input[2].getUnit());
 				result.setText("m = " + answer + " " + input[2].getUnitName());
+				steps.add(Function.latex("q = mc\\Delta T \u2192 m = \\frac{" + input[0].getAmount() + " g}{" + input[1].getAmount()
+						+ "\\frac{J}{g*K} * " + input[3].getAmount() + " K}"));
 			}
 			else if(blank == 3) {
 				answer = input[0].getAmount() / input[1].getAmount() / input[2].getAmount();
 				answer = Units.toOriginalTime(answer, input[3].getUnit());
 				result.setText("\u0394T = " + answer + " " + input[3].getUnit());
+				steps.add(Function.latex("q = mc\\Delta T \u2192 \\Delta T = \\frac{" + input[0].getAmount() + " g}{" + input[1].getAmount()
+						+ "\\frac{J}{g*K} * " + input[2].getAmount() + " g}"));
 			}
 			if(!input[2].isEmpty()) input[2].setAmount(Units.fromBaseUnit(input[2].getAmount(), input[2].getUnit()));
 			if(!input[3].isEmpty()) input[3].setAmount(Units.toOriginalTemp(input[3].getAmount(), input[3].getUnit()));
+			
+			steps.setVisible(true);
 		}
 	}
 	
