@@ -18,6 +18,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -43,9 +44,10 @@ public class CrashFrame extends JFrame {
 		c.gridy = 0;
 		panel.add(new JLabel("<html><h1>Uh Oh!</h1></html>"), c);
 		c.gridy = 1;
-		panel.add(new JLabel("ChemHelper has crashed! Please send a report so we can fix the problem."), c);
+		panel.add(new JLabel("<html>ChemHelper has crashed! Please send a report so we can fix the problem:"
+				+ "<br>https://goo.gl/forms/F0yj4206Jrx2NkT23</html>"), c);
 		
-		c.gridy++;
+		/*c.gridy++;
 		panel.add(new JLabel("<html><br>Please explain exactly what you were doing at the time of the crash.<br>"
 				+ "Include any data you were using.</html>"), c);
 		
@@ -57,34 +59,37 @@ public class CrashFrame extends JFrame {
 		explainArea.setLineWrap(true);
 		c.gridy++;
 		c.anchor = GridBagConstraints.CENTER;
-		panel.add(explainPane, c);
+		panel.add(explainPane, c);*/
 		
 		c.gridy++;
 		c.anchor = GridBagConstraints.WEST;
-		panel.add(new JLabel("<html><br>Exception(s) thrown:</html>"), c);
+		panel.add(new JLabel("<html><br>Please include this in your report:	</html>"), c);
 		
-		Box exceptionBox = Box.createVerticalBox();
-		exceptionBox.add(new JLabel("" + exception));
+		JTextArea exceptionTextArea = new JTextArea();
+		String exceptionText = "";
+		exceptionText += "" + exception;
 		for(StackTraceElement e: stack)
-			exceptionBox.add(new JLabel("\t" + e));
+			exceptionText += "\n    " + e;
 		JScrollPane exceptionPane = new JScrollPane();
 		exceptionPane.setPreferredSize(new Dimension(400, 100));
-		exceptionPane.setViewportView(exceptionBox);
+		exceptionTextArea.setText(exceptionText);
+		exceptionTextArea.setEditable(false);
+		exceptionPane.setViewportView(exceptionTextArea);
 		c.anchor = GridBagConstraints.CENTER;
 		c.gridy++;
 		panel.add(exceptionPane, c);
 		
-		send = new JButton("Send Report");
+		send = new JButton(/*"Send Report"*/ "Open Form");
 		cancel = new JButton("Cancel");
 		c.gridy++;
 		c.anchor = GridBagConstraints.EAST;
 		panel.add(send, c);
-		c.anchor = GridBagConstraints.WEST;
-		panel.add(cancel, c);
+		/*c.anchor = GridBagConstraints.WEST;
+		panel.add(cancel, c);*/
 		
 		send.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Desktop desktop = Desktop.getDesktop();
+				/*Desktop desktop = Desktop.getDesktop();
 				String message = "mailto:jmcclellan@mxschool.edu,lrgiacalone@mxschool.edu?subject=ChemHelper%20Error&body=";
 				message += "EXCEPTION:%0A%0A";
 				message += removeSpace(exception.toString());
@@ -97,7 +102,10 @@ public class CrashFrame extends JFrame {
 					desktop.mail(uri);
 				} catch (IOException e1) {}
 				dispose();
-				System.exit(0);
+				System.exit(0);*/
+				try {
+					Desktop.getDesktop().browse(new URI("https://goo.gl/forms/F0yj4206Jrx2NkT23"));
+				} catch (IOException | URISyntaxException e1) {}
 			}
 		});
 		cancel.addActionListener(new ActionListener() {
