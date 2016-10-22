@@ -9,12 +9,15 @@ package ChemHelper;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.LinkedList;
 
 import javax.swing.Box;
@@ -128,6 +131,10 @@ public class ChemHelper extends JFrame { //Primary GUI class
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
 		ld.dispose();
+		JOptionPane.showMessageDialog(this, "UNAUTHORIZED DISTRIBUTION OF CHEMHELPER IS STRICTLY\nPROHIBITED! Any unauthorized"
+				+ " distribution is breaking a Major\nSchool Rule and will result in disciplinary action.");
+		JOptionPane.showMessageDialog(this, "Welcome to ChemHelper Beta v0.5.0! Please submit bugs and\nsuggestions to"
+				+ " https://goo.gl/forms/F0yj4206Jrx2NkT23");
 	}
 
 	private void createMenu()
@@ -181,6 +188,15 @@ public class ChemHelper extends JFrame { //Primary GUI class
 			}
 			menu.add(thisMenu);
 		}
+		JMenuItem reportMenuItem = new JMenuItem("Submit Report");
+		reportMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					Desktop.getDesktop().browse(new URI("https://goo.gl/forms/F0yj4206Jrx2NkT23"));
+				} catch (IOException | URISyntaxException e1) {}
+			}
+		});
+		menu.getMenu(menu.getMenuCount() - 1).add(reportMenuItem);
 	}
 
 	private class FunctionMenuItem extends JMenuItem
