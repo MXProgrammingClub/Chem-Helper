@@ -119,9 +119,7 @@ public class ChemHelper extends JFrame { //Primary GUI class
 		//Add a shutdownhook that will save the preferences set by the user
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
-				try {
-					preferences.export();
-				} catch (FileNotFoundException | UnsupportedEncodingException e) {}
+				preferences.export();
 			}
 		});
 		
@@ -333,9 +331,7 @@ public class ChemHelper extends JFrame { //Primary GUI class
 		}
 		catch(Throwable e) {
 			if(chelper != null) {
-				try {
-					chelper.preferences.export();
-				} catch (FileNotFoundException | UnsupportedEncodingException e1) {}
+				chelper.preferences.export();
 				chelper.dispose();
 			}
 			new CrashFrame(e, e.getStackTrace());

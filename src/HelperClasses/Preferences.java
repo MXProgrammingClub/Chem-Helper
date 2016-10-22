@@ -1,10 +1,10 @@
-/*
- * File: Preferences.java
+/**
+ * Preferences.java
  * 
- * Making our own preferences class that will write to a file
+ * This class manages the import/export of the user preferences
  * 
- * Author: Luke Giacalone
- * Version: 02/09/2016
+ * @author Luke Giacalone
+ * @version 10/22/2016
  */
 
 package HelperClasses;
@@ -18,14 +18,18 @@ import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import javax.swing.JOptionPane;
+
 public class Preferences extends HashMap<String, String> {
 	
 	private String file;
 	PrintWriter writer;
+	private static String preferencesFileLoc = System.getProperty("user.home");	
 
 	public Preferences(String file) throws IOException {
-		this.file = file;
-		File f = new File(file);
+		updateFilePath();
+		this.file = preferencesFileLoc + file;
+		File f = new File(this.file);
 		if(!f.exists())
 			f.createNewFile();
 		Scanner scan = new Scanner(f);
@@ -37,46 +41,76 @@ public class Preferences extends HashMap<String, String> {
 		scan.close();
 	}
 	
-	public void export() throws FileNotFoundException, UnsupportedEncodingException {
-		writer = new PrintWriter(file, "UTF-8");
-		Thread write = new Thread(new backgroundWriter());
-		write.run();
-	}
-	
-	private void intExport(){
+	/**
+	 * Exports the preferences into an external file.
+	 */
+	public void export() {
 		try {
-			export();
+			writer = new PrintWriter(file, "UTF-8");
+			Thread write = new Thread(new BackgroundWriter());
+			write.run();
 		} catch (FileNotFoundException | UnsupportedEncodingException e) {
+			JOptionPane.showMessageDialog(null, "Error Exporting Preferences.");
 		}
 	}
 	
+	/**
+	 * Puts a preference as a String into the map.
+	 * 
+	 * @param key The key associated with the preference
+	 * @param value The value associated with the preference
+	 */
 	public void putString(String key, String value) {
 		if(key.contains(" ") || value.contains(" "))
 			throw new InvalidParameterException();
 		this.put(key, value);
-		intExport();
+		export();
 	}
 	
+	/**
+	 * Puts a preference as a boolean into the map.
+	 * 
+	 * @param key The key associated with the preference
+	 * @param value The value associated with the preference
+	 */
 	public void putBoolean(String key, boolean value) {
 		if(key.contains(" "))
 			throw new InvalidParameterException();
 		this.put(key, "" + value);
-		intExport();
+		export();
 	}
 	
+	/**
+	 * Puts a preference as an integer into the map.
+	 * 
+	 * @param key The key associated with the preference
+	 * @param value The value associated with the preference
+	 */
 	public void putInteger(String key, int value) {
 		if(key.contains(" "))
 			throw new InvalidParameterException();
 		this.put(key, "" + value);
-		intExport();
+		export();
 	}
 	
+	/**
+	 * Gets and returns a preference stored as a String
+	 * 
+	 * @param key The key corresponding to the preference
+	 * @return The preference as a String
+	 */
 	public String getString(String key) {
 		if(key.contains(" "))
 			throw new InvalidParameterException();
 		return this.get(key);
 	}
 	
+	/**
+	 * Gets and returns a preference stored as a boolean
+	 * 
+	 * @param key The key corresponding to the preference
+	 * @return The preference as a boolean
+	 */
 	public boolean getBoolean(String key) {
 		if(key.contains(" "))
 			throw new InvalidParameterException();
@@ -89,6 +123,12 @@ public class Preferences extends HashMap<String, String> {
 		}
 	}
 	
+	/**
+	 * Gets and returns a preference stored as an integer
+	 * 
+	 * @param key The key corresponding to the preference
+	 * @return The preference as an integer
+	 */
 	public int getInteger(String key) {
 		if(key.contains(" "))
 			throw new InvalidParameterException();
@@ -101,14 +141,35 @@ public class Preferences extends HashMap<String, String> {
 		}
 	}
 	
-	private class backgroundWriter implements Runnable{
-		public void run(){ 
-			for(String key: keySet())
+	/**
+	 * This is the private class that exports the preferences to the external File
+	 * 
+	 * @author Ted Pyne, Luke Giacalone
+	 * @version 10/22/2016
+	 */
+	private class BackgroundWriter implements Runnable {
+		public void run() { 
+			for(String key: keySet()) {
 				writer.println(key + " " + get(key));
+			}
 			
 			writer.close();
 		}
-		
+	}
+	
+	/**
+	 * Updates the file path for the location of the properties file depending
+	 * on the operating system.
+	 */
+	private static void updateFilePath() {
+		if (System.getProperty("os.name").contains("Mac")) {
+			preferencesFileLoc += File.separator + "Library" + File.separator + "ChemHelper" + File.separator;
+		}
+		else {
+			preferencesFileLoc += File.separator + "ChemHelper" + File.separator;
+		}
+		File file = new File(preferencesFileLoc);
+		file.mkdirs();
 	}
 	
 }
