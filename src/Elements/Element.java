@@ -74,8 +74,9 @@ public class Element
         return mass;
     }
     
-    /*
+    /**
      * Returns the electron shell configuration for the given element.
+     * @return The electron shell configuration in latex form.
      */
     public String getEShell()
     {
@@ -94,7 +95,7 @@ public class Element
     			s = S;
     			elec -= S;
     		}
-    		shell += row + "s^" + s + " ";
+    		shell += row + "s^{" + s + "}";
     		
     		//Adds the f for the row two before, if applicable
     		if(row >= 6 && elec > 0) //The first row with an insertion of a previous f row in it is 6
@@ -110,7 +111,7 @@ public class Element
         			f = F;
         			elec -= F;
         		}
-        		shell += (row - 2) + "f^" + f + " ";
+        		shell += (row - 2) + "f^{" + f + "}";
     		}
     		
     		//Adds the d for the row before, if applicable
@@ -123,10 +124,11 @@ public class Element
         			elec = 0;
         			
         			//Deals with exception where d should be filled before the next s.
-        			if(d == D - 1)
+        			if(d == D - 1 || d == D / 2 - 1)
         			{
-        				d = D;
-        				shell = shell.substring(0, shell.length() - 2) + (S - 1) + " ";
+        				d++;
+        				int index = shell.lastIndexOf("s");
+        				shell = shell.substring(0, index + 3) + (S - 1) + shell.substring(index + 4);
         			}
         		}
         		else
@@ -134,7 +136,7 @@ public class Element
         			d = D;
         			elec -= D;
         		}
-        		shell += (row - 1) + "d^" + d + " ";
+        		shell += (row - 1) + "d^{" + d + "}";
     		}
     		
     		//Adds the p for the row, if applicable
@@ -151,10 +153,12 @@ public class Element
         			p = P;
         			elec -= P;
         		}
-        		shell += row + "p^" + p + " ";
+        		shell += row + "p^{" + p + "}";
     		}
     	}
+    	return shell;
     	//String toReturn = "<html>";
+    	/*
     	String toReturn = "";
     	while(shell.length() != 0)
     	{
@@ -165,7 +169,7 @@ public class Element
     		//toReturn += "<sup>" + shell.substring(start + 1, end) + "</sup>";
     		shell = shell.substring(end + 1);
     	}
-    	return toReturn;
+    	return toReturn;*/
     }
     
     /*
